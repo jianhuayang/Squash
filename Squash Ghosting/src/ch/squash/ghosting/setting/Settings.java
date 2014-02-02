@@ -7,39 +7,39 @@ import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class Settings {
+final public class Settings {
 	private final static String TAG = Settings.class.getSimpleName();
 	// constants
-	public static final String version = "0.1";
+	public static final String VERSION = "0.1";
 
 	// preferences
 	private static SharedPreferences mPreferences = PreferenceManager
 			.getDefaultSharedPreferences(MainActivity.getActivity());
 
-	public static boolean setKeyValue(String key, String value){
+	public static boolean setKeyValue(final String key, final String value){
 		return setKeyValue(key, value, String.class);
 	}
-	public static boolean setKeyValue(String key, int value){
+	public static boolean setKeyValue(final String key, final int value){
 		return setKeyValue(key, value, int.class);
 	}
-	public static boolean setKeyValue(String key, Object value,
-			@SuppressWarnings("rawtypes") Class c) {
-		Editor editor = mPreferences.edit();
+	public static boolean setKeyValue(final String key, final Object value,
+			@SuppressWarnings("rawtypes") final Class classType) {
+		final Editor editor = mPreferences.edit();
 
 		Log.d(TAG, "Writing new value for setting " + key + ": " + value);
 		
-		if (c.equals(boolean.class))
+		if (classType.equals(boolean.class))
 			editor.putBoolean(key, (Boolean)value);
-		else if (c.equals(String.class))
+		else if (classType.equals(String.class))
 			editor.putString(key, (String) value);
-		else if (c.equals(int.class))
+		else if (classType.equals(int.class))
 			editor.putString(key, value.toString());
-		else if (c.equals(Size.class))
-			editor.putString(key, "" + ((Size) value).width + "x"
+		else if (classType.equals(Size.class))
+			editor.putString(key, Integer.toString(((Size) value).width) + "x"
 					+ ((Size) value).height);
 		else {
 			Log.e(TAG,
-					"Couldnt write value: unknonwn class " + c.getSimpleName());
+					"Couldnt write value: unknonwn class " + classType.getSimpleName());
 			return false;
 		}
 
@@ -62,7 +62,7 @@ public class Settings {
 	public static int getCornerTime(){
 		return Integer.parseInt(mPreferences.getString("time", "60"));
 	}
-	public static boolean getCornersOrTime(){
+	public static boolean isCornersOrTime(){
 		return mPreferences.getBoolean("cornersortime", true);
 	}
 	public static String getCorners(){
@@ -79,5 +79,9 @@ public class Settings {
 	}
 	public static String getBackTime(){
 		return mPreferences.getString("backtime", "0.5");
+	}
+	
+	private Settings(){
+		
 	}
 }

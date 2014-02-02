@@ -27,115 +27,118 @@ public class MainActivity extends FragmentActivity implements
 
 	private static MainActivity mInstance;
 
-	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private ViewPager mViewPager;
 
 	private SquashView mSquashView;
-	
+
 	private int mSquashViewHeight;
 
 	public static MainActivity getActivity() {
 		return mInstance;
 	}
-	
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		Log.d(TAG, "starting initialization");
-		
+
 		// TODO: handle corner click events to select custom corner range
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		mInstance = this;
 		mSquashView = new SquashView(this);
-		
+
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		// Create the adapter that will return a fragment for each section
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		final SectionsPagerAdapter mPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setAdapter(mPagerAdapter);
 
 		// Enable swiping between tabs
-		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		mViewPager
+				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
-					public void onPageSelected(int position) {
+					public void onPageSelected(final int position) {
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
 
 		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+		for (int i = 0; i < mPagerAdapter.getCount(); i++) {
 			actionBar.addTab(actionBar.newTab()
-					.setText(mSectionsPagerAdapter.getPageTitle(i))
+					.setText(mPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-		
+
 		Log.i(TAG, "initialization done");
 	}
 
 	public void onButStartClick(final View view) {
 		// save "original" height with appropriate aspect ratio
-		if (mSquashViewHeight == 0)
+		if (mSquashViewHeight == 0) {
 			mSquashViewHeight = mSquashView.getHeight();
-		
+		}
+
 		// toggle ghosting session
-		if (Ghosting.running)
+		if (Ghosting.running) {
 			Ghosting.cancelSession();
-		else
+		} else {
 			Ghosting.startSession();
+		}
 	}
 
 	@Override
-	public void onTabSelected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+	public void onTabSelected(final ActionBar.Tab tab,
+			final FragmentTransaction fragmentTransaction) {
 		mViewPager.setCurrentItem(tab.getPosition());
 
 		// ensure the proper corners are visible after possibly changing them
-		if (tab.getPosition() == 0)
+		if (tab.getPosition() == 0) {
 			SquashView.setOverallCornerVisibility();
-		
-		// ensure settings views are properly displayed
-		if (tab.getPosition() == 1) 
-			SettingViews.initialize();
+		}
 
+		// ensure settings views are properly displayed
+		if (tab.getPosition() == 1) {
+			SettingViews.initialize();
+		}
 	}
-	
-	public void setActionBarVisibility(boolean visible){
-		if (visible)
+
+	public void setActionBarVisibility(final boolean visible) {
+		if (visible) {
 			getActionBar().show();
-		else{
+		} else {
 			getActionBar().hide();
 			// ensure proper height (and aspect ratio) of squash view
-			mSquashView.setLayoutParams(new LayoutParams(mSquashView.getWidth(), mSquashViewHeight));
+			mSquashView.setLayoutParams(new LayoutParams(
+					mSquashView.getWidth(), mSquashViewHeight));
 		}
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 		private final String TAG = SectionsPagerAdapter.class.getSimpleName();
 
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
+		public SectionsPagerAdapter(final FragmentManager fragmentManager) {
+			super(fragmentManager);
 		}
 
 		@Override
-		public Fragment getItem(int position) {
-			Fragment fragment;
+		public Fragment getItem(final int position) {
+			Fragment fragment = null;
 			// select proper fragment
-			if (position == 0)
+			if (position == 0) {
 				fragment = new MainSectionFragment();
-			else if (position == 1)
+			} else if (position == 1) {
 				fragment = new SettingsSectionFragment();
-			else {
+			} else {
 				Log.e(TAG, "invalid position: " + position);
-				return null;
 			}
-
 			return fragment;
 		}
 
@@ -145,13 +148,15 @@ public class MainActivity extends FragmentActivity implements
 		}
 
 		@Override
-		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
+		public CharSequence getPageTitle(final int position) {
+			final Locale loc = Locale.getDefault();
 			switch (position) {
 			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
+				return getString(R.string.title_section1).toUpperCase(loc);
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
+				return getString(R.string.title_section2).toUpperCase(loc);
+			default:
+				Log.e(TAG, "Invalid tab position: " + position);
 			}
 			return null;
 		}
@@ -159,15 +164,15 @@ public class MainActivity extends FragmentActivity implements
 
 	public static class MainSectionFragment extends Fragment {
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
+		public View onCreateView(final LayoutInflater inflater,
+				final ViewGroup container, final Bundle savedInstanceState) {
+			final View rootView = inflater.inflate(R.layout.fragment_main,
+					container, false);
 
 			// add squash view
-			LinearLayout ll = (LinearLayout) rootView
+			final LinearLayout linlay = (LinearLayout) rootView
 					.findViewById(R.id.squashViewLayout);
-			ll.addView(MainActivity.getActivity().mSquashView);
+			linlay.addView(MainActivity.getActivity().mSquashView);
 
 			return rootView;
 		}
@@ -175,9 +180,9 @@ public class MainActivity extends FragmentActivity implements
 
 	public static class SettingsSectionFragment extends Fragment {
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_settings,
+		public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+				final Bundle savedInstanceState) {
+			final View rootView = inflater.inflate(R.layout.fragment_settings,
 					container, false);
 
 			return rootView;
@@ -186,10 +191,12 @@ public class MainActivity extends FragmentActivity implements
 
 	// unused methods
 	@Override
-	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+	public void onTabReselected(final Tab arg0, final FragmentTransaction arg1) {
+		// unused
 	}
 
 	@Override
-	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+	public void onTabUnselected(final Tab arg0, final FragmentTransaction arg1) {
+		// unused
 	}
 }
