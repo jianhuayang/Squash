@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Squash Simulation</string>
+	<string name="settings">Settings</string>
+	
+	<string name="key_draw_mode">draw_mode</string>
+	<string name="summary_draw_mode">Select draw mode for 3D objects</string>
+	<string name="title_draw_mode">Draw Mode</string>
+	
+	<string name="key_select_objects">select_objects</string>
+	<string name="summary_select_objects">Tap to select objects to be drawn</string>
+	<string name="title_select_objects">Select Objects</string>
+	
+	<string name="key_camera_mode">camera_mode</string>
+	<string name="summary_camera_mode">Select camera mode</string>
+	<string name="title_camera_mode">Camera Mode</string>
+	
+	<string name="key_reset">reset</string>
+	<string name="summary_reset">Return moving objects to their initial place</string>
+	<string name="title_reset">Reset world</string>
+	
+	
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="entries_draw_mode">
+        <item name="0">default</item>
+        <item name="1">lines</item>
+        <item name="2">line loop</item>
+        <item name="3">triangles</item>
+        <item name="4">points</item>
+    </string-array>
+    
+	<string-array name="entries_camera_mode">
+        <item name="0">rotating</item>
+        <item name="1">back</item>
+        <item name="2">left</item>
+        <item name="3">front</item>
+        <item name="4">right</item>
+    </string-array>
+    
+	<string-array name="empty_array"/>
+</resources>

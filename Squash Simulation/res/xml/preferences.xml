@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Misc" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_reset"
+            android:summary="@string/summary_reset"
+            android:title="@string/title_reset" >
+        </CheckBoxPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Drawing" >
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/entries_draw_mode"
+            android:key="@string/key_draw_mode"
+            android:summary="@string/summary_draw_mode"
+            android:title="@string/title_draw_mode" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Objects" >
+        <MultiSelectListPreference
+            android:defaultValue="@array/empty_array"
+            android:entries="@array/empty_array"
+            android:entryValues="@array/empty_array"
+            android:key="@string/key_select_objects"
+            android:summary="@string/summary_select_objects"
+            android:title="@string/title_select_objects" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Camera" >
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/entries_camera_mode"
+            android:key="@string/key_camera_mode"
+            android:summary="@string/summary_camera_mode"
+            android:title="@string/title_camera_mode" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
