@@ -1,10 +1,10 @@
-package ch.squash.main;
+package ch.squash.simulation.main;
 
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
-import ch.squash.R;
-import ch.squash.shapes.common.Movable;
+import ch.squash.simulation.R;
+import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
 	private final static String TAG = MovementEngine.class.getSimpleName();

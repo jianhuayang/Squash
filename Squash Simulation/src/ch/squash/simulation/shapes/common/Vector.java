@@ -1,4 +1,4 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
 

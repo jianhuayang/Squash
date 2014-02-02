@@ -1,4 +1,4 @@
-package ch.squash.main;
+package ch.squash.simulation.main;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -12,8 +12,8 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
-import ch.squash.R;
-import ch.squash.common.Settings;
+import ch.squash.simulation.R;
+import ch.squash.simulation.common.Settings;
 
 public class SettingsFragment extends PreferenceFragment implements
 		OnSharedPreferenceChangeListener {

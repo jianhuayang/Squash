@@ -1,10 +1,9 @@
 package ch.squash.test;
 
 import junit.framework.TestCase;
-import android.util.Log;
-import ch.squash.shapes.common.IVector;
-import ch.squash.shapes.common.Vector;
-import ch.squash.shapes.shapes.Quadrilateral;
+import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.Vector;
+import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class QuadTest extends TestCase {
 	// -1/-1 to 1/1 on y=0

@@ -1,7 +1,7 @@
-package ch.squash.shapes.shapes;
+package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
-import ch.squash.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.AbstractShape;
 
 public class Tetrahedron extends AbstractShape {
 	

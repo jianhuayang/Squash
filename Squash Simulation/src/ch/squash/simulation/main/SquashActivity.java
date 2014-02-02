@@ -1,4 +1,4 @@
-package ch.squash.main;
+package ch.squash.simulation.main;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import ch.squash.R;
-import ch.squash.common.Settings;
+import ch.squash.simulation.R;
+import ch.squash.simulation.common.Settings;
 
 public class SquashActivity extends Activity {
 	private final static String TAG = SquashActivity.class.getSimpleName();

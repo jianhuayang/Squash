@@ -1,6 +1,6 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
-import ch.squash.shapes.shapes.Arrow;
+import ch.squash.simulation.shapes.shapes.Arrow;
 
 public class PhysicalVector implements IVector {
 	public final static float ARROW_LENGTH_DIVISOR = 10;

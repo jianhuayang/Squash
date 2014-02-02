@@ -1,4 +1,4 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -7,9 +7,9 @@ import java.nio.FloatBuffer;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
-import ch.squash.common.Settings;
-import ch.squash.main.SquashRenderer;
-import ch.squash.shapes.shapes.DummyShape;
+import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.DummyShape;
 
 public abstract class AbstractShape {
 	private final static String TAG = AbstractShape.class.getSimpleName();

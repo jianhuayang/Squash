@@ -1,10 +1,10 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.squash.main.SquashRenderer;
-import ch.squash.shapes.shapes.Quadrilateral;
+import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class ShapeCollection {
 	public static final int OBJECT_COLLECTION_COURT = 0;

@@ -1,6 +1,6 @@
-package ch.squash.shapes.shapes;
+package ch.squash.simulation.shapes.shapes;
 
-import ch.squash.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.AbstractShape;
 
 public class DummyShape extends AbstractShape {
 	public DummyShape() {

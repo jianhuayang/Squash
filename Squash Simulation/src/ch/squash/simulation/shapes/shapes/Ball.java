@@ -1,12 +1,12 @@
-package ch.squash.shapes.shapes;
+package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
 import android.util.Log;
-import ch.squash.shapes.common.AbstractShape;
-import ch.squash.shapes.common.IVector;
-import ch.squash.shapes.common.Movable;
-import ch.squash.shapes.common.PhysicalVector;
-import ch.squash.shapes.common.Vector;
+import ch.squash.simulation.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.Movable;
+import ch.squash.simulation.shapes.common.PhysicalVector;
+import ch.squash.simulation.shapes.common.Vector;
 
 public class Ball extends AbstractShape {
 	private final static String TAG = Ball.class.getSimpleName();

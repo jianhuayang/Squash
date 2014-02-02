@@ -1,9 +1,9 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
-import ch.squash.main.MovementEngine;
-import ch.squash.main.SquashRenderer;
-import ch.squash.shapes.shapes.Quadrilateral;
+import ch.squash.simulation.main.MovementEngine;
+import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();

@@ -1,4 +1,4 @@
-package ch.squash.common;
+package ch.squash.simulation.common;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,9 +7,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import ch.squash.R;
-import ch.squash.main.SquashActivity;
-import ch.squash.main.SquashRenderer;
+import ch.squash.simulation.R;
+import ch.squash.simulation.main.SquashActivity;
+import ch.squash.simulation.main.SquashRenderer;
 
 public final class Settings {
 	// static members

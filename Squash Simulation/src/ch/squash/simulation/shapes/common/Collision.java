@@ -1,9 +1,9 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
-import ch.squash.shapes.common.AbstractShape.SolidType;
-import ch.squash.shapes.shapes.Ball;
-import ch.squash.shapes.shapes.Quadrilateral;
+import ch.squash.simulation.shapes.common.AbstractShape.SolidType;
+import ch.squash.simulation.shapes.shapes.Ball;
+import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public final class Collision {
 	private final static String TAG = Collision.class.getSimpleName();

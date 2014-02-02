@@ -1,4 +1,4 @@
-package ch.squash.shapes.common;
+package ch.squash.simulation.shapes.common;
 
 public interface IVector {
 	float getX();

@@ -1,8 +1,8 @@
 package ch.squash.test;
 
 import junit.framework.TestCase;
-import ch.squash.shapes.common.IVector;
-import ch.squash.shapes.common.Vector;
+import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.Vector;
 
 public class VectorTest extends TestCase {
 	private IVector v0 = new Vector(0, 0, 0);

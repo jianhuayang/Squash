@@ -1,4 +1,4 @@
-package ch.squash.main;
+package ch.squash.simulation.main;
 
 import java.util.ArrayList;
 
@@ -10,18 +10,18 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
-import ch.squash.common.Settings;
-import ch.squash.shapes.common.AbstractShape;
-import ch.squash.shapes.common.IVector;
-import ch.squash.shapes.common.Movable;
-import ch.squash.shapes.common.ShapeCollection;
-import ch.squash.shapes.common.Vector;
-import ch.squash.shapes.shapes.Arrow;
-import ch.squash.shapes.shapes.Ball;
-import ch.squash.shapes.shapes.Cube;
-import ch.squash.shapes.shapes.DottedLine;
-import ch.squash.shapes.shapes.DummyShape;
-import ch.squash.shapes.shapes.Tetrahedron;
+import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.Movable;
+import ch.squash.simulation.shapes.common.ShapeCollection;
+import ch.squash.simulation.shapes.common.Vector;
+import ch.squash.simulation.shapes.shapes.Arrow;
+import ch.squash.simulation.shapes.shapes.Ball;
+import ch.squash.simulation.shapes.shapes.Cube;
+import ch.squash.simulation.shapes.shapes.DottedLine;
+import ch.squash.simulation.shapes.shapes.DummyShape;
+import ch.squash.simulation.shapes.shapes.Tetrahedron;
 
 public class SquashRenderer implements GLSurfaceView.Renderer {
 	private static final String TAG = SquashRenderer.class.getSimpleName();

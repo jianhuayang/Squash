@@ -1,4 +1,4 @@
-package ch.squash.main;
+package ch.squash.simulation.main;
 
 import android.app.Activity;
 import android.os.Bundle;
