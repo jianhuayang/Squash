@@ -1,4 +1,4 @@
-package ch.squash.test;
+package ch.squash.simulation.test;
 
 import junit.framework.TestCase;
 import ch.squash.simulation.shapes.common.IVector;
