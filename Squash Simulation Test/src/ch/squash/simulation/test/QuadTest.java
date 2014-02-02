@@ -7,11 +7,21 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class QuadTest extends TestCase {
 	// -1/-1 to 1/1 on y=0
-	private Quadrilateral q0 = new Quadrilateral("q0", new float[]{-1,0,-1,  1,0,-1,  1,0,1,  -1,0,1}, new float[]{0, 0, 0, 0}, false);
+	private Quadrilateral q0 = new Quadrilateral("q0", new float[]{-1,0,-1,		1,0,-1,		1,0,1,		-1,0,1}, new float[]{0, 0, 0, 0}, false);
 	// -1/-1 to 1/1 on x=0
-	private Quadrilateral q1 = new Quadrilateral("q1", new float[]{0,-1,-1,  0,-1,1,  0,1,1,  0,1,-1}, new float[]{0, 0, 0, 0}, false);
+	private Quadrilateral q1 = new Quadrilateral("q1", new float[]{0,-1,-1,		0,-1,1,		0,1,1,		0,1,-1}, new float[]{0, 0, 0, 0}, false);
 	// -2/-2 to 5/-2 to 5/4 to -2/2 on z=0
-	private Quadrilateral q2 = new Quadrilateral("q2", new float[]{-2,-2,0,  5,-2,0,  5,4,0,  -2,2,0}, new float[]{0, 0, 0, 0}, false);
+	private Quadrilateral q2 = new Quadrilateral("q2", new float[]{-2,-2,0,		5,-2,0,		5,4,0,		-2,2,0}, new float[]{0, 0, 0, 0}, false);
+	// 3/3 to 7/7 on y=0
+	private Quadrilateral q3 = new Quadrilateral("q3", new float[]{3,0,3,		7,0,3,		7,0,7,		3,0,7}, new float[]{0, 0, 0, 0}, false);
+	// -5/-5 to -2/-2 on x=0
+	private Quadrilateral q4 = new Quadrilateral("q4", new float[]{0,-5,-5,		0,-5,-2,	0,-2,-2,	0,-2,-5}, new float[]{0, 0, 0, 0}, false);
+	// -2/2 to -2/5 to -5/7 to -5/2 on z=0
+	private Quadrilateral q5 = new Quadrilateral("q5", new float[]{-2,2,0,		-2,5,0,		-5,7,0,		-5,2,0}, new float[]{0, 0, 0, 0}, false);
+	// 1/2/0 to -2/0/2
+	private Quadrilateral q6 = new Quadrilateral("q6", new float[]{1,2,0,		1,0,2,		-1,0,2,		-1,2,0}, new float[]{0, 0, 0, 0}, false);
+	// 0/1/-3 to -2/3/0
+	private Quadrilateral q7 = new Quadrilateral("q7", new float[]{0,1,-3,		-2,1,0,		-2,3,0,		0,3,-3}, new float[]{0, 0, 0, 0}, false);
 	
 	private IVector v0 = new Vector(0, 0, 0);
 	private IVector v1 = new Vector(1, 0, 1);
@@ -28,9 +38,14 @@ public class QuadTest extends TestCase {
 	private IVector v12 = new Vector(0.5f, 6.5f, 7);
 	
 	public void testGetNormalVector() {
-		assertEquals(new Vector(0, -4, 0), q0.getNormalVector());
-		assertEquals(new Vector(-4, 0, 0), q1.getNormalVector());
-		assertEquals(new Vector(0, 0, 28), q2.getNormalVector());
+		assertEquals(new Vector( 0, -4,  0), q0.getNormalVector());
+		assertEquals(new Vector(-4,  0,  0), q1.getNormalVector());
+		assertEquals(new Vector( 0,  0, 28), q2.getNormalVector());
+		assertEquals(new Vector( 0,-16,  0), q3.getNormalVector());
+		assertEquals(new Vector(-9,  0,  0), q4.getNormalVector());
+		assertEquals(new Vector( 0,  0,  9), q5.getNormalVector());
+		assertEquals(new Vector( 0, -4, -4), q6.getNormalVector());
+		assertEquals(new Vector(-6,  0, -4), q7.getNormalVector());
 	}
 	
 	public void testGetDistanceToPoint(){
