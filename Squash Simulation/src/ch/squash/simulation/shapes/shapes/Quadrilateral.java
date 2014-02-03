@@ -103,7 +103,7 @@ public class Quadrilateral extends AbstractShape {
 	}
 
 	public float getDistanceToPoint(final IVector p) {
-		Log.d(TAG, "Testing whether " + p + " lies in quad " + tag);
+		Log.i(TAG, "Testing whether " + p + " lies in quad " + tag);
 		float dVertical = Float.MIN_VALUE; // distance from p to quad area
 
 		// project p onto quad area
@@ -138,7 +138,7 @@ public class Quadrilateral extends AbstractShape {
 							else
 								e[index++] = edges[3 * j + k];
 
-					Log.v(TAG, "q=" + q[0] + "/" + q[1] + ", edges=" + e[0]
+					Log.d(TAG, "q=" + q[0] + "/" + q[1] + ", edges=" + e[0]
 							+ "/" + e[1] + ", " + e[2] + "/" + e[3] + ", "
 							+ e[4] + "/" + e[5] + ", " + e[6] + "/" + e[7]
 							+ ", ");
@@ -151,26 +151,37 @@ public class Quadrilateral extends AbstractShape {
 		float b;
 		final List<Integer> violatedEdges = new ArrayList<Integer>();
 
+		// find violated edges
 		for (int i = 0; i < 4; i++) {
+			boolean otherEdgeSign;
+			boolean qSign;
+
 			// m = (y2 - y1) / (x2 - x1)
 			m = (e[(2 * i + 3) % 8] - e[(2 * i + 1) % 8])
 					/ (e[(2 * i + 2) % 8] - e[(2 * i + 0) % 8]);
-			if (areEqual(e[(2 * i + 2) % 8], e[(2 * i + 0) % 8]) || Float.isInfinite(m) || Float.isNaN(m)) {
-				Log.e(TAG, "cannot handle infinite slope yet. m=" + m);
-				return -1;
+			
+			if (areEqual(e[(2 * i + 2) % 8], e[(2 * i + 0) % 8])
+					|| Float.isInfinite(m) || Float.isNaN(m)) {
+				// can not do it with geometry if slope is infinite
+				// sign depends on x-coordinate
+				otherEdgeSign = e[(2 * i + 4) % 8] >= e[(2 * i + 2) % 8];
+				qSign = q[0] >= e[(2 * i + 2) % 8];
+			} else {
+				// can do it with geometry; continue
+				// b = y1 - m * x1
+				b = e[(2 * i + 1) % 8] - m * e[(2 * i + 0) % 8];
+
+				// check sign of "opposite" (next) corner
+				// y3 - m * x3 - b > 0
+				otherEdgeSign = e[(2 * i + 5) % 8] - m * e[(2 * i + 4) % 8] - b >= 0;
+				qSign = (q[1] - m * q[0] - b >= 0);
 			}
-			// b = y1 - m * x1
-			b = e[(2 * i + 1) % 8] - m * e[(2 * i + 0) % 8];
-			
-			// check sign of "opposite" (next) corner
-			// y3 - m * x3 - b > 0
-			boolean positive = e[(2 * i + 5) % 8] - m * e[(2 * i + 4) % 8] - b >= 0;
-			
 			// edge is violated if sign of point doesnt match
-			if ((q[1] - m * q[0] - b >= 0) != positive)
+			if (otherEdgeSign != qSign)
 				violatedEdges.add(i);
 		}
-		
+
+		// calculate distance according to how q and quad lie
 		if (violatedEdges.size() == 0)
 			// point is in quad
 			return dVertical;
@@ -182,242 +193,45 @@ public class Quadrilateral extends AbstractShape {
 			m = (e[(2 * violatedEdges.get(0) + 3) % 8] - e[(2 * violatedEdges.get(0) + 1) % 8])
 					/ (e[(2 * violatedEdges.get(0) + 2) % 8] - e[(2 * violatedEdges.get(0) + 0) % 8]);
 			if (areEqual(e[(2 * violatedEdges.get(0)+ 2) % 8], e[(2 * violatedEdges.get(0) + 0) % 8]) || Float.isInfinite(m) || Float.isNaN(m)) {
-				Log.e(TAG, "cannot handle infinite slope yet. m=" + m);
-				return -1;
+				// can not do it with geometry if slope is infinite
+				// distance depends on x-coordinate
+				return (float)Math.sqrt(Math.pow(dVertical, 2) + Math.pow(q[0] - e[(2 * violatedEdges.get(0) + 0) % 8], 2));
 			}
+			// can do it with geometry (maybe); continue
 			// b = y1 - m * x1
 			b = e[(2 * violatedEdges.get(0) + 1) % 8] - m * e[(2 * violatedEdges.get(0) + 0) % 8];
 						
 			// calculate inverseM, inverseB
 			final float inverseM = -1/m;
 			if (areEqual(inverseM, 0f) || Float.isInfinite(inverseM) || Float.isNaN(inverseM)) {
-				Log.e(TAG, "cannot handle infinite slope yet. inverseM=" + inverseM);
-				return -1;
+				// can not do it with geometry after all, slope is zero
+				// distance depends on y-coordinate
+				return (float)Math.sqrt(Math.pow(dVertical, 2) + Math.pow(q[1] - e[(2 * violatedEdges.get(0) + 1) % 8], 2));
 			}
+			// can do it with geometry AFTER ALL; continue
 			final float inverseB = q[1] - inverseM * q[0];
 			
 			// intersect 2 lines
 			final float x = (inverseB - b) / (m - inverseM);	// no need to test x for infinity
 			final float y = m * x + b;
 			
-			return dVertical + AbstractShape.getPointPointDistance(new float[]{ x, y }, q);
+			return (float)Math.sqrt(Math.pow(dVertical, 2) + Math.pow(AbstractShape.getPointPointDistance(new float[]{ x, y }, q), 2));
 		}
 		
 		if (violatedEdges.size() == 2){
 			// point is closest to corner between two violated edges
-			return dVertical + AbstractShape.getPointPointDistance(new float[]{ e[(2 * violatedEdges.get(1)) % 8],  e[(2 * violatedEdges.get(1) + 1) % 8] }, q);
+			
+			// use special indices if the edge is closest to the very first edge
+			if (violatedEdges.get(0) == 0 && violatedEdges.get(1) == 3)
+				return (float)Math.sqrt(Math.pow(dVertical, 2) + 
+						Math.pow(AbstractShape.getPointPointDistance(new float[]{ e[(2 * violatedEdges.get(0)) % 8],  e[(2 * violatedEdges.get(0) + 1) % 8] }, q), 2));
+			
+			return (float)Math.sqrt(Math.pow(dVertical, 2) + 
+					Math.pow(AbstractShape.getPointPointDistance(new float[]{ e[(2 * violatedEdges.get(1)) % 8],  e[(2 * violatedEdges.get(1) + 1) % 8] }, q), 2));
 		}
 		
 		Log.e(TAG, "Invalid amount of violated edges: " + violatedEdges.size());
 		return -1;
-	}
-
-	public float oldGetDistanceToPoint(final IVector p) {
-		Log.d(TAG, "Testing whether " + p + " lies in quad " + tag);
-		float dVertical = Float.MIN_VALUE; // distance from p to quad area
-
-		// project p onto quad area
-		final IVector n = getNormalVector();
-		float[] q = new float[2]; // projection of p onto quad area
-		float[] e = new float[8]; // edges in 2d (2 relevant components of quad
-									// area)
-
-		// ensure there is only one component in normal vector (two 0's)
-		// and compute q
-		for (int i = 0; i < 3; i++)
-			if (n.getDirection()[i] != 0)
-				if (Math.abs(n.getDirection()[i]) == n.getLength()) {
-					float[] v = p.getDirection();
-					dVertical = Math.abs(v[i] - edges[i]);
-					v[i] = edges[i];
-
-					if (i == 0)
-						q[0] = v[1];
-					else
-						q[0] = v[0];
-					if (i == 2)
-						q[1] = v[1];
-					else
-						q[1] = v[2];
-
-					int index = 0;
-					for (int j = 0; j < 4; j++)
-						for (int k = 0; k < 3; k++)
-							if (k == i)
-								continue;
-							else
-								e[index++] = edges[3 * j + k];
-
-					Log.v(TAG, "q=" + q[0] + "/" + q[1] + ", edges=" + e[0]
-							+ "/" + e[1] + ", " + e[2] + "/" + e[3] + ", "
-							+ e[4] + "/" + e[5] + ", " + e[6] + "/" + e[7]
-							+ ", ");
-				} else {
-					Log.e(TAG, "Cant handle non-ortogonal quads");
-					return -1;
-				}
-
-		// determine whether point lies in quad on plane
-		// iterate over all edges
-		final float[] eq = new float[2]; // current edge to point on plane
-		final float[] e1e2 = new float[2]; // edge across from current edge
-		final float[] e3e2 = new float[2]; // other edge across from current
-											// edge
-		final float[] m = new float[3]; // slope of the 3 vectors
-		final float[] b = new float[3]; // y-intercept of 3 vectors
-		final float[] s = new float[4]; // 2 intersections of eq and e1e2/e3e2
-		for (int i = 0; i < 4; i++) {
-			eq[0] = q[0] - e[2 * i];
-			eq[1] = q[1] - e[2 * i + 1];
-			e1e2[0] = e[(2 * i + 4) % 8] - e[(2 * i + 2) % 8];
-			e1e2[1] = e[(2 * i + 5) % 8] - e[(2 * i + 3) % 8];
-			e3e2[0] = e[(2 * i + 4) % 8] - e[(2 * i + 6) % 8];
-			e3e2[1] = e[(2 * i + 5) % 8] - e[(2 * i + 7) % 8];
-
-			m[0] = eq[1] / eq[0];
-			m[1] = e1e2[1] / e1e2[0];
-			m[2] = e3e2[1] / e3e2[0];
-			b[0] = e[(2 * i + 1) % 8] - m[0] * e[(2 * i) % 8];
-			b[1] = e[(2 * i + 5) % 8] - m[1] * e[(2 * i + 4) % 8];
-			b[2] = e[(2 * i + 5) % 8] - m[2] * e[(2 * i + 4) % 8];
-
-			if (Float.isInfinite(m[0]))
-				Log.w(TAG, "Slope of eq is infinite");
-
-			s[0] = Float.isInfinite(m[1]) ? e[(2 * i + 4) % 8] : (b[1] - b[0])
-					/ (m[0] - m[1]);
-			s[1] = m[0] * s[0] + b[0];
-			s[2] = Float.isInfinite(m[2]) ? e[(2 * i + 4) % 8] : (b[2] - b[0])
-					/ (m[0] - m[2]);
-			s[3] = m[0] * s[2] + b[0];
-
-			double lengthEq = Math
-					.sqrt(Math.pow(eq[0], 2) + Math.pow(eq[1], 2));
-			double lengthES0 = Math.sqrt(Math.pow(s[0] - e[2 * i], 2)
-					+ Math.pow(s[1] - e[2 * i + 1], 2));
-			double lengthES1 = Math.sqrt(Math.pow(s[2] - e[2 * i], 2)
-					+ Math.pow(s[3] - e[2 * i + 1], 2));
-
-			float lambda11 = e1e2[0] == 0 ? 0 : (s[0] - e[(2 * i + 2) % 8])
-					/ e1e2[0];
-			float lambda12 = e1e2[1] == 0 ? 0 : (s[1] - e[(2 * i + 3) % 8])
-					/ e1e2[1];
-			float lambda21 = e3e2[0] == 0 ? 0 : (s[2] - e[(2 * i + 6) % 8])
-					/ e3e2[0];
-			float lambda22 = e3e2[1] == 0 ? 0 : (s[3] - e[(2 * i + 7) % 8])
-					/ e3e2[1];
-
-			// test that 0 <= lambda <= 1
-			// if it is, test distance from edge to S and to Q
-			if ((lengthEq <= lengthES0 && lambda12 >= 0 && lambda12 <= 1
-					&& lambda11 >= 0 && lambda11 <= 1)
-					|| (lengthEq <= lengthES1 && lambda22 >= 0 && lambda22 <= 1
-							&& lambda21 >= 0 && lambda21 <= 1)) {
-				float lambdas00 = eq[0] == 0 ? 0 : (s[0] - e[2 * i]) / eq[0];
-				float lambdas01 = eq[1] == 0 ? 0 : (s[1] - e[2 * i + 1])
-						/ eq[1];
-				float lambdas10 = eq[0] == 0 ? 0 : (s[2] - e[2 * i]) / eq[0];
-				float lambdas11 = eq[1] == 0 ? 0 : (s[3] - e[2 * i + 1])
-						/ eq[1];
-
-				if ((lambdas00 >= 0 && lambdas01 >= 0)
-						|| (lambdas10 >= 0 && lambdas11 >= 0)) {
-					Log.v(TAG, "Point lies in quad. Detected from edge "
-							+ e[2 * i] + "/" + e[2 * i + 1] + ", distance of "
-							+ tag + " to origin: " + dVertical);
-					return dVertical;
-				}
-			}
-		}
-
-		// point doesnt lie in quad on plane
-		// compute dHorizontal
-		float dHorizontal = Float.MIN_VALUE; // distance from p on quad area to
-												// quad
-
-		int closestEdgeIndex = 0;
-		float closestEdgeDistance = Float.MAX_VALUE;
-
-		for (int i = 1; i < 4; i++) {
-			final float currentDistance = (float) Math.sqrt(Math.pow(e[2 * i]
-					- q[0], 2)
-					+ Math.pow(e[2 * i + 1] - q[1], 2));
-
-			if (currentDistance < closestEdgeDistance)
-				closestEdgeIndex = i;
-		}
-
-		Log.i(TAG, "Point doesnt lie in quad. Closest edge to quad is e"
-				+ closestEdgeIndex + " (" + e[2 * closestEdgeIndex] + "/"
-				+ e[2 * closestEdgeIndex + 1] + ")");
-		final float distanceClosestToQ = (float) Math.sqrt(Math.pow(
-				e[2 * closestEdgeIndex] - q[0], 2)
-				+ Math.pow(e[2 * closestEdgeIndex + 1] - q[1], 2));
-		final float distanceClosestToNext = (float) Math.sqrt(Math.pow(
-				e[2 * closestEdgeIndex] - e[(2 * closestEdgeIndex + 2) % 8], 2)
-				+ Math.pow(e[2 * closestEdgeIndex + 1]
-						- e[(2 * closestEdgeIndex + 3) % 8], 2));
-		final float distanceNextToQ = (float) Math.sqrt(Math.pow(
-				e[(2 * closestEdgeIndex + 2) % 8] - q[0], 2)
-				+ Math.pow(e[(2 * closestEdgeIndex + 3) % 8] - q[1], 2));
-		final float distanceClosestToPrevious = (float) Math.sqrt(Math.pow(
-				e[2 * closestEdgeIndex] - e[(2 * closestEdgeIndex + 6) % 8], 2)
-				+ Math.pow(e[2 * closestEdgeIndex + 1]
-						- e[(2 * closestEdgeIndex + 7) % 8], 2));
-		final float distancePreviousToQ = (float) Math.sqrt(Math.pow(
-				e[(2 * closestEdgeIndex + 6) % 8] - q[0], 2)
-				+ Math.pow(e[(2 * closestEdgeIndex + 7) % 8] - q[1], 2));
-
-		final float[] vectorToQ = new float[] { q[0] - e[2 * closestEdgeIndex],
-				q[1] - e[2 * closestEdgeIndex + 1] };
-
-		if (distanceClosestToNext >= distanceNextToQ) {
-			// calculate distance between edge and q with sin(angle) to next
-			// edge
-			final float[] vectorToNext = new float[] {
-					e[(2 * closestEdgeIndex) % 8]
-							- e[(2 * closestEdgeIndex + 2) % 8],
-					e[(2 * closestEdgeIndex + 1) % 8]
-							- e[(2 * closestEdgeIndex + 3) % 8] };
-			final float angle = (float) Math
-					.acos((vectorToQ[0] * vectorToNext[0] + vectorToQ[1]
-							* vectorToNext[1])
-							/ (Math.sqrt((vectorToQ[0] * vectorToQ[0] + vectorToQ[1]
-									* vectorToQ[1])
-									* (vectorToNext[0] * vectorToNext[0] + vectorToNext[1]
-											* vectorToNext[1]))));
-
-			dHorizontal = (float) Math.sin(angle) * distanceClosestToQ;
-			Log.d(TAG, "Point is closest to the edge to the next edge");
-		} else if (distanceClosestToPrevious >= distancePreviousToQ) {
-			// calculate distance between edge and q with sin(angle) to previous
-			// edge
-			final float[] vectorToPrevious = new float[] {
-					e[(2 * closestEdgeIndex) % 8]
-							- e[(2 * closestEdgeIndex + 6) % 8],
-					e[(2 * closestEdgeIndex + 1) % 8]
-							- e[(2 * closestEdgeIndex + 7) % 8] };
-			final float angle = (float) Math
-					.acos((vectorToQ[0] * vectorToPrevious[0] + vectorToQ[1]
-							* vectorToPrevious[1])
-							/ (Math.sqrt((vectorToQ[0] * vectorToQ[0] + vectorToQ[1]
-									* vectorToQ[1])
-									* (vectorToPrevious[0]
-											* vectorToPrevious[0] + vectorToPrevious[1]
-											* vectorToPrevious[1]))));
-
-			dHorizontal = (float) Math.sin(angle) * distanceClosestToQ;
-			Log.d(TAG, "Point is closest to the edge to the previous edge");
-		} else {
-			// calculate distance from edge to q
-			dHorizontal = distanceClosestToQ;
-			Log.d(TAG, "Point is closest to the vertex");
-		}
-
-		Log.w(TAG, "dVert=" + dVertical + ", dhor=" + dHorizontal + ", total="
-				+ Math.sqrt(dVertical * dVertical + dHorizontal * dHorizontal));
-		return (float) Math.sqrt(dVertical * dVertical + dHorizontal
-				* dHorizontal);
 	}
 
 	public boolean isPointInQuad(final IVector p) {
