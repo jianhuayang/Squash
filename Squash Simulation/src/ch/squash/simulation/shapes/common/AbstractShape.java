@@ -197,4 +197,18 @@ public abstract class AbstractShape {
 			return diff / (absA + absB) < epsilon;
 		}
 	}
+	
+	public static float getPointPointDistance(final float[] p1, final float[] p2){
+		if (p1.length != p2.length){
+			Log.e(TAG, "Both points must have the same amount of dimensions");
+			return -1;
+		}
+		
+		double result = 0;
+		
+		for (int i = 0; i < p1.length; i++)
+			result += Math.pow(p1[i] - p2[i], 2);
+		
+		return (float) Math.sqrt(result);
+	}
 }
