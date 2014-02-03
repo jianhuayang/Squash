@@ -72,15 +72,33 @@ public class QuadTest extends TestCase {
 		assertEquals("p closest to edge 3"	,	2f,						q0.getDistanceToPoint(new Vector(0, 0, 3)));
 		assertEquals("p closest to edge 4"	,	2.5f,					q0.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
 
-		// points in different plane around rectangle q1
-		
 		// points in same plane around quad q2
+		assertEquals("p within quad",			0f,						q2.getDistanceToPoint(new Vector(0.5f, 0, -0.5f)));
+		
+		assertEquals("p on vertex 1",			0f,						q2.getDistanceToPoint(new Vector(-1, 0, -1)));
+		assertEquals("p on vertex 2",			0f,						q2.getDistanceToPoint(new Vector(1, 0, -1)));
+		assertEquals("p on vertex 3",			0f,						q2.getDistanceToPoint(new Vector(1, 0, 1)));
+		assertEquals("p on vertex 4",			0f,						q2.getDistanceToPoint(new Vector(-1, 0, 1)));
+		
+		assertEquals("p on edge 1",				0f,						q2.getDistanceToPoint(new Vector(0.5f, 0, -1)));
+		assertEquals("p on edge 2",				0f,						q2.getDistanceToPoint(new Vector(1, 0, 0.4f)));
+		assertEquals("p on edge 3",				0f,						q2.getDistanceToPoint(new Vector(-0.3f, 0, 1)));
+		assertEquals("p on edge 4",				0f,						q2.getDistanceToPoint(new Vector(-1f, 0, -0.1f)));
+		
+		assertEquals("p closest to vertex 1",	(float)Math.sqrt(2),	q2.getDistanceToPoint(new Vector(-2, 0, -2)));
+		assertEquals("p closest to vertex 2",	(float)Math.sqrt(1.25),	q2.getDistanceToPoint(new Vector(2, 0, -1.5f)));
+		assertEquals("p closest to vertex 3",	(float)Math.sqrt(4.5),	q2.getDistanceToPoint(new Vector(2.5f, 0, 2.5f)));
+		assertEquals("p closest to vertex 4",	5f,						q2.getDistanceToPoint(new Vector(-5, 0, 4)));
+		
+		assertEquals("p closest to edge 1"	,	3f,						q2.getDistanceToPoint(new Vector(0.25f, 0, -4)));
+		assertEquals("p closest to edge 2"	,	4f,						q2.getDistanceToPoint(new Vector(5, 0, 0.5f)));
+		assertEquals("p closest to edge 3"	,	2f,						q2.getDistanceToPoint(new Vector(0, 0, 3)));
+		assertEquals("p closest to edge 4"	,	2.5f,					q2.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
 
 		// points in different plane around quad q5
 
 		// points in different plane around quad q6
 
-		// points in different plane around quad q7
 		
 		// q1
 		assertEquals(0f, q1.getDistanceToPoint(v0));
