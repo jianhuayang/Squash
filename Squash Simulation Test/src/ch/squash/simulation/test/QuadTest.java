@@ -1,7 +1,6 @@
 package ch.squash.simulation.test;
 
 import junit.framework.TestCase;
-import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.Vector;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
@@ -19,23 +18,9 @@ public class QuadTest extends TestCase {
 	// -2/2 to -2/5 to -5/7 to -5/2 on z=0
 	private Quadrilateral q5 = new Quadrilateral("q5", new float[]{-2,2,0,		-2,5,0,		-5,7,0,		-5,2,0}, new float[]{0, 0, 0, 0}, false);
 	// 1/2/0 to -2/0/2
-	private Quadrilateral q6 = new Quadrilateral("q6", new float[]{1,2,0,		1,0,2,		-1,0,2,		-1,2,0}, new float[]{0, 0, 0, 0}, false);
+	private Quadrilateral q6 = new Quadrilateral("q6", new float[]{1,2,0,		1,0,2,		-1,0,2,		-1,3,-1}, new float[]{0, 0, 0, 0}, false);
 	// 0/1/-3 to -2/3/0
 	private Quadrilateral q7 = new Quadrilateral("q7", new float[]{0,1,-3,		-2,1,0,		-2,3,0,		0,3,-3}, new float[]{0, 0, 0, 0}, false);
-	
-	private IVector v0 = new Vector(0, 0, 0);
-	private IVector v1 = new Vector(1, 0, 1);
-	private IVector v2 = new Vector(1, 0, 0);
-	private IVector v3 = new Vector(0, 1, 0);
-	private IVector v4 = new Vector(1, 1, 1);
-	private IVector v5 = new Vector(1, 1, 0);
-	private IVector v6 = new Vector(0, -1, 0);
-	private IVector v7 = new Vector(1, -1, 1);
-	private IVector v8 = new Vector(1, -1, 0);
-	private IVector v9 = new Vector(5, -2, -12);
-	private IVector v10 = new Vector(-1, -5, -20);
-	private IVector v11 = new Vector(-5, -6, 13);
-	private IVector v12 = new Vector(0.5f, 6.5f, 7);
 	
 	public void testGetNormalVector() {
 		assertEquals(new Vector( 0, -4,  0), q0.getNormalVector());
@@ -117,8 +102,5 @@ public class QuadTest extends TestCase {
 		assertEquals("p closest to edge 1"	,	(float)Math.sqrt(13.25),q5.getDistanceToPoint(new Vector(-1.5f, 9, -0.5f)));
 		assertEquals("p closest to edge 2"	,	(float)Math.sqrt(8.5),	q5.getDistanceToPoint(new Vector(-6.5f, 3, -2.5f)));
 		assertEquals("p closest to edge 3"	,	(float)Math.sqrt(10.25),q5.getDistanceToPoint(new Vector(-3.5f, 0, -2.5f)));
-
-		// points in different plane around quad q6
-		
 	}
 }
