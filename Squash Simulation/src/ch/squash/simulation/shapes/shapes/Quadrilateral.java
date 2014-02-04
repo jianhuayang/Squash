@@ -219,8 +219,65 @@ public class Quadrilateral extends AbstractShape {
 		}
 		
 		if (violatedEdges.size() == 2){
-			// point is closest to corner between two violated edges
+			// point is LIKELY to be closest to corner between two violated edges
+			// but point MAY also be closest to be an edge while also violating a second corner
+
 			
+			
+			// find out whether one of the two corners is further away from the edge
+			float nearestCorner = AbstractShape.getPointPointDistance(
+					new float[]{ e[(2 * violatedEdges.get(0) + 0) % 8], e[(2 * violatedEdges.get(0) + 1) % 8] } , q);
+			float distanceToEdge;
+			
+			if (nearestCorner > AbstractShape.getPointPointDistance(
+					new float[]{ e[(2 * violatedEdges.get(0) + 2) % 8], e[(2 * violatedEdges.get(0) + 3) % 8] } , q))
+				nearestCorner = AbstractShape.getPointPointDistance(
+						new float[]{ e[(2 * violatedEdges.get(0) + 2) % 8], e[(2 * violatedEdges.get(0) + 3) % 8] } , q);
+					
+			// recalculate m, b
+			m = (e[(2 * violatedEdges.get(0) + 3) % 8] - e[(2 * violatedEdges.get(0) + 1) % 8])
+					/ (e[(2 * violatedEdges.get(0) + 2) % 8] - e[(2 * violatedEdges.get(0) + 0) % 8]);
+			if (areEqual(e[(2 * violatedEdges.get(0)+ 2) % 8], e[(2 * violatedEdges.get(0) + 0) % 8]) || Float.isInfinite(m) || Float.isNaN(m)) {
+				// can not do it with geometry if slope is infinite
+				// distance depends on x-coordinate
+				distanceToEdge = Math.abs(q[0] - e[(2 * violatedEdges.get(0) + 0) % 8]);
+			}else{
+				// can do it with geometry (maybe); continue
+				// b = y1 - m * x1
+				b = e[(2 * violatedEdges.get(0) + 1) % 8] - m * e[(2 * violatedEdges.get(0) + 0) % 8];
+							
+				// calculate inverseM, inverseB
+				final float inverseM = -1/m;
+				if (areEqual(inverseM, 0f) || Float.isInfinite(inverseM) || Float.isNaN(inverseM)) {
+					// can not do it with geometry after all, slope is zero
+					// distance depends on y-coordinate
+					distanceToEdge = Math.abs(q[1] - e[(2 * violatedEdges.get(0) + 1) % 8]);
+				}else{
+					// can do it with geometry AFTER ALL; continue
+					final float inverseB = q[1] - inverseM * q[0];
+					
+					// intersect 2 lines
+					final float x = (inverseB - b) / (m - inverseM);	// no need to test x for infinity
+					final float y = m * x + b;
+					
+					distanceToEdge = AbstractShape.getPointPointDistance(new float[]{ x, y }, q);
+				}
+			}
+			
+			// PROBLEM:		distance is measured to infinitely long edge, not to finite edge
+			// SOLUTION:	not only in normal case, calculate intersection with (infinite) edge
+			//				then check whether intersection is on finite edge
+			//				yes	-> point is closest to edge, return that distance
+			//				no	-> point is closest to vertex, return "original" distance
+			// DO ALSO:		refactor that piece of code into a method and call it with 1 violated edge also
+			
+			
+			
+			if (distanceToEdge <= nearestCorner){
+				Log.w(TAG, "Point is (surprisingly) closer to edge than to vertex, fyi...");
+				return (float)Math.sqrt(Math.pow(dVertical, 2) + Math.pow(distanceToEdge, 2));
+			}
+				
 			// use special indices if the edge is closest to the very first edge
 			if (violatedEdges.get(0) == 0 && violatedEdges.get(1) == 3)
 				return (float)Math.sqrt(Math.pow(dVertical, 2) + 
