@@ -52,68 +52,73 @@ public class QuadTest extends TestCase {
 		// points in same plane around rectangle q0
 		assertEquals("p within quad",			0f,						q0.getDistanceToPoint(new Vector(0.5f, 0, -0.5f)));
 		
-		assertEquals("p on vertex 1",			0f,						q0.getDistanceToPoint(new Vector(-1, 0, -1)));
-		assertEquals("p on vertex 2",			0f,						q0.getDistanceToPoint(new Vector(1, 0, -1)));
-		assertEquals("p on vertex 3",			0f,						q0.getDistanceToPoint(new Vector(1, 0, 1)));
-		assertEquals("p on vertex 4",			0f,						q0.getDistanceToPoint(new Vector(-1, 0, 1)));
+		assertEquals("p on vertex 0",			0f,						q0.getDistanceToPoint(new Vector(-1, 0, -1)));
+		assertEquals("p on vertex 1",			0f,						q0.getDistanceToPoint(new Vector(1, 0, -1)));
+		assertEquals("p on vertex 2",			0f,						q0.getDistanceToPoint(new Vector(1, 0, 1)));
+		assertEquals("p on vertex 3",			0f,						q0.getDistanceToPoint(new Vector(-1, 0, 1)));
 		
-		assertEquals("p on edge 1",				0f,						q0.getDistanceToPoint(new Vector(0.5f, 0, -1)));
-		assertEquals("p on edge 2",				0f,						q0.getDistanceToPoint(new Vector(1, 0, 0.4f)));
-		assertEquals("p on edge 3",				0f,						q0.getDistanceToPoint(new Vector(-0.3f, 0, 1)));
-		assertEquals("p on edge 4",				0f,						q0.getDistanceToPoint(new Vector(-1f, 0, -0.1f)));
+		assertEquals("p on edge 0",				0f,						q0.getDistanceToPoint(new Vector(0.5f, 0, -1)));
+		assertEquals("p on edge 1",				0f,						q0.getDistanceToPoint(new Vector(1, 0, 0.4f)));
+		assertEquals("p on edge 2",				0f,						q0.getDistanceToPoint(new Vector(-0.3f, 0, 1)));
+		assertEquals("p on edge 3",				0f,						q0.getDistanceToPoint(new Vector(-1f, 0, -0.1f)));
 		
-		assertEquals("p closest to vertex 1",	(float)Math.sqrt(2),	q0.getDistanceToPoint(new Vector(-2, 0, -2)));
-		assertEquals("p closest to vertex 2",	(float)Math.sqrt(1.25),	q0.getDistanceToPoint(new Vector(2, 0, -1.5f)));
-		assertEquals("p closest to vertex 3",	(float)Math.sqrt(4.5),	q0.getDistanceToPoint(new Vector(2.5f, 0, 2.5f)));
-		assertEquals("p closest to vertex 4",	5f,						q0.getDistanceToPoint(new Vector(-5, 0, 4)));
+		assertEquals("p closest to vertex 0",	(float)Math.sqrt(2),	q0.getDistanceToPoint(new Vector(-2, 0, -2)));
+		assertEquals("p closest to vertex 1",	(float)Math.sqrt(1.25),	q0.getDistanceToPoint(new Vector(2, 0, -1.5f)));
+		assertEquals("p closest to vertex 2",	(float)Math.sqrt(4.5),	q0.getDistanceToPoint(new Vector(2.5f, 0, 2.5f)));
+		assertEquals("p closest to vertex 3",	5f,						q0.getDistanceToPoint(new Vector(-5, 0, 4)));
 		
-		assertEquals("p closest to edge 1"	,	3f,						q0.getDistanceToPoint(new Vector(0.25f, 0, -4)));
-		assertEquals("p closest to edge 2"	,	4f,						q0.getDistanceToPoint(new Vector(5, 0, 0.5f)));
-		assertEquals("p closest to edge 3"	,	2f,						q0.getDistanceToPoint(new Vector(0, 0, 3)));
-		assertEquals("p closest to edge 4"	,	2.5f,					q0.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
+		assertEquals("p closest to edge 0"	,	3f,						q0.getDistanceToPoint(new Vector(0.25f, 0, -4)));
+		assertEquals("p closest to edge 1"	,	4f,						q0.getDistanceToPoint(new Vector(5, 0, 0.5f)));
+		assertEquals("p closest to edge 2"	,	2f,						q0.getDistanceToPoint(new Vector(0, 0, 3)));
+		assertEquals("p closest to edge 3"	,	2.5f,					q0.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
 
 		// points in same plane around quad q2
 		assertEquals("p within quad",			0f,						q2.getDistanceToPoint(new Vector(-1, 1, 0)));
 		
-		assertEquals("p on vertex 1",			0f,						q2.getDistanceToPoint(new Vector(-2, -2, 0)));
-		assertEquals("p on vertex 2",			0f,						q2.getDistanceToPoint(new Vector(5, -2, 0)));
-		assertEquals("p on vertex 3",			0f,						q2.getDistanceToPoint(new Vector(5, 4, 0)));
-		assertEquals("p on vertex 4",			0f,						q2.getDistanceToPoint(new Vector(-2, 2, 0)));
+		assertEquals("p on vertex 0",			0f,						q2.getDistanceToPoint(new Vector(-2, -2, 0)));
+		assertEquals("p on vertex 1",			0f,						q2.getDistanceToPoint(new Vector(5, -2, 0)));
+		assertEquals("p on vertex 2",			0f,						q2.getDistanceToPoint(new Vector(5, 4, 0)));
+		assertEquals("p on vertex 3",			0f,						q2.getDistanceToPoint(new Vector(-2, 2, 0)));
 		
-		assertEquals("p on edge 1",				0f,						q2.getDistanceToPoint(new Vector(1.5f, -2, 0)));
-		assertEquals("p on edge 2",				0f,						q2.getDistanceToPoint(new Vector(5, 3.5f, 0)));
-		assertEquals("p on edge 3",				0f,						q2.getDistanceToPoint(new Vector(1.51f, 3, 0)));
-		assertEquals("p on edge 4",				0f,						q2.getDistanceToPoint(new Vector(-2, 1.5f, 0)));
+		assertEquals("p on edge 0",				0f,						q2.getDistanceToPoint(new Vector(1.5f, -2, 0)));
+		assertEquals("p on edge 1",				0f,						q2.getDistanceToPoint(new Vector(5, 3.5f, 0)));
+		assertEquals("p on edge 2",				0f,						q2.getDistanceToPoint(new Vector(1.5f, 3, 0)));		// inaccurate
+		assertEquals("p on edge 3",				0f,						q2.getDistanceToPoint(new Vector(-2, 1.5f, 0)));
 		
-		assertEquals("p closest to vertex 1",	(float)Math.sqrt(2.5),	q2.getDistanceToPoint(new Vector(-3.5f, -2.5f, 0)));
-		assertEquals("p closest to vertex 2",	(float)Math.sqrt(3.25),	q2.getDistanceToPoint(new Vector(6, -3.5f, 0)));
-		assertEquals("p closest to vertex 3",	(float)Math.sqrt(4.5),	q2.getDistanceToPoint(new Vector(6.5f, 5.5f, 0)));
-		assertEquals("p closest to vertex 4",	5f,						q2.getDistanceToPoint(new Vector(-6, 5, 0)));
+		assertEquals("p closest to vertex 0",	(float)Math.sqrt(2.5),	q2.getDistanceToPoint(new Vector(-3.5f, -2.5f, 0)));
+		assertEquals("p closest to vertex 1",	(float)Math.sqrt(3.25),	q2.getDistanceToPoint(new Vector(6, -3.5f, 0)));
+		assertEquals("p closest to vertex 2",	(float)Math.sqrt(4.5),	q2.getDistanceToPoint(new Vector(6.5f, 5.5f, 0)));
+		assertEquals("p closest to vertex 3",	5f,						q2.getDistanceToPoint(new Vector(-6, 5, 0)));
 		
-		assertEquals("p closest to edge 1"	,	1.5f,					q2.getDistanceToPoint(new Vector(0.5f, -3.5f, 0)));
-		assertEquals("p closest to edge 2"	,	1.5f,					q2.getDistanceToPoint(new Vector(6.5f, 0, 0)));
-		assertEquals("p closest to edge 3"	,	(float)Math.sqrt(53),	q2.getDistanceToPoint(new Vector(-0.5f, 10, 0)));
-		assertEquals("p closest to edge 4"	,	1.5f,					q2.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
+		assertEquals("p closest to edge 0"	,	1.5f,					q2.getDistanceToPoint(new Vector(0.5f, -3.5f, 0)));
+		assertEquals("p closest to edge 1"	,	1.5f,					q2.getDistanceToPoint(new Vector(6.5f, 0, 0)));
+		assertEquals("p closest to edge 2"	,	(float)Math.sqrt(212),	q2.getDistanceToPoint(new Vector(-2.5f, 17, 0)));
+		assertEquals("p closest to edge 3"	,	1.5f,					q2.getDistanceToPoint(new Vector(-3.5f, 0, 0)));
 
 		// points in different plane around quad q5
+		assertEquals("p within quad",			2.5f,					q5.getDistanceToPoint(new Vector(-3.5f, 3.5f, 2.5f)));
+		
+		assertEquals("p on vertex 0",			1.5f,					q5.getDistanceToPoint(new Vector(-2, 2, -1.5f)));
+		assertEquals("p on vertex 1",			2.5f,					q5.getDistanceToPoint(new Vector(-2, 5, -2.5f)));
+		assertEquals("p on vertex 2",			3.5f,					q5.getDistanceToPoint(new Vector(-5, 7, 3.5f)));
+		assertEquals("p on vertex 3",			5.5f,					q5.getDistanceToPoint(new Vector(-5, 2, 5.5f)));
+		
+		assertEquals("p on edge 0",				2f,						q5.getDistanceToPoint(new Vector(-2, 2.5f, -2)));
+		assertEquals("p on edge 1",				3.5f,					q5.getDistanceToPoint(new Vector(-3.5f, 6f, 3.5f)));
+		assertEquals("p on edge 2",				3f,						q5.getDistanceToPoint(new Vector(-5, 6.5f, -3)));
+		assertEquals("p on edge 3",				2f,						q5.getDistanceToPoint(new Vector(-4.5f, 2, -2)));
+		
+		assertEquals("p closest to vertex 0",	(float)Math.sqrt(51.5),	q5.getDistanceToPoint(new Vector(3.5f, -2.5f, -1)));
+		assertEquals("p closest to vertex 1",	(float)Math.sqrt(13.25),q5.getDistanceToPoint(new Vector(1, 7, 0.5f)));
+		assertEquals("p closest to vertex 2",	(float)Math.sqrt(7.5),	q5.getDistanceToPoint(new Vector(-5.5f, 8, 2.5f)));
+		assertEquals("p closest to vertex 3",	(float)Math.sqrt(3),	q5.getDistanceToPoint(new Vector(-6, 1, 1)));
+		
+		assertEquals("p closest to edge 0"	,	(float)Math.sqrt(3.25),	q5.getDistanceToPoint(new Vector(-1, 3.5f, 1.5f)));
+		assertEquals("p closest to edge 1"	,	(float)Math.sqrt(13.25),q5.getDistanceToPoint(new Vector(-1.5f, 9, -0.5f)));
+		assertEquals("p closest to edge 2"	,	(float)Math.sqrt(8.5),	q5.getDistanceToPoint(new Vector(-6.5f, 3, -2.5f)));
+		assertEquals("p closest to edge 3"	,	(float)Math.sqrt(10.25),q5.getDistanceToPoint(new Vector(-3.5f, 0, -2.5f)));
 
 		// points in different plane around quad q6
 		
-		// q1
-		assertEquals(0f, q1.getDistanceToPoint(v0));
-		assertEquals(1f, q1.getDistanceToPoint(v1));
-		assertEquals(1f, q1.getDistanceToPoint(v2));
-		assertEquals(0f, q1.getDistanceToPoint(v3));
-		assertEquals(1f, q1.getDistanceToPoint(v4));
-		assertEquals(1f, q1.getDistanceToPoint(v5));
-		assertEquals(0f, q1.getDistanceToPoint(v6));
-		assertEquals(1f, q1.getDistanceToPoint(v7));
-		assertEquals(1f, q1.getDistanceToPoint(v8));
-		
-		// q2
-		assertEquals("point on vertex of quad with dvert",			12f,						q2.getDistanceToPoint(v9));
-		assertEquals("point near edge of quad with dvert",			(float)Math.sqrt(409),		q2.getDistanceToPoint(v10));
-		assertEquals("point near vertex of quad with dvert",		(float)Math.sqrt(194),		q2.getDistanceToPoint(v11));
-		assertEquals("point near skewed edge of quad with dvert",	7.889867f,					q2.getDistanceToPoint(v12));
 	}
 }
