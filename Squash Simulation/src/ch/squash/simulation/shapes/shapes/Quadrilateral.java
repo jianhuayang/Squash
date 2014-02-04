@@ -13,6 +13,8 @@ public class Quadrilateral extends AbstractShape {
 	private final static String TAG = Quadrilateral.class.getSimpleName();
 
 	public final float[] edges;
+	
+	public final int normalVectorNonzeroDimension;
 
 	private static boolean mBothSides;
 
@@ -32,6 +34,22 @@ public class Quadrilateral extends AbstractShape {
 		this.edges = edges.clone();
 
 		initialize(GLES20.GL_TRIANGLES, SolidType.AREA, null);
+		
+		// TODO: Check that all edges lie in same plane
+		// use linear combination of u and v to get from e0 to e3
+		
+		// Check that quad is ortoghonal
+		final IVector n = getNormalVector();
+		int nonZero = -1;
+		for (int i = 0; i < 3; i++)
+			if (n.getDirection()[i] != 0)
+				if (Math.abs(n.getDirection()[i]) == n.getLength())
+					if (nonZero == -1)
+						nonZero = i;
+					else
+						Log.e(TAG, "more than one nonzero dimension, quad is not ortoghonal");
+		
+		normalVectorNonzeroDimension = nonZero;		
 	}
 
 	private static float[] getMiddle(final float[] edges) {
@@ -104,54 +122,41 @@ public class Quadrilateral extends AbstractShape {
 
 	public float getDistanceToPoint(final IVector p) {
 		Log.i(TAG, "Testing whether " + p + " lies in quad " + tag);
+		if (normalVectorNonzeroDimension < 0 || normalVectorNonzeroDimension > 2){
+			Log.e(TAG, "Cannot calculate distance of point to nonorthogonal quad");
+			return -1;
+		}
+		
 		float dVertical = Float.MIN_VALUE; // distance from p to quad area
 
 		// project p onto quad area
-		final IVector n = getNormalVector();
 		float[] q = new float[2]; // projection of p onto quad area
-		float[] e = new float[8]; // edges in 2d (2 relevant components of quad
-									// area)
+		float[] e = new float[8]; // edges in 2d (2 relevant components of quad area)
+		float[] v = p.getDirection();
+		dVertical = Math.abs(v[normalVectorNonzeroDimension] - edges[normalVectorNonzeroDimension]);
+		v[normalVectorNonzeroDimension] = edges[normalVectorNonzeroDimension];
 
-		// ensure there is only one component in normal vector (two 0's)
-		// and compute q
-		for (int i = 0; i < 3; i++)
-			if (n.getDirection()[i] != 0)
-				if (Math.abs(n.getDirection()[i]) == n.getLength()) {
-					float[] v = p.getDirection();
-					dVertical = Math.abs(v[i] - edges[i]);
-					v[i] = edges[i];
+		if (normalVectorNonzeroDimension == 0)
+			q[0] = v[1];
+		else
+			q[0] = v[0];
+		if (normalVectorNonzeroDimension == 2)
+			q[1] = v[1];
+		else
+			q[1] = v[2];
 
-					if (i == 0)
-						q[0] = v[1];
-					else
-						q[0] = v[0];
-					if (i == 2)
-						q[1] = v[1];
-					else
-						q[1] = v[2];
+		int index = 0;
+		for (int j = 0; j < 4; j++)
+			for (int k = 0; k < 3; k++)
+				if (k == normalVectorNonzeroDimension)
+					continue;
+				else
+					e[index++] = edges[3 * j + k];
 
-					int index = 0;
-					for (int j = 0; j < 4; j++)
-						for (int k = 0; k < 3; k++)
-							if (k == i)
-								continue;
-							else
-								e[index++] = edges[3 * j + k];
-
-					Log.d(TAG, "q=" + q[0] + "/" + q[1] + ", edges=" + e[0]
-							+ "/" + e[1] + ", " + e[2] + "/" + e[3] + ", "
-							+ e[4] + "/" + e[5] + ", " + e[6] + "/" + e[7]
-							+ ", ");
-				} else {
-					Log.e(TAG, "Cant handle non-ortogonal quads");
-					return -1;
-				}
-
+		// find violated edges
 		float m;
 		float b;
 		final List<Integer> violatedEdges = new ArrayList<Integer>();
-
-		// find violated edges
 		for (int i = 0; i < 4; i++) {
 			boolean otherEdgeSign;
 			boolean qSign;
