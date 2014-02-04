@@ -15,8 +15,69 @@ public class Arrow extends AbstractShape {
 
 		initialize(GLES20.GL_LINES, SolidType.NONE, null);
 	}
-
+	
 	public static float[] getVertices(final float startx, final float starty,
+			final float startz, final float endx, final float endy, final float endz) {
+		final float[] vertices = new float[10 * 3];
+
+		final IVector v = new Vector(endx - startx, endy - starty, endz - startz).multiply(0.1f);
+		
+		final IVector[] o = new IVector[4];
+		
+		// idea for code: find 2 components with highest absolute value
+		// if both are greater than null
+		//		-> use formula to calculate orthos
+		// else
+		//		-> not sure yet...
+		
+		
+		final IVector o0 = new Vector(v.getY(), v.getX(), -(2 * v.getX() * v.getY()) / v.getZ());
+		
+		
+		final float mx = endx - 2 * v.getX();
+		final float my = endy - 2 * v.getY();
+		final float mz = endz - 2 * v.getZ();
+		
+		vertices[ 0] = startx;
+		vertices[ 1] = starty;
+		vertices[ 2] = startz;
+		vertices[ 3] = endx;
+		vertices[ 4] = endy;
+		vertices[ 5] = endz;
+
+		vertices[ 6] = mx;
+		vertices[ 7] = my;
+		vertices[ 8] = mz;
+		vertices[ 9] = mx + o0.getX();
+		vertices[10] = my + o0.getY();
+		vertices[11] = mz + o0.getZ();
+//
+//		vertices[12] = endx;
+//		vertices[13] = endy;
+//		vertices[14] = endz;
+//		vertices[15] = mx - o1.getX();
+//		vertices[16] = my - o1.getY();
+//		vertices[17] = mz - o1.getZ();
+//
+//		vertices[18] = endx;
+//		vertices[19] = endy;
+//		vertices[20] = endz;
+//		vertices[21] = mx - o2.getX();
+//		vertices[22] = my - o2.getY();
+//		vertices[23] = mz - o2.getZ();
+//
+//		vertices[24] = endx;
+//		vertices[25] = endy;
+//		vertices[26] = endz;
+//		vertices[27] = mx - o3.getX();
+//		vertices[28] = my - o3.getY();
+//		vertices[29] = mz - o3.getZ();
+
+		
+		return vertices;
+	}
+	
+	public static float[] ggetVertices(final float startx, final float starty,
 			final float startz, final float endx, final float endy, final float endz) {
 		IVector dir = new Vector(endx - startx, endy - starty, endz - startz);
 		
