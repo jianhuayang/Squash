@@ -103,13 +103,7 @@ public class Quadrilateral extends AbstractShape {
 	}
 
 	public IVector getNormalVector() {
-		final IVector u = getU();
-		final IVector v = getV();
-		// normal vector of the quad
-
-		return new Vector(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ()
-				* v.getX() - u.getX() * v.getZ(), u.getX() * v.getY()
-				- u.getY() * v.getX());
+		return getU().getCrossProduct(getV());
 	}
 
 	public IVector getNormalizedVector() {
@@ -120,8 +114,18 @@ public class Quadrilateral extends AbstractShape {
 		return getDistanceToPoint(new Vector(0, 0, 0));
 	}
 
+	public float getDistanceFromQuadPlaneToPoint(final IVector p){
+		return Math.abs(p.getDirection()[normalVectorNonzeroDimension] - edges[normalVectorNonzeroDimension]);
+	}
+
+	public IVector getIntersectionWithPlane(final IVector start, final IVector direction){
+		final float lambda = (edges[normalVectorNonzeroDimension] - start.getDirection()[normalVectorNonzeroDimension]) / direction.getDirection()[normalVectorNonzeroDimension];;
+
+		return new Vector(start.getX() + lambda * direction.getX(), start.getY() + lambda * direction.getY(), start.getZ() + lambda * direction.getZ());
+	}
+	
 	public float getDistanceToPoint(final IVector p) {
-		Log.i(TAG, "Testing whether " + p + " lies in quad " + tag);
+//		Log.i(TAG, "Testing whether " + p + " lies in quad " + tag);
 		if (normalVectorNonzeroDimension < 0 || normalVectorNonzeroDimension > 2){
 			Log.e(TAG, "Cannot calculate distance of point to nonorthogonal quad");
 			return -1;
