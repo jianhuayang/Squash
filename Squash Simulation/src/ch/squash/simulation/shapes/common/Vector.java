@@ -124,4 +124,11 @@ public class Vector implements IVector {
 				.doubleToRawLongBits(getY()) ^ Double
 				.doubleToRawLongBits(getZ())));
 	}
+	
+	@Override
+	public IVector getCrossProduct(IVector other){
+		return new Vector(getY() * other.getZ() - getZ() * other.getY(), getZ()
+				* other.getX() - getX() * other.getZ(), getX() * other.getY()
+				- getY() * other.getX());
+	}
 }

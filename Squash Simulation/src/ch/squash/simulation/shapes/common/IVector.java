@@ -22,4 +22,6 @@ public interface IVector {
 	void setDirection(float x, float y, float z);
 	
 	IVector getNormalizedVector();
+	
+	IVector getCrossProduct(IVector other);
 }

@@ -109,4 +109,9 @@ public class PhysicalVector implements IVector {
 	public IVector getNormalizedVector() {
 		return mVector.getNormalizedVector();
 	}
+	
+	@Override
+	public IVector getCrossProduct(IVector other) {
+		return mVector.getCrossProduct(other);
+	}
 }
