@@ -30,7 +30,8 @@ public class Arrow extends AbstractShape {
 			if (Math.abs(v.getDirection()[i]) > Math.abs(v.getDirection()[maxComp]))
 				maxComp = i;
 		
-		if (areEqual(v.getLength(), v.getDirection()[maxComp])){
+		if (areEqual(v.getLength(), Math.abs(v.getDirection()[maxComp])
+				)){
 			// if we have exactly one non-zero component, use trivial orthogonal vectors
 			if (maxComp == 0){
 				o[0] = new Vector(0, v.getDirection()[maxComp], 0);
