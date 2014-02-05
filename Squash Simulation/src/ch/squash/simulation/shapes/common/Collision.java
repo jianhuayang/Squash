@@ -7,18 +7,15 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public final class Collision {
 	private final static String TAG = Collision.class.getSimpleName();
-	private final static float EPSILON = (float) Math.pow(10, -6);
 
 	public final IVector collisionPoint;
-	public final float lambda;
-	public final float timePercentage;
+	public final float travelPercentage;
 	public final IVector normalForce;
 	public final IVector solidNormalVector;
 	
-	private Collision(final IVector collisionPoint, final float lambda, final float timePercentage, final IVector normalForce, final IVector solidNormalVector) {
+	private Collision(final IVector collisionPoint, final float travelPercentage, final IVector normalForce, final IVector solidNormalVector) {
 		this.collisionPoint = collisionPoint;
-		this.lambda = lambda;
-		this.timePercentage = timePercentage;
+		this.travelPercentage = travelPercentage;
 		this.normalForce = normalForce;
 		this.solidNormalVector = solidNormalVector;
 	}
@@ -57,96 +54,60 @@ public final class Collision {
 	
 	private static Collision getBallQuadrilateralCollision(final Ball ball, final IVector travelled,
 			final Quadrilateral quad) {
-		Log.i(TAG, "Detecting collision with " + quad.tag);
-		// prepare variables
-		final IVector n = quad.getNormalVector();
-
-		// distance of quad to origin
-		final float b = quad.getDistanceToOrigin();
+//		Log.i(TAG, "Detecting collision with " + quad.tag);
 		
-		// reachable sphere
-		// distance middle of sphere to area:
-		final float d = (n.getX() * ball.location.getX() + n.getY() * ball.location.getY() + n.getZ() * ball.location.getZ() - b) / n.getLength(); 
+		// TODO: Not treat ball as a point anymore (but as a sphere)		
+		// get distance to quad
+		final float distanceToQuad = quad.getDistanceToPoint(ball.location);
 		
-//		if (d < 0){
-//			Log.d(TAG, "n=" + n + ", ball=" + ball.location);
-//		}
-		
-		// ball wont touch solid, return
-		if (d > travelled.getLength()){
-			return null;
-		}
-		
-		final IVector r = travelled;
-		
-		// factor of direction of ball to area
-		final float lambda = (b - ball.location.getX() * n.getX() - ball.location.getY() * n.getY() - ball.location.getZ() * n.getZ())
-				/ (r.getX() * n.getX() + r.getY() * n.getY() + r.getZ() * n.getZ());
-		
-		if (lambda < 0 || lambda > 1)
-			return null;
-
-		Log.v(TAG, "Location=" + ball.location + ", speed=" + travelled);
-		Log.v(TAG, "b=" + b + ", d=" + d + ", Lambda=" + lambda);
-		
-		// intersection of ball and area
-		IVector s = new Vector(ball.location.getX() + lambda * r.getX(), ball.location.getY() + lambda * r.getY(), ball.location.getZ() + lambda * r.getZ());
-		if (!quad.isPointInQuad(s)){
-			IVector nNorm = n.multiply(1 / n.getLength());
-			
-			for (int i = 0; i < 5; i++)
-				if (nNorm.getLength() == 1)
-					break;
-				else
-					nNorm = nNorm.multiply(1 / nNorm.getLength());
-			
-			if (nNorm.getLength() != 1)
-				Log.e(TAG, "Failed to normalize vector");
-			
-			final float dStoQuad = -(nNorm.getX() * s.getX() + nNorm.getY() * s.getY() + nNorm.getZ() * s.getZ() - b); 
-			
-			s = s.add(nNorm.multiply(dStoQuad));
-			Log.w(TAG, "New S=" + s + ", nNorm=" + nNorm);
-		}
-		
-		// check x
-		if (quad.edges[0] < quad.edges[6]) {
-			if (s.getX() + EPSILON < quad.edges[0]
-					|| s.getX() > quad.edges[6] + EPSILON)
-				return null;
-		} else if (s.getX() > quad.edges[0] + EPSILON
-				|| s.getX() + EPSILON < quad.edges[6])
-			return null;
-
-		// check y
-		if (quad.edges[1] < quad.edges[7]) {
-			if (s.getY() + EPSILON < quad.edges[1]
-					|| s.getY() > quad.edges[7] + EPSILON)
-				return null;
-		} else if (s.getY() > quad.edges[1] + EPSILON
-				|| s.getY() + EPSILON < quad.edges[7])
-			return null;
-
-		// check z
-		if (quad.edges[2] < quad.edges[8]) {
-			if (s.getZ() + EPSILON < quad.edges[2]
-					|| s.getZ() > quad.edges[8] + EPSILON)
-				return null;
-		} else if (s.getZ() > quad.edges[2] + EPSILON
-				|| s.getZ() + EPSILON < quad.edges[8])
+		if (AbstractShape.areEqual(0, distanceToQuad))
 			return null;
 		
-		Log.e(TAG, "Collision with " + quad.tag + " after " + d + "m from " + travelled.getLength() + "m (" + (d/travelled.getLength() * 100) + "%)");
-		Log.e(TAG, "Collision point=" + s + " is in quad=" + quad.isPointInQuad(s));
-		return new Collision((Vector)s, lambda, d/travelled.getLength(), getNormalForce((Vector)n), (Vector)n);
+		// if the quad is too far away, return
+		if (distanceToQuad > travelled.getLength())
+			return null;
+		
+		final IVector intersection = 
+				quad.getIntersectionWithPlane(ball.location, travelled);
+//					.add(quad.getNormalVector().multiply(-0.5f / quad.getNormalVector().getLength()));
+		
+//		final float lambdax = (intersection.getX() - ball.location.getX()) / travelled.getX();
+//		final float lambday = (intersection.getY() - ball.location.getY()) / travelled.getY();
+//		final float lambdaz = (intersection.getZ() - ball.location.getZ()) / travelled.getZ();
+//		
+//		IVector newInters = null;
+//		if (Math.abs(lambdax) < Math.abs(lambday)){
+//			if (Math.abs(lambdax) < Math.abs(lambdaz))
+//				newInters = new Vector(	ball.location.getX() + travelled.getX() * 0.9f * lambdax, 
+//										ball.location.getY() + travelled.getY() * 0.9f * lambdax, 
+//										ball.location.getZ() + travelled.getZ() * 0.9f * lambdax);
+//			else
+//				newInters = new Vector(	ball.location.getX() + travelled.getX() * 0.9f * lambdaz, 
+//						ball.location.getY() + travelled.getY() * 0.9f * lambdaz, 
+//						ball.location.getZ() + travelled.getZ() * 0.9f * lambdaz);
+//		}else if (Math.abs(lambday) < Math.abs(lambdaz))
+//				newInters = new Vector(	ball.location.getX() + travelled.getX() * 0.9f * lambday, 
+//										ball.location.getY() + travelled.getY() * 0.9f * lambday, 
+//										ball.location.getZ() + travelled.getZ() * 0.9f * lambday);
+//		else
+//			newInters = new Vector(	ball.location.getX() + travelled.getX() * 0.9f * lambdaz, 
+//									ball.location.getY() + travelled.getY() * 0.9f * lambdaz, 
+//									ball.location.getZ() + travelled.getZ() * 0.9f * lambdaz);
+		
+		// if ball does not cross quad, return null
+		if (quad.getDistanceToPoint(intersection) > 0)
+			return null;
+		
+		// collision happens, return collision object	
+		// TODO: check necessity of parameters for collision ctor
+		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
+		Log.w(TAG, "Ball is at " + ball.location + ", travelling " + travelled + " to inters=" + intersection);
+		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector());
 	}
 
-	
 	private static IVector getNormalForce(final IVector areaNormal){
 		final IVector a = new Vector(0, 1, 0);
 		final float angle = (float) Math.acos(areaNormal.multiply(a) / areaNormal.getLength() / a.getLength());
-		
-		Log.v(TAG, "a=" + a + ", angle=" + (angle * 180 / Math.PI) + ", cos=" + Math.cos(angle));
 		
 		return Movable.getGravitation().multiply(-(float)Math.cos(angle));
 	}
