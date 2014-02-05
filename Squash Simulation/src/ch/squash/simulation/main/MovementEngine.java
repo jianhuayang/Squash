@@ -1,5 +1,7 @@
 package ch.squash.simulation.main;
 
+import java.util.Calendar;
+
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
@@ -13,11 +15,11 @@ public final class MovementEngine {
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
-	public final static int DELAY_BETWEEN_MOVEMENTS = 20; // ms
+	public final static int DELAY_BETWEEN_MOVEMENTS = 10; // ms
 	public final static int SLOW_FACTOR = 1;
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
-	private static float[] startSpeed = new float[] { 8, 1, -4 };
+	private static float[] startSpeed = new float[] { 0, 0, 0, }; //7, 1, -4 };
 	private final int mSoundBounce;
 	private final SoundPool mSoundPool;
 
@@ -40,10 +42,13 @@ public final class MovementEngine {
 	}
 
 	private void doWork() {
+		Log.w(TAG, "New thread starting to do work of MovementEngine");
+		
 		for (final Movable im : mMovables)
 			im.resetClock();
 
-		while (isRunning) {
+		final long end = Calendar.getInstance().getTimeInMillis() + 2000;
+		while (isRunning && Calendar.getInstance().getTimeInMillis() < end) {
 			for (final Movable im : mMovables)
 				im.move();
 
