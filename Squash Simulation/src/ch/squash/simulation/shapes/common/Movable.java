@@ -42,10 +42,6 @@ public class Movable {
 		final float dt = (now - mLastMovement) / 1000f; // s
 		mLastMovement = now;
 
-		move(dt);
-	}
-
-	private void move(final float dt) {
 		if (MovementEngine.DELAY_BETWEEN_MOVEMENTS > 0) {
 			try {
 				Thread.sleep(MovementEngine.DELAY_BETWEEN_MOVEMENTS);
@@ -55,71 +51,68 @@ public class Movable {
 			mLastMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
 		}
 
+		move(dt);
+	}
+
+	// move in seconds to use Si-units
+	private void move(float dt) {
 		// add forces
 		IVector totalForce = new Vector(gravitation.getDirection()).multiply(1 / MovementEngine.SLOW_FACTOR);
 
 		// calculate new speed v = v0 + a*t
-		speed.setDirection((speed.getDirection()[0] + totalForce.getX() * dt)
-				* MovementEngine.AIR_FRICTION_FACTOR,
-				(speed.getDirection()[1] + totalForce.getY() * dt)
-						* MovementEngine.AIR_FRICTION_FACTOR,
-				(speed.getDirection()[2] + totalForce.getZ() * dt)
-						* MovementEngine.AIR_FRICTION_FACTOR);
-
-		// calculate travelling distance s = v0*t + 1/2*a*t^2
-		float[] distance = new float[3];
-		for (int i = 0; i < 3; i++)
-			distance[i] = (speed.getDirection()[i] * dt + 0.5f
-					* totalForce.getDirection()[i] * dt * dt) / MovementEngine.SLOW_FACTOR;
-		
+		speed.setDirection(
+				(speed.getDirection()[0] + totalForce.getX() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
+				(speed.getDirection()[1] + totalForce.getY() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
+				(speed.getDirection()[2] + totalForce.getZ() * dt) * MovementEngine.AIR_FRICTION_FACTOR);
 				
-		// Collision floorCollision = null;
-		boolean collided = false;
+		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + "distance=" + speed.multiply(dt));
 		
-		Log.w(TAG, "Starting new round of collisions");
-		
-		for (final AbstractShape solid : SquashRenderer.getInstance().courtSolids) {
-			// Log.i(TAG, "Checking collision with " + solid.tag);
-			final Collision collision = Collision.getCollision(mShape,
-					speed.multiply(dt), solid);
-
-			if (collision != null) {
-				MovementEngine.playBounceSound();
-				collided = true;
-				if (!(solid instanceof Quadrilateral)) {
-					Log.wtf(TAG, "Shouldnt collide with unsolid shape!");
-					continue;
+		boolean collided = true;
+		while (collided){
+			collided = false;
+			
+			for (final AbstractShape solid : SquashRenderer.getInstance().courtSolids) {
+				final Collision collision = Collision.getCollision(mShape, speed.multiply(dt), solid);
+	
+				if (collision != null) {
+					collided = true;
+					
+//					MovementEngine.playBounceSound();
+					if (!(solid instanceof Quadrilateral)) {
+						Log.wtf(TAG, "Shouldnt collide with unsolid shape!");
+						continue;
+					}
+					
+	//				totalForce = (Vector) totalForce.add(collision.normalForce);
+					
+					dt = dt * (1 - collision.travelPercentage);
+	
+					mShape.moveTo(collision.collisionPoint);
+	
+					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
+					final IVector oldSpeed = speed.multiply(1);	// get a copy of the current speed
+					final IVector newSpeed = (Vector) speed.add(n.multiply(-2 * speed.multiply(n)));	// formula for ausfallswinkel
+					
+					speed.setDirection(newSpeed.getX(), newSpeed.getY(), newSpeed.getZ());
+					
+					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", normal=" + n);
+					break;
 				}
-
-				totalForce = (Vector) totalForce.add(collision.normalForce);
-				
-				final float newDt = dt * (1 - collision.timePercentage);
-
-				mShape.moveTo(collision.collisionPoint);
-
-				final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
-				final IVector oldSpeed = speed.multiply(1);	// get a copy of the current speed
-				final IVector newSpeed = (Vector) speed.add(n.multiply(-2 * speed.multiply(n)));	// formula for ausfallswinkel
-				
-				speed.setDirection(newSpeed.getX(), newSpeed.getY(), newSpeed.getZ());
-				
-				Log.i(TAG, "oldsp=" + oldSpeed + ", newspeed=" + newSpeed + ", normal=" + n);
-
-				if (speed.getLength() > 1) {
-					move(newDt);
-				}
-				return;
 			}
 		}
 
-		if (!collided) {
-			float[] destination = new float[3];
-			for (int i = 0; i < 3; i++)
-				destination[i] = mShape.location.getDirection()[i]
-						+ distance[i];
+		// calculate travelling distance s = v0*t + 1/2*a*t^2
+		final float[] distance = new float[3];
+		for (int i = 0; i < 3; i++)
+			distance[i] = (speed.getDirection()[i] * dt + 0.5f * totalForce.getDirection()[i] * dt * dt)
+								/ MovementEngine.SLOW_FACTOR;
+		
+		float[] destination = new float[3];
+		for (int i = 0; i < 3; i++)
+			destination[i] = mShape.location.getDirection()[i]
+					+ distance[i];
 
-			mShape.moveTo(new Vector(destination));
-		}
+		mShape.moveTo(new Vector(destination));
 	}
 
 	public void reset() {
