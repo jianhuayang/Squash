@@ -22,6 +22,24 @@ public class QuadTest extends TestCase {
 	// 0/1/-3 to -2/3/0
 	private Quadrilateral q7 = new Quadrilateral("q7", new float[]{0,1,-3,		-2,1,0,		-2,3,0,		0,3,-3}, new float[]{0, 0, 0, 0}, false);
 	
+	public void testgetDistanceFromQuadPlaneToPoint() {
+		assertEquals(0f, q0.getDistanceFromQuadPlaneToPoint(new Vector(0,	0,	0)));
+		assertEquals(0f, q0.getDistanceFromQuadPlaneToPoint(new Vector(-1,	0,	0)));
+		assertEquals(0f, q0.getDistanceFromQuadPlaneToPoint(new Vector(-4,	0,	3)));
+		assertEquals(1f, q0.getDistanceFromQuadPlaneToPoint(new Vector(0,	1,	0)));
+		assertEquals(1f, q0.getDistanceFromQuadPlaneToPoint(new Vector(3,	-1,	7)));
+		
+		assertEquals(0f, q5.getDistanceFromQuadPlaneToPoint(new Vector(-3,	3,	0)));
+		assertEquals(0f, q5.getDistanceFromQuadPlaneToPoint(new Vector(-9,	4.5f,0)));
+		assertEquals(0f, q5.getDistanceFromQuadPlaneToPoint(new Vector(1,	-1,	0)));
+		assertEquals(1.5f, q5.getDistanceFromQuadPlaneToPoint(new Vector(-2,	2,	-1.5f)));
+		assertEquals(2.75f, q5.getDistanceFromQuadPlaneToPoint(new Vector(10, 10.5f, 2.75f)));
+	}
+	
+	public void testGetIntersectionWithPlane() {
+		fail("not yet implemented");
+	}
+	
 	public void testGetNormalVector() {
 		assertEquals(new Vector( 0, -4,  0), q0.getNormalVector());
 		assertEquals(new Vector(-4,  0,  0), q1.getNormalVector());
