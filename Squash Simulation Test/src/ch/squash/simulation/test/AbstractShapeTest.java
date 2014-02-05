@@ -7,6 +7,7 @@ public class AbstractShapeTest extends TestCase {
 	
 	public void testAreEqual(){
 		assertEquals(true,	AbstractShape.areEqual(0, 0));
+		assertEquals(true,	AbstractShape.areEqual(0, -0));
 		assertEquals(false,	AbstractShape.areEqual(0, 1));
 		assertEquals(true,	AbstractShape.areEqual(1, 1));
 		assertEquals(false,	AbstractShape.areEqual(1, 2));
