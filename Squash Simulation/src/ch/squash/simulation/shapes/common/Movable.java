@@ -15,8 +15,8 @@ public class Movable {
 	public final PhysicalVector normal;
 
 	public final PhysicalVector[] vectorArrows;
-	
-	private long mLastMovement;
+
+	private long mNextMovement = System.currentTimeMillis(); // ms
 
 	public static IVector getGravitation() {
 		return new Vector(0, -9.81f, 0);
@@ -34,26 +34,26 @@ public class Movable {
 	}
 
 	public void resetClock() {
-		mLastMovement = System.currentTimeMillis();
+		mNextMovement = System.currentTimeMillis() + MovementEngine.DELAY_BETWEEN_MOVEMENTS;
 	}
 
 	public void move() {
-		final long now = System.currentTimeMillis(); // ms
-		final float dt = (now - mLastMovement) / 1000f; // s
-		mLastMovement = now;
-
-		if (MovementEngine.DELAY_BETWEEN_MOVEMENTS > 0) {
-			try {
-				Thread.sleep(MovementEngine.DELAY_BETWEEN_MOVEMENTS);
-			} catch (InterruptedException e) {
-				Log.e(TAG, "Error while sleeping", e);
-			}
-			mLastMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
-		}
-
-		move(dt);
+		final long now = System.currentTimeMillis();
+		long sleep = mNextMovement - now;
+		mNextMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
+		
+		if (sleep > 0)
+			try{
+				Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					Log.e(TAG, "Error while sleeping", e);
+				}
+		else
+			sleep = 0;		// for log entry
+		move(MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f);
+		Log.d(TAG, "sleep=" + sleep + "ms, movementduration=" + (System.currentTimeMillis() - now - sleep) + "ms");
 	}
-
+	
 	// move in seconds to use Si-units
 	private void move(float dt) {
 		// add forces
@@ -65,7 +65,7 @@ public class Movable {
 				(speed.getDirection()[1] + totalForce.getY() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
 				(speed.getDirection()[2] + totalForce.getZ() * dt) * MovementEngine.AIR_FRICTION_FACTOR);
 				
-		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + "distance=" + speed.multiply(dt));
+//		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + "distance=" + speed.multiply(dt));
 		
 		boolean collided = true;
 		while (collided){
@@ -77,7 +77,7 @@ public class Movable {
 				if (collision != null) {
 					collided = true;
 					
-//					MovementEngine.playBounceSound();
+//					<MovementEngine.playBounceSound();
 					if (!(solid instanceof Quadrilateral)) {
 						Log.wtf(TAG, "Shouldnt collide with unsolid shape!");
 						continue;
@@ -95,8 +95,10 @@ public class Movable {
 					
 					speed.setDirection(newSpeed.getX(), newSpeed.getY(), newSpeed.getZ());
 					
-					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", normal=" + n);
-					break;
+					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", normal=" + n + ", location=" + mShape.location);
+					
+					return;
+//					break;
 				}
 			}
 		}
