@@ -170,6 +170,9 @@ public final class Ghosting {
 			}
 		});
 		for (int i = 0; i < 5000 / UPDATE_INTERVAL; i++) {
+			if (!running)
+				return;
+			
 			final int finalI = i;
 			MainActivity.getActivity().runOnUiThread(new Runnable() {
 				public void run() {
@@ -180,6 +183,7 @@ public final class Ghosting {
 							+ "s");
 				}
 			});
+			
 			try {
 				Thread.sleep(UPDATE_INTERVAL);
 			} catch (InterruptedException e) {
@@ -188,6 +192,9 @@ public final class Ghosting {
 		}
 
 		for (int curSeries = 0; curSeries < totalSeries; curSeries++) {
+			if (!running)
+				return;
+			
 			Log.w(TAG, "Starting series " + (curSeries + 1) + " of "
 					+ totalSeries);
 
@@ -254,6 +261,8 @@ public final class Ghosting {
 				} catch (InterruptedException e) {
 					Log.e(TAG, "Error while sleeping in break", e);
 				}
+				if (!running)
+					return;
 
 				// hide last corner
 				SquashView.setCornerVisible(curCorner, false);
@@ -349,8 +358,9 @@ public final class Ghosting {
 	private static int getColor(final float percentage) {
 		float additional = percentage < 0.5f ? percentage : 1 - percentage;
 
-		final int red = (int) ((1 - percentage + additional) * 255) << 16;
-		final int green = (int) ((percentage + additional) * 255) << 8;
+		final int max = 180;		// should be 255 but I want darker colors for contrast (thus visibility)
+		final int red = (int) ((1 - percentage + additional) * max) << 16;
+		final int green = (int) ((percentage + additional) * max) << 8;
 
 		return red + green;
 	}
