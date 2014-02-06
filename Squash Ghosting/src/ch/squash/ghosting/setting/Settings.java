@@ -60,7 +60,7 @@ final public class Settings {
 		return Integer.parseInt(mPreferences.getString("cornercount", "30"));
 	}
 	public static int getCornerTime(){
-		return Integer.parseInt(mPreferences.getString("time", "60"));
+		return Integer.parseInt(mPreferences.getString("time", "30"));
 	}
 	public static boolean isCornersOrTime(){
 		return mPreferences.getBoolean("cornersortime", true);
@@ -75,10 +75,10 @@ final public class Settings {
 		return mPreferences.getString("maxtime", "3.25");
 	}
 	public static String getFrontTime(){
-		return mPreferences.getString("fronttime", "0.75");
+		return mPreferences.getString("fronttime", "1.0");
 	}
 	public static String getBackTime(){
-		return mPreferences.getString("backtime", "0.5");
+		return mPreferences.getString("backtime", "0.75");
 	}
 	
 	private Settings(){
