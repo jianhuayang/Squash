@@ -14,19 +14,21 @@ import android.view.View;
 public class SquashRenderer implements GLSurfaceView.Renderer {
 	private ShortBuffer courtLineIndices;
 	private FloatBuffer courtLineVertices;
-	private int lineVertexCount;
 	private ShortBuffer courtFillIndices;
+	private int lineVertexCount;
 	private int fillVertexCount;
 
 	private ShortBuffer[] cornerIndices;
 	private FloatBuffer[] cornerVertices;
-	private int[] cornerVertexCount;
+	private int cornerVertexCount;
 	private boolean[] cornerVisible;
 	private float[][] cornerColor;
+	private ShortBuffer[] cornerLineIndices;
+	private FloatBuffer[] cornerLineVertices;
+	private int cornerLineVertexCount;
 
-	private final static int CORNER_CORNERS = 50;
-	private final static float CORNER_RADIUS = 0.5f;
-
+	private final static int CORNER_CORNERS = 50;			// amount of vertices of the "round" corners 
+	private final static float CORNER_RADIUS = 0.65f;
 
 	private float mWidth = 320f;
 	private float mHeight = 480f;
@@ -104,68 +106,62 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				continue;
 			}
 
+			glObject.glColor4f(0, 0, 0, 0);
+			glObject.glVertexPointer(3, GL10.GL_FLOAT, 0, cornerLineVertices[i]);
+			glObject.glDrawElements(GL10.GL_LINE_LOOP, cornerLineVertexCount,
+					GL10.GL_UNSIGNED_SHORT, cornerLineIndices[i]);
+			
 			glObject.glColor4f(cornerColor[i][0], cornerColor[i][1],
 					cornerColor[i][2], cornerColor[i][3]);
 			glObject.glVertexPointer(3, GL10.GL_FLOAT, 0, cornerVertices[i]);
-			glObject.glDrawElements(GL10.GL_TRIANGLES, cornerVertexCount[i],
+			glObject.glDrawElements(GL10.GL_TRIANGLES, cornerVertexCount,
 					GL10.GL_UNSIGNED_SHORT, cornerIndices[i]);
 		}
 
 		// lines
-		glObject.glColor4f(0.8f, 0f, 0f, 0.5f);
+		glObject.glColor4f(0.7f, 0f, 0f, 1f);
 		glObject.glVertexPointer(3, GL10.GL_FLOAT, 0, courtLineVertices);
 		glObject.glDrawElements(GL10.GL_LINE_LOOP, lineVertexCount,
 				GL10.GL_UNSIGNED_SHORT, courtLineIndices);
 
 		// fill
-		glObject.glColor4f(0.85f, 0.73f, 0.47f, 1f);
+		glObject.glColor4f(1f, 0.9f, 0.6f, 1f);
 		glObject.glVertexPointer(3, GL10.GL_FLOAT, 0, courtLineVertices);
 		glObject.glDrawElements(GL10.GL_TRIANGLES, fillVertexCount,
 				GL10.GL_UNSIGNED_SHORT, courtFillIndices);
 	}
 
 	private void drawCourtLines() {
-		final float[] coords = { -3.2f * DRAW_FACTOR,
-				-4.26f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, -4.26f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				-4.26f * DRAW_FACTOR, 0f * DRAW_FACTOR,
+		final float[] coords = { 
+				-3.2f * DRAW_FACTOR,	-4.26f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				0f * DRAW_FACTOR,		-4.26f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		-4.26f * DRAW_FACTOR,	0f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, -1.6f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, -1.6f * DRAW_FACTOR,
-				-1.6f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				1.6f * DRAW_FACTOR, -1.6f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				-1.6f * DRAW_FACTOR, 0f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	-1.6f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				-1.6f * DRAW_FACTOR,	-1.6f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				1.6f * DRAW_FACTOR,		-1.6f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		-1.6f * DRAW_FACTOR,	0f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, -1.6f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 1.6f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				3.2f * DRAW_FACTOR, 0f * DRAW_FACTOR,
-				0f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	0f * DRAW_FACTOR,		0f * DRAW_FACTOR,
+				-1.6f * DRAW_FACTOR,	0f * DRAW_FACTOR, 		0f * DRAW_FACTOR,
+				0f * DRAW_FACTOR, 		0f * DRAW_FACTOR,		0f * DRAW_FACTOR, 
+				1.6f * DRAW_FACTOR,		0f * DRAW_FACTOR,		0f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR, 	0f * DRAW_FACTOR,		0f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, 5.49f * DRAW_FACTOR,
-				0f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				5.49f * DRAW_FACTOR, 0f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	5.49f * DRAW_FACTOR,	0f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		5.49f * DRAW_FACTOR,	0f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, 5.49f * DRAW_FACTOR,
-				0.48f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				5.49f * DRAW_FACTOR, 0.48f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	5.49f * DRAW_FACTOR,	0.48f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		5.49f * DRAW_FACTOR,	0.48f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, 5.49f * DRAW_FACTOR,
-				1.78f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				5.49f * DRAW_FACTOR, 1.78f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	5.49f * DRAW_FACTOR,	1.78f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		5.49f * DRAW_FACTOR,	1.78f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, -4.26f * DRAW_FACTOR,
-				2.13f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				-4.26f * DRAW_FACTOR, 2.13f * DRAW_FACTOR,
+				-3.2f * DRAW_FACTOR,	-4.26f * DRAW_FACTOR,	2.13f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		-4.26f * DRAW_FACTOR,	2.13f * DRAW_FACTOR,
 
-				-3.2f * DRAW_FACTOR, 5.49f * DRAW_FACTOR,
-				4.57f * DRAW_FACTOR, 3.2f * DRAW_FACTOR,
-				5.49f * DRAW_FACTOR, 4.57f * DRAW_FACTOR, };
+				-3.2f * DRAW_FACTOR,	5.49f * DRAW_FACTOR,	4.57f * DRAW_FACTOR,
+				3.2f * DRAW_FACTOR,		5.49f * DRAW_FACTOR,	4.57f * DRAW_FACTOR, };
 
 		final short[] indices = new short[] {
 				// floor
@@ -225,12 +221,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 	private void drawCorners() {
 		cornerIndices = new ShortBuffer[10];
-		cornerVertexCount = new int[10];
 		cornerVertices = new FloatBuffer[10];
 		cornerColor = new float[10][];
+		
+		cornerLineIndices = new ShortBuffer[10];
+		cornerLineVertices = new FloatBuffer[10];
 
 		short[] indices = new short[CORNER_CORNERS * 3];
-
+		short[] lineIndices = new short[CORNER_CORNERS];
 		for (short i = 0; i < CORNER_CORNERS; i++) {
 			indices[3 * i + 1] = (short) (i + 1);
 			if (indices[3 * i + 1] >= CORNER_CORNERS + 1)
@@ -238,14 +236,18 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			indices[3 * i + 2] = (short) (i + 2);
 			if (indices[3 * i + 2] >= CORNER_CORNERS + 1)
 				indices[3 * i + 2] -= CORNER_CORNERS;
+			lineIndices[i] = (short) (i + 1);
 		}
-
+		
+		cornerVertexCount = indices.length;
+		cornerLineVertexCount = lineIndices.length;
+		
 		float[] vertices = null;
+		float[] lineVertices = null;
 		final float[] blueCornerColor = new float[] { 0f, 0f, 1f, 0.5f };
 
 		for (int i = 0; i < 10; i++) {
 			// int, bool
-			cornerVertexCount[i] = indices.length;
 			cornerColor[i] = blueCornerColor;
 
 			// indices
@@ -255,47 +257,73 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			cornerIndices[i] = ibb.asShortBuffer();
 			cornerIndices[i].put(indices);
 			cornerIndices[i].position(0);
+			
+			final ByteBuffer bb = ByteBuffer.allocateDirect(lineIndices.length * 2);
+			bb.order(ByteOrder.nativeOrder());
+			cornerLineIndices[i] = bb.asShortBuffer();
+			cornerLineIndices[i].put(lineIndices);
+			cornerLineIndices[i].position(0);
 
 			// vertices
 			switch (i) {
 			case 0:
 				vertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 5.49f - CORNER_RADIUS,
 						CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 5.49f - CORNER_RADIUS,
+						CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			case 1:
 				vertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 5.49f - CORNER_RADIUS,
+						CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 5.49f - CORNER_RADIUS,
 						CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			case 2:
 				vertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 1.6f + CORNER_RADIUS,
 						CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 1.6f + CORNER_RADIUS,
+						CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			case 3:
 				vertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 1.6f + CORNER_RADIUS,
+						CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 1.6f + CORNER_RADIUS,
 						CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			case 4:
 				vertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 0f, CORNER_RADIUS,
 						DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(3.2f - CORNER_RADIUS, 0f, CORNER_RADIUS,
+						DRAW_FACTOR);
 				break;
 			case 5:
 				vertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 0f, CORNER_RADIUS,
+						DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, 0f, CORNER_RADIUS,
 						DRAW_FACTOR);
 				break;
 			case 6:
 				vertices = getCornerCoordinates(3.2f - CORNER_RADIUS, -1.6f, CORNER_RADIUS,
 						DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(3.2f - CORNER_RADIUS, -1.6f, CORNER_RADIUS,
+						DRAW_FACTOR);
 				break;
 			case 7:
 				vertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, -1.6f, CORNER_RADIUS,
+						DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(-3.2f + CORNER_RADIUS, -1.6f, CORNER_RADIUS,
 						DRAW_FACTOR);
 				break;
 			case 8:
 				vertices = getCornerCoordinates(3.2f - CORNER_RADIUS, -4.26f + CORNER_RADIUS,
 						CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(3.2f - CORNER_RADIUS, -4.26f + CORNER_RADIUS,
+						CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			case 9:
 				vertices = getCornerCoordinates(-3.2f + CORNER_RADIUS,
+						-4.26f + CORNER_RADIUS, CORNER_RADIUS, DRAW_FACTOR);
+				lineVertices = getCornerCoordinates(-3.2f + CORNER_RADIUS,
 						-4.26f + CORNER_RADIUS, CORNER_RADIUS, DRAW_FACTOR);
 				break;
 			default:
@@ -307,6 +335,12 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			cornerVertices[i] = vbb.asFloatBuffer();
 			cornerVertices[i].put(vertices);
 			cornerVertices[i].position(0);
+
+			final ByteBuffer vb = ByteBuffer.allocateDirect(lineVertices.length * 4);
+			vb.order(ByteOrder.nativeOrder());
+			cornerLineVertices[i] = vb.asFloatBuffer();
+			cornerLineVertices[i].put(lineVertices);
+			cornerLineVertices[i].position(0);
 		}
 	}
 
