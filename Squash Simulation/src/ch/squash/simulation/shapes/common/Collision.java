@@ -71,10 +71,25 @@ public final class Collision {
 				quad.getIntersectionWithPlane(ball.location, travelled);
 //					.add(quad.getNormalVector().multiply(-0.5f / quad.getNormalVector().getLength()));
 		
-//		final float lambdax = (intersection.getX() - ball.location.getX()) / travelled.getX();
-//		final float lambday = (intersection.getY() - ball.location.getY()) / travelled.getY();
-//		final float lambdaz = (intersection.getZ() - ball.location.getZ()) / travelled.getZ();
-//		
+		final float lambdax = (intersection.getX() - ball.location.getX()) / travelled.getX();
+		final float lambday = (intersection.getY() - ball.location.getY()) / travelled.getY();
+		final float lambdaz = (intersection.getZ() - ball.location.getZ()) / travelled.getZ();
+
+		if (!AbstractShape.areEqual(travelled.getX(), 0)
+				&& (lambdax < 0 || lambdax > 1)) {
+			Log.i(TAG, "lx=" + lambdax);
+			return null;
+		}
+		if (!AbstractShape.areEqual(travelled.getY(), 0)
+				&& (lambday < 0 || lambday > 1)) {
+			Log.i(TAG, "ly=" + lambday);
+			return null;
+		}
+		if (!AbstractShape.areEqual(travelled.getZ(), 0)
+				&& (lambdaz < 0 || lambdaz > 1)) {
+			Log.i(TAG, "lz=" + lambdaz);
+			return null;
+		}
 //		IVector newInters = null;
 //		if (Math.abs(lambdax) < Math.abs(lambday)){
 //			if (Math.abs(lambdax) < Math.abs(lambdaz))
@@ -95,13 +110,16 @@ public final class Collision {
 //									ball.location.getZ() + travelled.getZ() * 0.9f * lambdaz);
 		
 		// if ball does not cross quad, return null
-		if (quad.getDistanceToPoint(intersection) > 0)
+		if (!AbstractShape.areEqual(quad.getDistanceToPoint(intersection), 0)){
+			Log.i(TAG, "distancetointers=" + quad.getDistanceToPoint(intersection) + ", inters=" + intersection);
 			return null;
+		}
 		
 		// collision happens, return collision object	
 		// TODO: check necessity of parameters for collision ctor
 		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
 		Log.w(TAG, "Ball is at " + ball.location + ", travelling " + travelled + " to inters=" + intersection);
+//		Log.i(TAG, "lx=" + lambdax + ", ly=" + lambday + ", lz=" + lambdaz);
 		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector());
 	}
 
