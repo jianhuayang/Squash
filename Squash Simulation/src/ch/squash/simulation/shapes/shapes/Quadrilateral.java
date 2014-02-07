@@ -49,7 +49,7 @@ public class Quadrilateral extends AbstractShape {
 					else
 						Log.e(TAG, "more than one nonzero dimension, quad is not ortoghonal");
 		
-		normalVectorNonzeroDimension = nonZero;		
+		normalVectorNonzeroDimension = nonZero;	
 	}
 
 	private static float[] getMiddle(final float[] edges) {
@@ -124,7 +124,10 @@ public class Quadrilateral extends AbstractShape {
 		
 		final float lambda = (edges[normalVectorNonzeroDimension] - start.getDirection()[normalVectorNonzeroDimension]) / direction.getDirection()[normalVectorNonzeroDimension];
 
-		return new Vector(start.getX() + lambda * direction.getX(), start.getY() + lambda * direction.getY(), start.getZ() + lambda * direction.getZ());
+		return new Vector(
+				normalVectorNonzeroDimension == 0 ? edges[0] : start.getX() + lambda * direction.getX(),
+				normalVectorNonzeroDimension == 1 ? edges[1] : start.getY() + lambda * direction.getY(), 
+				normalVectorNonzeroDimension == 2 ? edges[2] : start.getZ() + lambda * direction.getZ());
 	}
 	
 	public float getDistanceToPoint(final IVector p) {
