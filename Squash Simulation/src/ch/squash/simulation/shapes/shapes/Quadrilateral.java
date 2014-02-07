@@ -119,7 +119,10 @@ public class Quadrilateral extends AbstractShape {
 	}
 
 	public IVector getIntersectionWithPlane(final IVector start, final IVector direction){
-		final float lambda = (edges[normalVectorNonzeroDimension] - start.getDirection()[normalVectorNonzeroDimension]) / direction.getDirection()[normalVectorNonzeroDimension];;
+		if (direction.getDirection()[normalVectorNonzeroDimension] == 0)
+			return null;
+		
+		final float lambda = (edges[normalVectorNonzeroDimension] - start.getDirection()[normalVectorNonzeroDimension]) / direction.getDirection()[normalVectorNonzeroDimension];
 
 		return new Vector(start.getX() + lambda * direction.getX(), start.getY() + lambda * direction.getY(), start.getZ() + lambda * direction.getZ());
 	}
