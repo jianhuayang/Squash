@@ -5,17 +5,6 @@ import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.Vector;
 
 public class VectorTest extends TestCase {
-	private IVector v0 = new Vector(0, 0, 0);
-	private IVector v1 = new Vector(1, 0, 0);
-	private IVector v2 = new Vector(0, 1, 0);
-	private IVector v3 = new Vector(0, 0, 1);
-	private IVector v4 = new Vector(1, 1, 0);
-	private IVector v5 = new Vector(0, 4, -5);
-	private IVector v6 = new Vector(-6, 7, 10);
-	private IVector v7 = new Vector(0, -3, 3);
-	private IVector v8 = new Vector(17, -23, 9);
-	private IVector v9 = new Vector(-5, 0, 3);
-	
 	public void testGetAngle() {
 		assertEquals(Float.NaN, v0.getAngle(v4));
 		assertEquals((float)Math.PI/2, v1.getAngle(v2));
@@ -93,7 +82,7 @@ public class VectorTest extends TestCase {
 		assertEquals(new Vector(0.5669818f, -0.76709294f, 0.30016682f), v8.getNormalizedVector());
 		assertEquals(new Vector(-0.857493f, 0, 0.5144958f), v9.getNormalizedVector());
 	}
-	
+
 	public void testGetCrossProduct() {
 		assertEquals(new Vector(0, 0, 0), v0.getCrossProduct(v0));
 		assertEquals(new Vector(0, 0, 0), v0.getCrossProduct(v1));
@@ -103,33 +92,43 @@ public class VectorTest extends TestCase {
 		assertEquals(new Vector(0, 0, 0), v0.getCrossProduct(v9));
 		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v1));
 		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v0));
-		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v2));
-		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v4));
-		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v6));
-		assertEquals(new Vector(0, 0, 0), v1.getCrossProduct(v8));
+		assertEquals(new Vector(0, 0, 1), v1.getCrossProduct(v2));
+		assertEquals(new Vector(0, 0, 1), v1.getCrossProduct(v4));
+		assertEquals(new Vector(0, -10, 7), v1.getCrossProduct(v6));
+		assertEquals(new Vector(0, -9, -23), v1.getCrossProduct(v8));
 		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v4));
-		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v1));
-		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v3));
-		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v5));
-		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v7));
-		assertEquals(new Vector(0, 0, 0), v4.getCrossProduct(v9));
+		assertEquals(new Vector(0, 0, 1), v4.getCrossProduct(v1));
+		assertEquals(new Vector(1, -1, 0), v4.getCrossProduct(v3));
+		assertEquals(new Vector(-5, 5, 4), v4.getCrossProduct(v5));
+		assertEquals(new Vector(3, -3, -3), v4.getCrossProduct(v7));
+		assertEquals(new Vector(3, -3, 5), v4.getCrossProduct(v9));
 		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v5));
 		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v0));
 		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v2));
-		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v4));
-		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v6));
-		assertEquals(new Vector(0, 0, 0), v5.getCrossProduct(v8));
+		assertEquals(new Vector(5, -5, 4), v5.getCrossProduct(v4));
+		assertEquals(new Vector(75, 30, 24), v5.getCrossProduct(v6));
+		assertEquals(new Vector(-79, -85, -68), v5.getCrossProduct(v8));
 		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v8));
-		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v1));
-		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v3));
-		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v5));
-		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v7));
-		assertEquals(new Vector(0, 0, 0), v8.getCrossProduct(v9));
+		assertEquals(new Vector(0, 9, 23), v8.getCrossProduct(v1));
+		assertEquals(new Vector(-23, -17, 0), v8.getCrossProduct(v3));
+		assertEquals(new Vector(79, 85, 68), v8.getCrossProduct(v5));
+		assertEquals(new Vector(-42, -51, -51), v8.getCrossProduct(v7));
+		assertEquals(new Vector(-69, -96, -115), v8.getCrossProduct(v9));
 		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v9));
 		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v0));
-		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v2));
-		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v4));
-		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v6));
-		assertEquals(new Vector(0, 0, 0), v9.getCrossProduct(v8));
+		assertEquals(new Vector(-3, 0, -5), v9.getCrossProduct(v2));
+		assertEquals(new Vector(-3, 3, -5), v9.getCrossProduct(v4));
+		assertEquals(new Vector(-21, 32, -35), v9.getCrossProduct(v6));
+		assertEquals(new Vector(69, 96, 115), v9.getCrossProduct(v8));
 	}
+	private IVector v0 = new Vector(0, 0, 0);
+	private IVector v1 = new Vector(1, 0, 0);
+	private IVector v2 = new Vector(0, 1, 0);
+	private IVector v3 = new Vector(0, 0, 1);
+	private IVector v4 = new Vector(1, 1, 0);
+	private IVector v5 = new Vector(0, 4, -5);
+	private IVector v6 = new Vector(-6, 7, 10);
+	private IVector v7 = new Vector(0, -3, 3);
+	private IVector v8 = new Vector(17, -23, 9);
+	private IVector v9 = new Vector(-5, 0, 3);
 }
