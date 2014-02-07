@@ -15,11 +15,13 @@ public final class MovementEngine {
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
-	public final static int DELAY_BETWEEN_MOVEMENTS = 10; // ms
+	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
+	private final static int ENGINE_DURATION = 30000;		// ms
 	public final static int SLOW_FACTOR = 1;
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
-	private static float[] startSpeed = new float[] { 0, 0, 0, }; //7, 1, -4 };
+	private static float[] startSpeed = new float[] { 2
+		, 1, -3 };
 	private final int mSoundBounce;
 	private final SoundPool mSoundPool;
 
@@ -47,17 +49,19 @@ public final class MovementEngine {
 		for (final Movable im : mMovables)
 			im.resetClock();
 
-		final long end = Calendar.getInstance().getTimeInMillis() + 2000;
+		final long end = Calendar.getInstance().getTimeInMillis() + ENGINE_DURATION;
 		while (isRunning && Calendar.getInstance().getTimeInMillis() < end) {
 			for (final Movable im : mMovables)
 				im.move();
 
 			try {
 				Thread.sleep(INTERVAL);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException e) {		
 				Log.e(TAG, "Error while sleepint", e);
 			}
 		}
+		
+		Log.w(TAG, "MovementEngine has stopped");
 	}
 
 	public static void playBounceSound() {
@@ -66,8 +70,15 @@ public final class MovementEngine {
 
 	public static void initialize(final Movable[] movables) {
 		synchronized (LOCK) {
-			if (mInstance == null)
+			if (mInstance == null){
 				mInstance = new MovementEngine(movables.clone());
+				new Thread() {
+					@Override
+					public void run() {
+						MovementEngine.mInstance.doWork();
+					}
+				}.start();
+			} 
 			else {
 				Log.e(TAG, "Can only have one movement engine, aborting...");
 				return;
@@ -84,13 +95,6 @@ public final class MovementEngine {
 
 		for (final Movable m : mMovables)
 			m.speed.setDirection(startSpeed[0], startSpeed[1], startSpeed[2]);
-
-		new Thread() {
-			@Override
-			public void run() {
-				MovementEngine.mInstance.doWork();
-			}
-		}.start();
 	}
 
 	public static void resetMovables() {
