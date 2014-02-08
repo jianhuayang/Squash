@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.opengl.GLES20;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
@@ -91,11 +92,15 @@ public class SettingsFragment extends PreferenceFragment implements
 			MovementEngine.resetMovables();
 		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyCameraPositionZ()))
 			SquashRenderer.getInstance().resetCamera();
-		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ()))
+		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ())){
 			SquashRenderer.getInstance().setBallPosition(Settings.getBallStartPosition());
-		else if (key.equals(Settings.getKeyBallSpeedX()) || key.equals(Settings.getKeyBallSpeedY()) || key.equals(Settings.getKeyBallSpeedZ()))
+			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
+		}
+		else if (key.equals(Settings.getKeyBallSpeedX()) || key.equals(Settings.getKeyBallSpeedY()) || key.equals(Settings.getKeyBallSpeedZ())){
+			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
 			MovementEngine.resetMovables();
-			
+		}
+		
 		pref.setSummary(getSummary(key));
 
 		Log.i(TAG, "Setting " + key + " changed its value");
