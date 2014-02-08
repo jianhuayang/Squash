@@ -4,20 +4,40 @@
 	<string name="settings">Settings</string>
 	
 	<string name="key_draw_mode">draw_mode</string>
-	<string name="summary_draw_mode">Select draw mode for 3D objects</string>
 	<string name="title_draw_mode">Draw Mode</string>
+	<string name="summary_draw_mode">Select draw mode for 3D objects</string>
 	
 	<string name="key_select_objects">select_objects</string>
-	<string name="summary_select_objects">Tap to select objects to be drawn</string>
 	<string name="title_select_objects">Select Objects</string>
+	<string name="summary_select_objects">Tap to select objects to be drawn</string>
 	
 	<string name="key_camera_mode">camera_mode</string>
-	<string name="summary_camera_mode">Select camera mode</string>
 	<string name="title_camera_mode">Camera Mode</string>
+	<string name="summary_camera_mode">Select camera mode</string>
 	
 	<string name="key_reset">reset</string>
-	<string name="summary_reset">Return moving objects to their initial place</string>
 	<string name="title_reset">Reset world</string>
+	<string name="summary_reset">Return moving objects to their initial place</string>
 	
+	<string name="title_vectors">Set Vectors of the world</string>
+	<string name="summary_vectors">Define starting location and movement of objects of the world</string>
 	
+	<string name="title_x">x-Component of the vector</string>
+	<string name="title_y">y-Component of the vector</string>
+	<string name="title_z">z-Component of the vector</string>
+	
+	<string name="title_camera_position">Select Position of the Camera</string>
+	<string name="key_camera_position_x">camera_position_x</string>
+	<string name="key_camera_position_y">camera_position_y</string>
+	<string name="key_camera_position_z">camera_position_z</string>
+	
+	<string name="title_ball_position">Select Position of the Ball</string>
+	<string name="key_ball_position_x">ball_position_x</string>
+	<string name="key_ball_position_y">ball_position_y</string>
+	<string name="key_ball_position_z">ball_position_z</string>
+	
+	<string name="title_ball_speed">Select speed of the Ball</string>
+	<string name="key_ball_speed_x">ball_speed_x</string>
+	<string name="key_ball_speed_y">ball_speed_y</string>
+	<string name="key_ball_speed_z">ball_speed_z</string>
 </resources>
