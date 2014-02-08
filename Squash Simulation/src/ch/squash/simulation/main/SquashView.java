@@ -2,19 +2,18 @@ package ch.squash.simulation.main;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.Toast;
 
 public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback {
 	private final static String TAG = SquashView.class.getSimpleName();
 
-	// vars for touchevents
-	private float mPreviousX;
-	private float mPreviousY;
-	private final float mDensity;
-
+	private final GestureDetector mGestureDetector;
+	private static boolean mLongPress;
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -24,7 +23,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void onResume() {
 		super.onResume();
-		MovementEngine.resume();
+//		MovementEngine.resume();
 	}
 
 	public SquashView(final Context context) {
@@ -32,39 +31,39 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 
 		setEGLContextClientVersion(2);
 
-		final DisplayMetrics displayMetrics = new DisplayMetrics();
-		((SquashActivity) context).getWindowManager().getDefaultDisplay()
-				.getMetrics(displayMetrics);
-		mDensity = displayMetrics.density;
-
 		setRenderer(SquashRenderer.getInstance());
 
 		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
+		mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+		    public void onLongPress(MotionEvent e) {
+		    	MovementEngine.pause();
+		    	MovementEngine.resetMovables();
+		    	
+		    	Toast.makeText(SquashActivity.getInstance(), "Movables reset", Toast.LENGTH_SHORT).show();
+		    	
+		        mLongPress = true;
+		    }
+		});
+		
 		Log.i(TAG, "SquashView created");
 	}
-
+	
 	public boolean onTouchEvent(final MotionEvent event) {
-		if (event == null)
-			return super.onTouchEvent(event);
-		else {
-			final float x = event.getX();
-			final float y = event.getY();
-
-			if (event.getAction() == MotionEvent.ACTION_MOVE
-					&& SquashRenderer.getInstance() != null) {
-				final float deltaX = (x - mPreviousX) / mDensity / 2f;
-				final float deltaY = (y - mPreviousY) / mDensity / 2f;
-
-				SquashRenderer.getInstance().mDeltaX += deltaX;
-				SquashRenderer.getInstance().mDeltaY += deltaY;
-			}
-
-			mPreviousX = x;
-			mPreviousY = y;
-
+		mGestureDetector.onTouchEvent(event);
+		
+		if (mLongPress){
+			// only reset longpress flag if it was completed (if the action is UP)
+			mLongPress = event.getAction() != MotionEvent.ACTION_UP;
 			return true;
 		}
+		
+		if (event.getAction() == MotionEvent.ACTION_UP){
+	    	Toast.makeText(SquashActivity.getInstance(),
+	    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
+			MovementEngine.toggleRunning();
+		}
+		
+		return true;
 	}
-
 }
