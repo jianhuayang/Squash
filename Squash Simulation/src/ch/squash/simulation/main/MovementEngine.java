@@ -16,13 +16,16 @@ public final class MovementEngine {
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
-	private final static int ENGINE_DURATION = 30000;		// ms
+	private final static int ENGINE_DURATION = 4000;		// ms
 	public final static int SLOW_FACTOR = 1;
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
-	private static float[] startSpeed = new float[] { 2
-		, 1, -3 };
+	private static float[] startSpeed = new float[] { 3, 1, -3 };
 	private final int mSoundBounce;
+	private final int mSoundFloor;
+	private final int mSoundFrontWall;
+	private final int mSoundTin;
+	private final int mSoundBeep;
 	private final SoundPool mSoundPool;
 
 	public static void pause() {
@@ -64,8 +67,15 @@ public final class MovementEngine {
 		Log.w(TAG, "MovementEngine has stopped");
 	}
 
-	public static void playBounceSound() {
-		mInstance.mSoundPool.play(mInstance.mSoundBounce, 1, 1, 1, 0, 1);
+	public static void playSound(final String desc) {
+		if ("floor inside".equals(desc))
+			mInstance.mSoundPool.play(mInstance.mSoundBounce, 1, 1, 1, 0, 1);
+		else if ("front wall inside".equals(desc))
+			mInstance.mSoundPool.play(mInstance.mSoundFrontWall, 1, 1, 1, 0, 1);
+		else if ("tin wall inside".equals(desc) || "tin line".equals(desc))
+			mInstance.mSoundPool.play(mInstance.mSoundTin, 0.5f, 0.5f, 1, 0, 1);
+		else
+			mInstance.mSoundPool.play(mInstance.mSoundBeep, 0.05f, 0.05f, 1, 0, 1);
 	}
 
 	public static void initialize(final Movable[] movables) {
@@ -87,9 +97,17 @@ public final class MovementEngine {
 	}
 
 	private MovementEngine(final Movable[] movables) {
-		mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
 		mSoundBounce = mSoundPool.load(SquashActivity.getInstance(),
-				R.raw.ball_bounce, 1);
+				R.raw.bounce, 1);
+		mSoundFloor = mSoundPool.load(SquashActivity.getInstance(),
+				R.raw.floor, 1);
+		mSoundFrontWall = mSoundPool.load(SquashActivity.getInstance(),
+				R.raw.frontwall, 1);
+		mSoundTin = mSoundPool.load(SquashActivity.getInstance(),
+				R.raw.tin, 1);
+		mSoundBeep = mSoundPool.load(SquashActivity.getInstance(),
+				R.raw.beep, 1);
 
 		mMovables = movables.clone();
 
