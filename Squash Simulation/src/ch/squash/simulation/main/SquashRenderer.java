@@ -64,8 +64,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// for dynamic movement
 	public float angleInDegrees;
 	private float oldAngle;
-	public float mDeltaX;
-	public float mDeltaY;
 
 	public static SquashRenderer getInstance() {
 		synchronized (LOCK) {
@@ -272,9 +270,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 //			object.draw();
 
 		GLES20.glUseProgram(mPointProgramHandle);
-
-		mDeltaX = 0.0f;
-		mDeltaY = 0.0f;
 	}
 
 	// gl methods
