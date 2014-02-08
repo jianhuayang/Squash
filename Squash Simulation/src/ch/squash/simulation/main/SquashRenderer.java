@@ -114,7 +114,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			for (final AbstractShape igs : sc.getAllShapes())
 				if (igs.isMovable())
 					movables.add(igs.getMovable());
-
 		
 		MovementEngine.initialize(movables.toArray(new Movable[movables.size()]));
 
@@ -358,7 +357,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	}
 
 	// own methods
-	private void resetCamera() {
+	public void resetCamera() {
 		Matrix.setIdentityM(mViewMatrix, 0);
 		
 		final IVector camPos = Settings.getCameraPosition(); 
@@ -367,5 +366,15 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 	public void setObjectVisibility(final int objectId, final boolean visible) {
 		mObjects[objectId].setVisibility(visible);
+	}
+
+	public void setBallPosition(final IVector ballStartPosition) {
+		for (ShapeCollection s : mObjects)
+			for (AbstractShape a : s.getOpaqueObjects())
+				if ("SquashBall".equals(a.tag)){
+					a.moveTo(Settings.getBallStartPosition());
+					return;
+				}
+		Log.e(TAG, "Apparently, new ball position could not be set since the ball object couldn\'t be found...");
 	}
 }
