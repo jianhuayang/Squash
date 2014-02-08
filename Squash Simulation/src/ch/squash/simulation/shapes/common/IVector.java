@@ -9,17 +9,19 @@ public interface IVector {
 	
 	float[] getDirection();
 
-	IVector multiply(float factor);
+	IVector multiply(final float factor);
 	
-	float multiply(IVector other);
+	float multiply(final IVector other);
 
-	float getAngle(IVector other);
+	float getAngle(final IVector other);
 
-	IVector add(IVector other);
+	IVector add(final IVector other);
 	
 	float getLength();
 	
-	void setDirection(float x, float y, float z);
+	void setDirection(final float x, final float y, final float z);
+	
+	void setDirection(final IVector other);
 	
 	IVector getNormalizedVector();
 	

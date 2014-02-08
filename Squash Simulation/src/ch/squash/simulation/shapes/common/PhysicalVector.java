@@ -111,7 +111,12 @@ public class PhysicalVector implements IVector {
 	}
 	
 	@Override
-	public IVector getCrossProduct(IVector other) {
+	public IVector getCrossProduct(final IVector other) {
 		return mVector.getCrossProduct(other);
+	}
+	
+	@Override
+	public void setDirection(final IVector other){
+		setDirection(other.getX(), other.getY(), other.getZ());
 	}
 }

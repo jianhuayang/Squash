@@ -115,7 +115,9 @@ public class Vector implements IVector {
 
 		final Vector v = (Vector) o;
 
-		return v.getX() == getX() && v.getY() == getY() && v.getZ() == getZ();
+		return AbstractShape.areEqual(v.getX(), getX()) && 
+				AbstractShape.areEqual(v.getY(), getY()) &&
+				AbstractShape.areEqual(v.getZ(), getZ());
 	}
 
 	@Override
@@ -126,9 +128,14 @@ public class Vector implements IVector {
 	}
 	
 	@Override
-	public IVector getCrossProduct(IVector other){
+	public IVector getCrossProduct(final IVector other){
 		return new Vector(getY() * other.getZ() - getZ() * other.getY(), getZ()
 				* other.getX() - getX() * other.getZ(), getX() * other.getY()
 				- getY() * other.getX());
+	}
+	
+	@Override
+	public void setDirection(final IVector other){
+		setDirection(other.getX(), other.getY(), other.getZ());
 	}
 }
