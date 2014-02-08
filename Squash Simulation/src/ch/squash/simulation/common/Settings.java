@@ -1,6 +1,7 @@
 package ch.squash.simulation.common;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import android.content.SharedPreferences;
@@ -10,6 +11,8 @@ import android.util.Log;
 import ch.squash.simulation.R;
 import ch.squash.simulation.main.SquashActivity;
 import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.Vector;
 
 public final class Settings {
 	// static members
@@ -18,11 +21,22 @@ public final class Settings {
 	private static final Object LOCK = new Object();
 
 	// instance members
+	private final SharedPreferences mSharedPrefs;
+	
 	private final String KEY_DRAW_MODE;
 	private final String KEY_SELECT_OBECTS;
 	private final String KEY_CAMERA_MODE;
 	private final String KEY_RESET;
-	private final SharedPreferences mSharedPrefs;
+
+	private final String KEY_CAMERA_POSITION_X;
+	private final String KEY_CAMERA_POSITION_Y;
+	private final String KEY_CAMERA_POSITION_Z;
+	private final String KEY_BALL_POSITION_X;
+	private final String KEY_BALL_POSITION_Y;
+	private final String KEY_BALL_POSITION_Z;
+	private final String KEY_BALL_SPEED_X;
+	private final String KEY_BALL_SPEED_Y;
+	private final String KEY_BALL_SPEED_Z;
 	
 	public static String getKeyDrawMode(){
 		return getInstance().KEY_DRAW_MODE;
@@ -35,6 +49,34 @@ public final class Settings {
 	}
 	public static String getKeyReset(){
 		return getInstance().KEY_RESET;
+	}
+
+	public static String getKeyCameraPositionX(){
+		return getInstance().KEY_CAMERA_POSITION_X;
+	}
+	public static String getKeyCameraPositionY(){
+		return getInstance().KEY_CAMERA_POSITION_Y;
+	}
+	public static String getKeyCameraPositionZ(){
+		return getInstance().KEY_CAMERA_POSITION_Z;
+	}
+	public static String getKeyBallPositionX(){
+		return getInstance().KEY_BALL_POSITION_X;
+	}
+	public static String getKeyBallPositionY(){
+		return getInstance().KEY_BALL_POSITION_Y;
+	}
+	public static String getKeyBallPositionZ(){
+		return getInstance().KEY_BALL_POSITION_Z;
+	}
+	public static String getKeyBallSpeedX(){
+		return getInstance().KEY_BALL_SPEED_X;
+	}
+	public static String getKeyBallSpeedY(){
+		return getInstance().KEY_BALL_SPEED_Y;
+	}
+	public static String getKeyBallSpeedZ(){
+		return getInstance().KEY_BALL_SPEED_Z;
 	}
 	
 	private Settings() {
@@ -49,6 +91,25 @@ public final class Settings {
 				.getString(R.string.key_camera_mode);
 		KEY_RESET = SquashActivity.getInstance().getResources()
 				.getString(R.string.key_reset);
+
+		KEY_CAMERA_POSITION_X = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_camera_position_x);
+		KEY_CAMERA_POSITION_Y = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_camera_position_y);
+		KEY_CAMERA_POSITION_Z = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_camera_position_z);
+		KEY_BALL_POSITION_X = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_position_x);
+		KEY_BALL_POSITION_Y = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_position_y);
+		KEY_BALL_POSITION_Z = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_position_z);
+		KEY_BALL_SPEED_X = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_speed_x);
+		KEY_BALL_SPEED_Y = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_speed_y);
+		KEY_BALL_SPEED_Z = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_ball_speed_z);
 
 		Log.i(TAG, "Settings initialized");
 	}
@@ -68,6 +129,10 @@ public final class Settings {
 	}
 
 	// access
+	public static Object getValue(final String key){
+		final Map<String,?> map = getInstance().mSharedPrefs.getAll();
+		return map.get(key);
+	}
 	public static int getDrawMode() {
 		return Integer.parseInt(getInstance().mSharedPrefs.getString(
 				getInstance().KEY_DRAW_MODE, "-1"));
@@ -115,5 +180,26 @@ public final class Settings {
 		return getInstance().mSharedPrefs.getStringSet(
 				getInstance().KEY_SELECT_OBECTS, new HashSet<String>())
 				.contains(Integer.toString(SquashRenderer.OBJECT_FORCE));
+	}
+	
+	public static IVector getCameraPosition(){
+		return new Vector(
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_X, "0")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Y, "-1.5")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Z, "2.75")));
+	}
+
+	public static IVector getBallStartPosition(){
+		return new Vector(
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_X, "-2")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Y, "1")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Z, "0")));
+	}
+	
+	public static IVector getBallStartSpeed(){
+		return new Vector(
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_X, "3")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Y, "1")),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Z, "-1")));
 	}
 }
