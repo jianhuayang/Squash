@@ -43,8 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		addPreferencesFromResource(R.xml.preferences);
 
 		// fill entry values etc
-		ListPreference listPref = (ListPreference) findPreference(Settings
-				.getKeyCameraMode());
+		ListPreference listPref = (ListPreference) findPreference(Settings.getKeyDrawMode());
 		listPref.setEntryValues(new String[] { "-1",
 				Integer.toString(GLES20.GL_LINES),
 				Integer.toString(GLES20.GL_LINE_LOOP),
@@ -68,6 +67,16 @@ public class SettingsFragment extends PreferenceFragment implements
 		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4" });
 		listPref.setSummary(getSummary(Settings.getKeyCameraMode()));
 
+		findPreference(Settings.getKeyCameraPositionX()).setSummary(getSummary(Settings.getKeyCameraPositionX()));
+		findPreference(Settings.getKeyCameraPositionY()).setSummary(getSummary(Settings.getKeyCameraPositionY()));
+		findPreference(Settings.getKeyCameraPositionZ()).setSummary(getSummary(Settings.getKeyCameraPositionZ()));
+		findPreference(Settings.getKeyBallPositionX()).setSummary(getSummary(Settings.getKeyBallPositionX()));
+		findPreference(Settings.getKeyBallPositionY()).setSummary(getSummary(Settings.getKeyBallPositionY()));
+		findPreference(Settings.getKeyBallPositionZ()).setSummary(getSummary(Settings.getKeyBallPositionZ()));
+		findPreference(Settings.getKeyBallSpeedX()).setSummary(getSummary(Settings.getKeyBallSpeedX()));
+		findPreference(Settings.getKeyBallSpeedY()).setSummary(getSummary(Settings.getKeyBallSpeedY()));
+		findPreference(Settings.getKeyBallSpeedZ()).setSummary(getSummary(Settings.getKeyBallSpeedZ()));
+		
 		Log.i(TAG, "SettingsFragment created");
 	}
 
@@ -80,7 +89,11 @@ public class SettingsFragment extends PreferenceFragment implements
 						Settings.isObjectCollectionVisible(i));
 		} else if (key.equals(Settings.getKeyReset()) && Settings.isReset())
 			MovementEngine.resetMovables();
-
+		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyCameraPositionZ()))
+			SquashRenderer.getInstance().resetCamera();
+		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ()))
+			SquashRenderer.getInstance().setBallPosition(Settings.getBallStartPosition());
+			
 		pref.setSummary(getSummary(key));
 
 		Log.i(TAG, "Setting " + key + " changed its value");
@@ -97,6 +110,12 @@ public class SettingsFragment extends PreferenceFragment implements
 		else if (key.equals(Settings.getKeyReset()))
 			return SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_reset);
+		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
+			return "x = " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
+			return "y = " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
+			return "z = " + Settings.getValue(key);
 
 		Log.e(TAG, "Unknown key: " + key);
 		return null;
