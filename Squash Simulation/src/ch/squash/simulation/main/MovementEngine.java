@@ -12,7 +12,7 @@ import ch.squash.simulation.shapes.common.Movable;
 public final class MovementEngine {
 	private final static String TAG = MovementEngine.class.getSimpleName();
 	private final Movable[] mMovables;
-	private boolean isRunning = true;
+	private boolean isRunning;
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
@@ -22,7 +22,7 @@ public final class MovementEngine {
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
 	private final int mSoundBounce;
-	private final int mSoundFloor;
+//	private final int mSoundFloor;
 	private final int mSoundFrontWall;
 	private final int mSoundTin;
 	private final int mSoundBeep;
@@ -82,12 +82,14 @@ public final class MovementEngine {
 		synchronized (LOCK) {
 			if (mInstance == null){
 				mInstance = new MovementEngine(movables.clone());
-				new Thread() {
-					@Override
-					public void run() {
-						MovementEngine.mInstance.doWork();
-					}
-				}.start();
+//				new Thread() {
+//					@Override
+//					public void run() {
+//						mInstance.isRunning = true;
+//						MovementEngine.mInstance.doWork();
+//						mInstance.isRunning = false;
+//					}
+//				}.start();
 			} 
 			else {
 				Log.e(TAG, "Can only have one movement engine, aborting...");
@@ -100,8 +102,8 @@ public final class MovementEngine {
 		mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
 		mSoundBounce = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.bounce, 1);
-		mSoundFloor = mSoundPool.load(SquashActivity.getInstance(),
-				R.raw.floor, 1);
+//		mSoundFloor = mSoundPool.load(SquashActivity.getInstance(),
+//				R.raw.floor, 1);
 		mSoundFrontWall = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.frontwall, 1);
 		mSoundTin = mSoundPool.load(SquashActivity.getInstance(),
@@ -120,5 +122,12 @@ public final class MovementEngine {
 			im.reset();
 			im.speed.setDirection(Settings.getBallStartSpeed());
 		}
+	}
+
+	public static void toggleRunning() {
+		if (mInstance.isRunning)
+			pause();
+		else
+			resume();
 	}
 }
