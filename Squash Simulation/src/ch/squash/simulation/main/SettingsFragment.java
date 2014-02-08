@@ -93,6 +93,8 @@ public class SettingsFragment extends PreferenceFragment implements
 			SquashRenderer.getInstance().resetCamera();
 		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ()))
 			SquashRenderer.getInstance().setBallPosition(Settings.getBallStartPosition());
+		else if (key.equals(Settings.getKeyBallSpeedX()) || key.equals(Settings.getKeyBallSpeedY()) || key.equals(Settings.getKeyBallSpeedZ()))
+			MovementEngine.resetMovables();
 			
 		pref.setSummary(getSummary(key));
 
