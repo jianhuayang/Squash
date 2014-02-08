@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 import ch.squash.simulation.R;
+import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
@@ -20,7 +21,6 @@ public final class MovementEngine {
 	public final static int SLOW_FACTOR = 1;
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
-	private static float[] startSpeed = new float[] { 3, 1, -3 };
 	private final int mSoundBounce;
 	private final int mSoundFloor;
 	private final int mSoundFrontWall;
@@ -111,14 +111,14 @@ public final class MovementEngine {
 
 		mMovables = movables.clone();
 
-		for (final Movable m : mMovables)
-			m.speed.setDirection(startSpeed[0], startSpeed[1], startSpeed[2]);
+		for (final Movable m : mMovables)		// watch out with new movables...
+			m.speed.setDirection(Settings.getBallStartSpeed());
 	}
 
 	public static void resetMovables() {
-		for (final Movable im : mInstance.mMovables) {
+		for (final Movable im : mInstance.mMovables) {		// watch out with new movables...
 			im.reset();
-			im.speed.setDirection(startSpeed[0], startSpeed[1], startSpeed[2]);
+			im.speed.setDirection(Settings.getBallStartSpeed());
 		}
 	}
 }

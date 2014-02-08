@@ -91,9 +91,10 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		misc.addObject(new Arrow("DummyArrow", 0, -1, -5, 0, 1, -5,
 				new float[] { 1, 1, 0, 1 }), false);
 
+		final IVector ballStart = Settings.getBallStartPosition();
 		mObjects = new ShapeCollection[] {
 				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_COURT),
-				new ShapeCollection(new Ball("SquashBall", -2, 2, -2, 40 * ONE_MM, 36,
+				new ShapeCollection(new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
 						new float[] { 0, 0, 0, 1 }), false), axis, misc,
 				new ShapeCollection(new DummyShape(), false) };
 
