@@ -117,8 +117,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		
 		MovementEngine.initialize(movables.toArray(new Movable[movables.size()]));
-//		movementEngine = new MovementEngine(
-//				movables.toArray(new Movable[movables.size()]));
 
 		Log.i(TAG, "SquashRenderer created");
 	}
@@ -362,8 +360,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// own methods
 	private void resetCamera() {
 		Matrix.setIdentityM(mViewMatrix, 0);
-//		 Matrix.translateM(mViewMatrix, 0, 0, -3f, -9f);
-		Matrix.translateM(mViewMatrix, 0, 0, -1.5f, -2.75f);
+		
+		final IVector camPos = Settings.getCameraPosition(); 
+		Matrix.translateM(mViewMatrix, 0, camPos.getX(), camPos.getY(), camPos.getZ());
 	}
 
 	public void setObjectVisibility(final int objectId, final boolean visible) {
