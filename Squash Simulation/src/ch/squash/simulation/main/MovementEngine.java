@@ -130,4 +130,8 @@ public final class MovementEngine {
 		else
 			resume();
 	}
+	
+	public static boolean isRunning(){
+		return mInstance.isRunning;
+	}
 }
