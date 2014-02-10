@@ -17,7 +17,7 @@ public final class MovementEngine {
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
-	private final static int ENGINE_DURATION = 4000;		// ms
+	private final static int ENGINE_DURATION = 5000;		// ms
 	public final static int SLOW_FACTOR = 1;
 	public final static float AIR_FRICTION_FACTOR = 0.99f;
 	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
@@ -63,6 +63,7 @@ public final class MovementEngine {
 				Log.e(TAG, "Error while sleepint", e);
 			}
 		}
+		isRunning = false;
 		
 		Log.w(TAG, "MovementEngine has stopped");
 	}
@@ -82,14 +83,6 @@ public final class MovementEngine {
 		synchronized (LOCK) {
 			if (mInstance == null){
 				mInstance = new MovementEngine(movables.clone());
-//				new Thread() {
-//					@Override
-//					public void run() {
-//						mInstance.isRunning = true;
-//						MovementEngine.mInstance.doWork();
-//						mInstance.isRunning = false;
-//					}
-//				}.start();
 			} 
 			else {
 				Log.e(TAG, "Can only have one movement engine, aborting...");
