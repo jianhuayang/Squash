@@ -1,6 +1,7 @@
 package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
+import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
@@ -48,10 +49,9 @@ public class Movable {
 				} catch (InterruptedException e) {
 					Log.e(TAG, "Error while sleeping", e);
 				}
-		else
-			sleep = 0;		// for log entry
+
 		move(MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f);
-		Log.d(TAG, "sleep=" + sleep + "ms, movementduration=" + (System.currentTimeMillis() - now - sleep) + "ms");
+//		Log.d(TAG, "sleep=" + sleep + "ms, movementduration=" + (System.currentTimeMillis() - now - sleep) + "ms");
 	}
 	
 	// move in seconds to use Si-units
@@ -65,7 +65,7 @@ public class Movable {
 				(speed.getDirection()[1] + totalForce.getY() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
 				(speed.getDirection()[2] + totalForce.getZ() * dt) * MovementEngine.AIR_FRICTION_FACTOR);
 				
-//		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + "distance=" + speed.multiply(dt));
+		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + speed.multiply(dt));
 		
 		boolean collided = true;
 		while (collided){
@@ -77,7 +77,7 @@ public class Movable {
 				if (collision != null) {
 					collided = true;
 					
-//					<MovementEngine.playBounceSound();
+					MovementEngine.playSound(solid.tag);
 					if (!(solid instanceof Quadrilateral)) {
 						Log.wtf(TAG, "Shouldnt collide with unsolid shape!");
 						continue;
@@ -118,8 +118,8 @@ public class Movable {
 	}
 
 	public void reset() {
-		speed.setDirection(0, 0, 0);
-		mShape.moveTo(mShape.origin);
+		speed.setDirection(Settings.getBallStartSpeed());		// watch out with new movables...
+		mShape.moveTo(Settings.getBallStartPosition());
 	}
 
 }

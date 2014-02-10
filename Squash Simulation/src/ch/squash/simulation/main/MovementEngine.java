@@ -114,14 +114,14 @@ public final class MovementEngine {
 		mMovables = movables.clone();
 
 		for (final Movable m : mMovables)		// watch out with new movables...
-			m.speed.setDirection(Settings.getBallStartSpeed());
+			m.reset();
 	}
 
 	public static void resetMovables() {
-		for (final Movable im : mInstance.mMovables) {		// watch out with new movables...
+		for (final Movable im : mInstance.mMovables) {
 			im.reset();
-			im.speed.setDirection(Settings.getBallStartSpeed());
 		}
+		Log.i(TAG, "Reset movables");
 	}
 
 	public static void toggleRunning() {
