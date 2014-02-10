@@ -136,6 +136,8 @@ public class MainActivity extends FragmentActivity implements
 				fragment = new MainSectionFragment();
 			} else if (position == 1) {
 				fragment = new SettingsSectionFragment();
+			} else if (position == 2) {
+				fragment = new InfoSectionFragment();
 			} else {
 				Log.e(TAG, "invalid position: " + position);
 			}
@@ -144,7 +146,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -155,6 +157,8 @@ public class MainActivity extends FragmentActivity implements
 				return getString(R.string.title_section1).toUpperCase(loc);
 			case 1:
 				return getString(R.string.title_section2).toUpperCase(loc);
+			case 2:
+				return getString(R.string.title_section3).toUpperCase(loc);
 			default:
 				Log.e(TAG, "Invalid tab position: " + position);
 			}
@@ -172,6 +176,10 @@ public class MainActivity extends FragmentActivity implements
 			// add squash view
 			final LinearLayout linlay = (LinearLayout) rootView
 					.findViewById(R.id.squashViewLayout);
+			
+			if (MainActivity.getActivity().mSquashView.getParent() != null)
+				((LinearLayout)MainActivity.getActivity().mSquashView.getParent()).removeView(MainActivity.getActivity().mSquashView);
+				
 			linlay.addView(MainActivity.getActivity().mSquashView);
 
 			return rootView;
@@ -183,6 +191,17 @@ public class MainActivity extends FragmentActivity implements
 		public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 				final Bundle savedInstanceState) {
 			final View rootView = inflater.inflate(R.layout.fragment_settings,
+					container, false);
+
+			return rootView;
+		}
+	}
+	
+	public static class InfoSectionFragment extends Fragment {
+		@Override
+		public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+				final Bundle savedInstanceState) {
+			final View rootView = inflater.inflate(R.layout.fragment_info,
 					container, false);
 
 			return rootView;

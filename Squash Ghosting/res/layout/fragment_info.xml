@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="*">
+    <TableRow>
+        <TextView
+            android:text="" />
+        <TextView
+            android:text="hard" />
+        <TextView
+            android:text="easy" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="min time per corner" />
+        <TextView
+            android:text="2.25" />
+        <TextView
+            android:text="3" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="max time per corner" />
+        <TextView
+            android:text="2.75" />
+        <TextView
+            android:text="3.5" />
+    </TableRow>
+        <TableRow>
+        <TextView
+            android:text="additional time in front" />
+        <TextView
+            android:text="0.5" />
+        <TextView
+            android:text="1" />
+    </TableRow>
+        <TableRow>
+        <TextView
+            android:text="additional time in back" />
+        <TextView
+            android:text="0.25" />
+        <TextView
+            android:text="1" />
+    </TableRow>
+</TableLayout>
