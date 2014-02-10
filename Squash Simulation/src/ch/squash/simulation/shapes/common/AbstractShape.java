@@ -118,10 +118,13 @@ public abstract class AbstractShape {
 		Matrix.setIdentityM(mModelMatrix, 0);
 		Matrix.translateM(mModelMatrix, 0, location.getX(), location.getY(), location.getZ());
 
-		if (isMovable() && Settings.isDrawForces())
-			for (final PhysicalVector v : mMovable.vectorArrows){
-				v.draw();
-			}
+		if (isMovable()){
+			if (Settings.isDrawForces())
+				for (final PhysicalVector v : mMovable.vectorArrows)
+					v.draw();
+			
+			mMovable.trace.draw();
+		}
 
 		// Pass in the position information
 		mPositions.position(0);

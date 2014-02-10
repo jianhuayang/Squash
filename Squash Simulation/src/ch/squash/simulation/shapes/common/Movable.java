@@ -16,6 +16,8 @@ public class Movable {
 	public final PhysicalVector normal;
 
 	public final PhysicalVector[] vectorArrows;
+	
+	public final Trace trace;
 
 	private long mNextMovement = System.currentTimeMillis(); // ms
 
@@ -32,6 +34,8 @@ public class Movable {
 		normal = new PhysicalVector("force_normal", origin.clone(), new float[3],
 				new float[] { 1, 1, 0, 1 });
 		vectorArrows = new PhysicalVector[] { gravitation, speed, normal };
+		
+		trace = new Trace(shape.tag + "\'s trace", shape.location.getX(), shape.location.getY(), shape.location.getZ(), null, new float[]{0, 0, 0, 1});
 	}
 
 	public void resetClock() {
