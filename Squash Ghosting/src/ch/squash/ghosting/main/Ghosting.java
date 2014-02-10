@@ -3,6 +3,8 @@ package ch.squash.ghosting.main;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +22,8 @@ public final class Ghosting {
 	private final TextView txtShotDuration;
 	private final TextView txtSeries;
 	private final TextView txtShotsTime; // unused atm
+	private final int mSoundBeep;
+	private final SoundPool mSoundPool;
 
 	private final static String TAG = Ghosting.class.getSimpleName();
 
@@ -47,6 +51,9 @@ public final class Ghosting {
 		txtShotsTime = (TextView) MainActivity.getActivity().findViewById(
 				R.id.txtShotsTime);
 
+		mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+		mSoundBeep = mSoundPool.load(MainActivity.getActivity(), R.raw.beep, 1);
+		
 		progress.setMax(100);
 	}
 
@@ -257,6 +264,9 @@ public final class Ghosting {
 				SquashView.setCornerColor(curCorner, getColor((float) curSteps
 						/ deltaSteps));
 				SquashView.setCornerVisible(curCorner, true);
+
+				mInstance.mSoundPool.play(mInstance.mSoundBeep, 1, 1, 1, 0, 1);
+				
 				final String durationString = Float.toString(curDuration);
 				MainActivity.getActivity().runOnUiThread(new Runnable() {
 					public void run() {
