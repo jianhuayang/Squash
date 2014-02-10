@@ -104,10 +104,12 @@ public class Movable {
 		}
 
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
+		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
 		final float[] distance = new float[3];
 		for (int i = 0; i < 3; i++)
-			distance[i] = (speed.getDirection()[i] * dt + 0.5f * totalForce.getDirection()[i] * dt * dt)
-								/ MovementEngine.SLOW_FACTOR;
+//			distance[i] = (speed.getDirection()[i] * dt + 0.5f * totalForce.getDirection()[i] * dt * dt)
+//								/ MovementEngine.SLOW_FACTOR;
+			distance[i] = speed.getDirection()[i] * dt;
 		
 		float[] destination = new float[3];
 		for (int i = 0; i < 3; i++)
