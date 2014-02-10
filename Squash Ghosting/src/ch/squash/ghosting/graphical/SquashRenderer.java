@@ -22,6 +22,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	private FloatBuffer[] cornerVertices;
 	private int cornerVertexCount;
 	private boolean[] cornerVisible;
+	private boolean[] cornerLineWhite;
 	private float[][] cornerColor;
 	private ShortBuffer[] cornerLineIndices;
 	private FloatBuffer[] cornerLineVertices;
@@ -35,9 +36,12 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 	private final static float DRAW_FACTOR = 0.18f;
 
-	public void setCornerVisible(final View view, final int corner,
-			final boolean visible) {
+	public void setCornerVisible(final int corner, final boolean visible) {
 		cornerVisible[corner] = visible;
+	}
+	
+	public void setCornerLineWhite(final int corner, final boolean white) {
+		cornerLineWhite[corner] = white;
 	}
 
 	public boolean getCornerVisible(final int corner) {
@@ -106,7 +110,11 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				continue;
 			}
 
-			glObject.glColor4f(0, 0, 0, 0);
+			if (cornerLineWhite[i])
+				glObject.glColor4f(1, 1, 1, 0);
+			else
+				glObject.glColor4f(0, 0, 0, 0);
+			
 			glObject.glVertexPointer(3, GL10.GL_FLOAT, 0, cornerLineVertices[i]);
 			glObject.glDrawElements(GL10.GL_LINE_LOOP, cornerLineVertexCount,
 					GL10.GL_UNSIGNED_SHORT, cornerLineIndices[i]);
@@ -346,5 +354,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 	public SquashRenderer() {
 		cornerVisible = new boolean[10];
+		cornerLineWhite = new boolean[10];
 	}
 }

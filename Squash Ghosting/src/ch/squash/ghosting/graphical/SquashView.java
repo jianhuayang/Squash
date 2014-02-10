@@ -46,7 +46,7 @@ public class SquashView extends GLSurfaceView {
     }
     
 	public static void setCornerVisible(final int corner, final boolean visible) {
-		mInstance.mRenderer.setCornerVisible(mInstance, corner, visible);
+		mInstance.mRenderer.setCornerVisible(corner, visible);
 	}
 	public static boolean getCornerVisible(final int corner) {
 		return mInstance.mRenderer.getCornerVisible(corner);
@@ -61,5 +61,8 @@ public class SquashView extends GLSurfaceView {
 		for (int i = 0; i < 10; i++){
 			setCornerVisible(i, false);
 		}
+	}
+	public static void setCornerLineWhite(final int corner, final boolean white){
+		mInstance.mRenderer.setCornerLineWhite(corner, white);
 	}
 }

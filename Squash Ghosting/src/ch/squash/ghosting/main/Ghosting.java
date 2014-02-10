@@ -157,7 +157,10 @@ public final class Ghosting {
 		final float backDuration = Float.parseFloat(Settings.getBackTime());
 		final int totalSeries = Settings.getSeries();
 		final int breakDuration = Settings.getBreak();
-
+		
+		int lastCorner = -1;
+		boolean lastCornerWhite = false;
+		
 		// countdown
 		try {
 			Thread.sleep(1000);
@@ -247,6 +250,10 @@ public final class Ghosting {
 						+ ", duration=" + curDuration);
 
 				// update views; corner and text that shows duration
+				SquashView.setCornerLineWhite(curCorner, curCorner == lastCorner && !lastCornerWhite);
+				lastCornerWhite = curCorner == lastCorner && !lastCornerWhite;
+				lastCorner = curCorner;
+				
 				SquashView.setCornerColor(curCorner, getColor((float) curSteps
 						/ deltaSteps));
 				SquashView.setCornerVisible(curCorner, true);
@@ -320,11 +327,6 @@ public final class Ghosting {
 						mInstance.txtShotDuration.setText("");
 					}
 				});
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Log.e(TAG, "Error while sleeping", e);
-				}
 			}
 		}
 		Log.w(TAG, "Finished doing " + Settings.getSeries() + " series.");
