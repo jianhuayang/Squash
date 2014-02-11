@@ -72,6 +72,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		}
 		return mInstance;
 	}
+
+	public boolean setCameraRotation = true;		// set rotation on startup
 	
 	public SquashRenderer() {
 		// add objects
@@ -225,7 +227,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		Log.i(TAG, "Surface changed");
 	}
-
+	
 	@Override
 	public void onDrawFrame(final GL10 glUnused) {
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -237,10 +239,13 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		if (Settings.isCameraRotating())
 			Matrix.rotateM(mViewMatrix, 0, angleInDegrees - oldAngle, 0.0f,
 					1.0f, 0.0f);
-		else {
+		else if (setCameraRotation){
+			setCameraRotation = false;
+			resetCamera();
 			Matrix.rotateM(mViewMatrix, 0, 90 * (Settings.getCameraMode() - 1),
-					0.0f, 1.0f, 0.0f);
+					0.0f, 1.0f, 0.0f);	
 		}
+		
 		oldAngle = angleInDegrees;
 
 		// Set our per-vertex lighting program.

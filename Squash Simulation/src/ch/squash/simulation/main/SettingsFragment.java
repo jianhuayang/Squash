@@ -90,6 +90,8 @@ public class SettingsFragment extends PreferenceFragment implements
 						Settings.isObjectCollectionVisible(i));
 		} else if (key.equals(Settings.getKeyReset()) && Settings.isReset())
 			MovementEngine.resetMovables();
+		else if (key.equals(Settings.getKeyCameraMode()))
+			SquashRenderer.getInstance().setCameraRotation = true;
 		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyCameraPositionZ()))
 			SquashRenderer.getInstance().resetCamera();
 		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ())){
