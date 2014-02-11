@@ -238,7 +238,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			Matrix.rotateM(mViewMatrix, 0, angleInDegrees - oldAngle, 0.0f,
 					1.0f, 0.0f);
 		else {
-			resetCamera();
 			Matrix.rotateM(mViewMatrix, 0, 90 * (Settings.getCameraMode() - 1),
 					0.0f, 1.0f, 0.0f);
 		}
