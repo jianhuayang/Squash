@@ -54,6 +54,9 @@ public class Movable {
 					Log.e(TAG, "Error while sleeping", e);
 				}
 
+		if (!MovementEngine.isRunning())
+			return;
+		
 		move(MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f);
 //		Log.d(TAG, "sleep=" + sleep + "ms, movementduration=" + (System.currentTimeMillis() - now - sleep) + "ms");
 	}
@@ -106,7 +109,10 @@ public class Movable {
 				}
 			}
 		}
-
+		
+		if (!MovementEngine.isRunning())
+			return;
+		
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
 		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
 		final float[] distance = new float[3];
