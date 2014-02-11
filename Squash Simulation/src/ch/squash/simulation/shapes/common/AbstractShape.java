@@ -166,19 +166,17 @@ public abstract class AbstractShape {
 	}
 
 	public void move(final IVector dv) {
-		location.setDirection(location.getX() + dv.getX(), location.getY() + dv.getY(), location.getZ() + dv.getZ());
-
-		if (isMovable())
-			for (final PhysicalVector gs : mMovable.vectorArrows)
-				gs.move(dv);
+		moveTo(location.add(dv));
 	}
 
 	public void moveTo(final IVector dv) {
 		location.setDirection(dv.getX(), dv.getY(), dv.getZ());
 
-		if (isMovable())
+		if (isMovable()){
 			for (final PhysicalVector gs : mMovable.vectorArrows)
 				gs.moveTo(dv);
+			mMovable.trace.addPoint(dv);
+		}
 	}
 
 	public static boolean areEqual(final float a, final float b) {
