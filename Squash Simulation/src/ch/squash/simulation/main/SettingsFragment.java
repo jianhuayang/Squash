@@ -77,7 +77,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		findPreference(Settings.getKeyBallSpeedX()).setSummary(getSummary(Settings.getKeyBallSpeedX()));
 		findPreference(Settings.getKeyBallSpeedY()).setSummary(getSummary(Settings.getKeyBallSpeedY()));
 		findPreference(Settings.getKeyBallSpeedZ()).setSummary(getSummary(Settings.getKeyBallSpeedZ()));
-		
+
 		Log.i(TAG, "SettingsFragment created");
 	}
 

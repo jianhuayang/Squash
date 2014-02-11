@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import ch.squash.simulation.R;
 import ch.squash.simulation.main.SquashActivity;
 import ch.squash.simulation.main.SquashRenderer;
@@ -127,6 +128,11 @@ public final class Settings {
 		editor.putBoolean(key, value);
 		editor.commit();
 	}
+	public static void setString(final String key, final String value) {
+		final Editor editor = getInstance().mSharedPrefs.edit();
+		editor.putString(key, value);
+		editor.commit();
+	}
 
 	// access
 	public static Object getValue(final String key){
@@ -183,23 +189,65 @@ public final class Settings {
 	}
 	
 	public static IVector getCameraPosition(){
-		return new Vector(
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_X, "0")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Y, "-1.5")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Z, "2.75")));
+		final IVector result;
+		try{
+			result = new Vector(
+					Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_X, 
+							SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_x))),
+					Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Y,
+							SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_y))),
+					Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_Z, 
+							SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_z))));
+		} catch (NumberFormatException nfe){
+			Log.e(TAG, "Cannot parse float:", nfe);
+			setString(getInstance().KEY_CAMERA_POSITION_X, SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_x));
+			setString(getInstance().KEY_CAMERA_POSITION_Y, SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_y));
+			setString(getInstance().KEY_CAMERA_POSITION_Z, SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_z));
+			Toast.makeText(SquashActivity.getInstance(), "Reset camera position", Toast.LENGTH_SHORT).show();
+			return getCameraPosition();
+		}
+		return result;
 	}
 
 	public static IVector getBallStartPosition(){
-		return new Vector(
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_X, "-2")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Y, "1")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Z, "0")));
+		final IVector result; 
+		try{
+			result = new Vector(
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_X,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_x))),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Y,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_y))),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_Z,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_z))));
+		} catch (NumberFormatException nfe){
+			Log.e(TAG, "Cannot parse float:", nfe);
+			setString(getInstance().KEY_BALL_POSITION_X, SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_x));
+			setString(getInstance().KEY_BALL_POSITION_Y, SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_y));
+			setString(getInstance().KEY_BALL_POSITION_Z, SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_z));
+			Toast.makeText(SquashActivity.getInstance(), "Reset ball position", Toast.LENGTH_SHORT).show();
+			return getBallStartPosition();
+		}
+		return result;
 	}
 	
 	public static IVector getBallStartSpeed(){
-		return new Vector(
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_X, "3")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Y, "1")),
-				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Z, "-1")));
+		final IVector result; 
+		try{
+			result = new Vector(
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_X,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_x))),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Y,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_y))),
+				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_Z,
+						SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_z))));
+		} catch (NumberFormatException nfe){
+			Log.e(TAG, "Cannot parse float:", nfe);
+			setString(getInstance().KEY_BALL_SPEED_X, SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_x));
+			setString(getInstance().KEY_BALL_SPEED_Y, SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_y));
+			setString(getInstance().KEY_BALL_SPEED_Z, SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_z));
+			Toast.makeText(SquashActivity.getInstance(), "Reset ball speed", Toast.LENGTH_SHORT).show();
+			return getBallStartSpeed();
+		}
+		return result;
 	}
 }

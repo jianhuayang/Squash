@@ -35,51 +35,51 @@
         android:title="@string/title_vectors" >
         <PreferenceCategory android:title="@string/title_camera_position" >
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_camera_position_x"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_camera_position_x" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_camera_position_y"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_camera_position_y" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_camera_position_z"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_camera_position_z" >
             </EditTextPreference>
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/title_ball_position" >
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_position_x"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_position_x" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_position_y"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_position_y" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_position_z"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_position_z" >
             </EditTextPreference>
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/title_ball_speed" >
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_speed_x"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_speed_x" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_speed_y"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_speed_y" >
             </EditTextPreference>
             <EditTextPreference
-                android:defaultValue="0"
+                android:defaultValue="@string/default_ball_speed_z"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_ball_speed_z" >
             </EditTextPreference>
