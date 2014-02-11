@@ -35,7 +35,7 @@ public class Movable {
 				new float[] { 1, 1, 0, 1 });
 		vectorArrows = new PhysicalVector[] { gravitation, speed, normal };
 		
-		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{0, 0, 0, 1});
+		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{ 0.35f, 0.35f, 0.35f, 1 });
 	}
 
 	public void resetClock() {
@@ -64,22 +64,26 @@ public class Movable {
 	// move in seconds to use Si-units
 	private void move(float dt) {
 		// add forces
-		IVector totalForce = new Vector(gravitation.getDirection()).multiply(1 / MovementEngine.SLOW_FACTOR);
-
+		IVector totalForce = new Vector(gravitation.getDirection());
+		
 		// calculate new speed v = v0 + a*t
 		speed.setDirection(
 				(speed.getDirection()[0] + totalForce.getX() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
 				(speed.getDirection()[1] + totalForce.getY() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
 				(speed.getDirection()[2] + totalForce.getZ() * dt) * MovementEngine.AIR_FRICTION_FACTOR);
+
+		// calculate travelling distance s = v0*t + 1/2*a*t^2
+		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
+		final IVector distance = speed.multiply(dt * MovementEngine.SLOW_FACTOR);
 				
-		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + speed.multiply(dt));
+		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance);
 		
 		boolean collided = true;
 		while (collided){
 			collided = false;
 			
 			for (final AbstractShape solid : SquashRenderer.getInstance().courtSolids) {
-				final Collision collision = Collision.getCollision(mShape, speed.multiply(dt), solid);
+				final Collision collision = Collision.getCollision(mShape, distance, solid);
 	
 				if (collision != null) {
 					collided = true;
@@ -92,13 +96,13 @@ public class Movable {
 					
 //					totalForce = (Vector) totalForce.add(collision.normalForce.multiply(30));
 					
-					dt = dt * (1 - collision.travelPercentage);
+//					dt = dt * (1 - collision.travelPercentage);
 	
 					mShape.moveTo(collision.collisionPoint);
 	
 					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
 					final IVector oldSpeed = speed.multiply(1);	// get a copy of the current speed
-					final IVector newSpeed = (Vector) speed.add(n.multiply(-2 * speed.multiply(n)));	// formula for ausfallswinkel
+					final IVector newSpeed = (Vector) speed.add(n.multiply(-2 * speed.multiply(n))).multiply(MovementEngine.COLLISION_FRICTION_FACTOR);	// formula for ausfallswinkel
 					
 					speed.setDirection(newSpeed.getX(), newSpeed.getY(), newSpeed.getZ());
 					
@@ -113,20 +117,7 @@ public class Movable {
 		if (!MovementEngine.isRunning())
 			return;
 		
-		// calculate travelling distance s = v0*t + 1/2*a*t^2
-		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
-		final float[] distance = new float[3];
-		for (int i = 0; i < 3; i++)
-//			distance[i] = (speed.getDirection()[i] * dt + 0.5f * totalForce.getDirection()[i] * dt * dt)
-//								/ MovementEngine.SLOW_FACTOR;
-			distance[i] = speed.getDirection()[i] * dt;
-		
-		float[] destination = new float[3];
-		for (int i = 0; i < 3; i++)
-			destination[i] = mShape.location.getDirection()[i]
-					+ distance[i];
-
-		mShape.moveTo(new Vector(destination));
+		mShape.moveTo(mShape.location.add(distance));
 	}
 
 	public void reset() {

@@ -6,7 +6,6 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 import ch.squash.simulation.R;
-import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
@@ -18,9 +17,9 @@ public final class MovementEngine {
 	private final static int INTERVAL = 10; // ms
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 5000;		// ms
-	public final static int SLOW_FACTOR = 1;
-	public final static float AIR_FRICTION_FACTOR = 0.99f;
-	public final static float COLLISION_FRICTION_FACTOR = 0.75f;
+	public final static float SLOW_FACTOR = 1f;
+	public final static float AIR_FRICTION_FACTOR = 0.97f;
+	public final static float COLLISION_FRICTION_FACTOR = 0.8f;
 	private final int mSoundBounce;
 //	private final int mSoundFloor;
 	private final int mSoundFrontWall;
