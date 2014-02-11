@@ -17,7 +17,7 @@ public class Movable {
 
 	public final PhysicalVector[] vectorArrows;
 	
-	public final Trace trace;
+	public final Trace mTrace;
 
 	private long mNextMovement = System.currentTimeMillis(); // ms
 
@@ -35,7 +35,7 @@ public class Movable {
 				new float[] { 1, 1, 0, 1 });
 		vectorArrows = new PhysicalVector[] { gravitation, speed, normal };
 		
-		trace = new Trace(shape.tag + "\'s trace", shape.location.getX(), shape.location.getY(), shape.location.getZ(), null, new float[]{0, 0, 0, 1});
+		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{0, 0, 0, 1});
 	}
 
 	public void resetClock() {
@@ -87,7 +87,7 @@ public class Movable {
 						continue;
 					}
 					
-	//				totalForce = (Vector) totalForce.add(collision.normalForce);
+//					totalForce = (Vector) totalForce.add(collision.normalForce.multiply(30));
 					
 					dt = dt * (1 - collision.travelPercentage);
 	
@@ -125,6 +125,7 @@ public class Movable {
 
 	public void reset() {
 		speed.setDirection(Settings.getBallStartSpeed());		// watch out with new movables...
+		mTrace.reset();
 		mShape.moveTo(Settings.getBallStartPosition());
 	}
 

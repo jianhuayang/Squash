@@ -8,6 +8,7 @@ public class Trace extends AbstractShape {
 	public final static float MIN_DISTANCE_OF_POINTS = 0.02f;
 	public final static int MAX_TRACE_SEGMENTS = 50;
 	private final IVector[] mPoints = new IVector[MAX_TRACE_SEGMENTS + 1];
+	private boolean isReset;
 	
 	private Trace mNextTrace;
 	
@@ -16,7 +17,7 @@ public class Trace extends AbstractShape {
 	private int mTraceIndex = 0;
 	
 	public void addPoint(IVector point){		
-		if (mNextTrace != null){
+		if (mNextTrace != null && !mNextTrace.isReset){
 			mNextTrace.addPoint(point);
 			return;
 		}
@@ -27,10 +28,17 @@ public class Trace extends AbstractShape {
 			return;
 		}
 		else if (mTraceIndex == mPoints.length){
-			// start new trace if current list is full
-			mNextTrace = new Trace(tag, 0, 0, 0, null, mColor);
+			// see if there's a re-usable trace
+			if (mNextTrace != null){
+				// reuse trace
+				mNextTrace.isReset = false;
+				Log.w(TAG, "Re-using old trace of " + tag);
+			}else{
+				// start new trace if current list is full
+				mNextTrace = new Trace(tag, 0, 0, 0, null, mColor);
+				Log.w(TAG, "Adding new trace to " + tag);
+			}
 			mNextTrace.addPoint(point);
-			Log.w(TAG, "Adding new trace to " + tag);
 		}
 		else if (AbstractShape.getPointPointDistance(mPoints[mTraceIndex - 1].getDirection(), point.getDirection()) >= MIN_DISTANCE_OF_POINTS)
 			// add new point to current list if it's enough far away from last point in list
@@ -56,6 +64,18 @@ public class Trace extends AbstractShape {
 		initialize(GLES20.GL_LINES, SolidType.NONE, null);
 	}
 
+	public void reset(){
+		if (mNextTrace != null && !mNextTrace.isReset)
+			mNextTrace.reset();
+		
+		mPositions.position(0);
+		mPositions.put(new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2]);
+		mPositions.position(0);
+		mTraceIndex = 0;
+		
+		isReset = true;
+	}
+	
 	@Override
 	protected float[] getColorData(float[] color) {
 		final float[] result = new float[(MAX_TRACE_SEGMENTS + 2) * 2 * color.length];
@@ -69,7 +89,7 @@ public class Trace extends AbstractShape {
 	public void draw() {
 		super.draw();
 		
-		if (mNextTrace != null)
+		if (mNextTrace != null && !mNextTrace.isReset)
 			mNextTrace.draw();
 	}
 }

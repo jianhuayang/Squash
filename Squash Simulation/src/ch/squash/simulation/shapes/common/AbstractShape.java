@@ -123,7 +123,7 @@ public abstract class AbstractShape {
 				for (final PhysicalVector v : mMovable.vectorArrows)
 					v.draw();
 			
-			mMovable.trace.draw();
+			mMovable.mTrace.draw();
 		}
 
 		// Pass in the position information
@@ -175,7 +175,7 @@ public abstract class AbstractShape {
 		if (isMovable()){
 			for (final PhysicalVector gs : mMovable.vectorArrows)
 				gs.moveTo(dv);
-			mMovable.trace.addPoint(dv);
+			mMovable.mTrace.addPoint(dv);
 		}
 	}
 
