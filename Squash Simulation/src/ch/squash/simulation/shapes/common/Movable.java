@@ -18,6 +18,7 @@ public class Movable {
 	public final PhysicalVector[] vectorArrows;
 	
 	public final Trace mTrace;
+	public Collision lastMovementCollision;
 
 	private long mNextMovement = System.currentTimeMillis(); // ms
 
@@ -32,7 +33,7 @@ public class Movable {
 		speed = new PhysicalVector("speed", origin.clone(), new float[3], new float[] {
 				0.5f, 0f, 0.5f, 1 });
 		normal = new PhysicalVector("force_normal", origin.clone(), new float[3],
-				new float[] { 1, 1, 0, 1 });
+				new float[] { 0, 0.8f, 0.8f, 1 });
 		vectorArrows = new PhysicalVector[] { gravitation, speed, normal };
 		
 		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{ 0.35f, 0.35f, 0.35f, 1 });
@@ -53,6 +54,8 @@ public class Movable {
 				} catch (InterruptedException e) {
 					Log.e(TAG, "Error while sleeping", e);
 				}
+		else
+			Log.w(TAG, "Calculating last round of movements took too long: " + (MovementEngine.DELAY_BETWEEN_MOVEMENTS - sleep) + "ms, should be under " + MovementEngine.DELAY_BETWEEN_MOVEMENTS + "ms");
 
 		if (!MovementEngine.isRunning())
 			return;
@@ -65,6 +68,15 @@ public class Movable {
 	private void move(float dt) {
 		// add forces
 		IVector totalForce = new Vector(gravitation.getDirection());
+
+		normal.setDirection(0, 0, 0);
+		for (final AbstractShape s : SquashRenderer.getInstance().courtSolids)
+			if (Collision.isOnSolid(mShape, s)){
+				final IVector n = ((Quadrilateral)s).getNormalizedVector().multiply(getGravitation().getLength());
+				totalForce = totalForce.add(n);
+				
+				normal.setDirection(n);
+			}
 		
 		// calculate new speed v = v0 + a*t
 		speed.setDirection(
@@ -76,17 +88,18 @@ public class Movable {
 		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
 		final IVector distance = speed.multiply(dt * MovementEngine.SLOW_FACTOR);
 				
-		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance);
+		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance + ", force=" + totalForce);
 		
 		boolean collided = true;
 		while (collided){
 			collided = false;
 			
 			for (final AbstractShape solid : SquashRenderer.getInstance().courtSolids) {
-				final Collision collision = Collision.getCollision(mShape, distance, solid);
+				final Collision collision = Collision.getCollision(mShape, distance, solid, lastMovementCollision);
 	
 				if (collision != null) {
 					collided = true;
+					lastMovementCollision = collision;
 					
 					MovementEngine.playSound(solid.tag);
 					if (!(solid instanceof Quadrilateral)) {
@@ -94,25 +107,27 @@ public class Movable {
 						continue;
 					}
 					
-//					totalForce = (Vector) totalForce.add(collision.normalForce.multiply(30));
-					
-//					dt = dt * (1 - collision.travelPercentage);
-	
 					mShape.moveTo(collision.collisionPoint);
 	
 					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
 					final IVector oldSpeed = speed.multiply(1);	// get a copy of the current speed
-					final IVector newSpeed = (Vector) speed.add(n.multiply(-2 * speed.multiply(n))).multiply(MovementEngine.COLLISION_FRICTION_FACTOR);	// formula for ausfallswinkel
+					final IVector newSpeed = (speed.add(n.multiply(-2 * speed.multiply(n)))).multiply(MovementEngine.COLLISION_FRICTION_FACTOR);	// formula for ausfallswinkel
 					
-					speed.setDirection(newSpeed.getX(), newSpeed.getY(), newSpeed.getZ());
+					speed.setDirection(newSpeed);
 					
-					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", normal=" + n + ", location=" + mShape.location);
+					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", location=" + mShape.location);
+
+					dt = dt * (1 - collision.travelPercentage);
 					
+					move(dt);
 					return;
 //					break;
 				}
 			}
 		}
+		
+		if (!collided)
+			lastMovementCollision = null;
 		
 		if (!MovementEngine.isRunning())
 			return;

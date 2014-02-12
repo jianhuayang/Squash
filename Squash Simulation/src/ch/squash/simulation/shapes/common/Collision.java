@@ -19,8 +19,39 @@ public final class Collision {
 		this.normalForce = normalForce;
 		this.solidNormalVector = solidNormalVector;
 	}
+	
+	public static boolean isOnSolid(final AbstractShape moving, final AbstractShape stationary){
+		String error = null;
 
-	public static Collision getCollision(final AbstractShape moving, final IVector travelled, final AbstractShape stationary) {
+		// ensure we got valid parameters
+		if (moving.getSolidType() == SolidType.NONE
+				|| stationary.getSolidType() == SolidType.NONE)
+			error = "Checking collision of unsolid shapes";
+		if (!moving.isMovable())
+			error = "Moving shape is not moving";
+		if (moving.getMovable().speed.getLength() == 0)
+			error = "Moving shape is not moving";
+		if (stationary.isMovable()
+				&& stationary.getMovable().speed.getLength() != 0)
+			error = "Stationary shape is moving";
+		if (moving.getSolidType() != SolidType.SPHERE
+				|| stationary.getSolidType() != SolidType.AREA)
+			error = "Checking collision of unknown types";
+
+		if (error != null) {
+			Log.e(TAG, error);
+			return false;
+		}
+
+		if (moving instanceof Ball && stationary instanceof Quadrilateral)
+			return isBallOnQuadrilateral((Ball) moving, (Quadrilateral) stationary);
+
+		Log.e(TAG, "Handling collision between " + moving + " and "
+				+ stationary + " not implemented");
+		return false;
+	}
+
+	public static Collision getCollision(final AbstractShape moving, final IVector travelled, final AbstractShape stationary, final Collision lastMovementCollision) {
 		String error = null;
 
 		// ensure we got valid parameters
@@ -45,25 +76,22 @@ public final class Collision {
 
 		if (moving instanceof Ball && stationary instanceof Quadrilateral)
 			return getBallQuadrilateralCollision((Ball) moving, travelled,
-					(Quadrilateral) stationary);
+					(Quadrilateral) stationary, lastMovementCollision);
 
 		Log.e(TAG, "Handling collision between " + moving + " and "
 				+ stationary + " not implemented");
 		return null;
 	}
 	
+	private static boolean isBallOnQuadrilateral(final Ball ball, final Quadrilateral quad){
+		return AbstractShape.areEqual(0, quad.getDistanceToPoint(ball.location));
+	}
+	
 	private static Collision getBallQuadrilateralCollision(final Ball ball, final IVector travelled,
-			final Quadrilateral quad) {
+			final Quadrilateral quad, final Collision lastMovementCollision) {
 		// TODO: Not treat ball as a point anymore (but as a sphere)		
 		// get distance to quad
 		final float distanceToQuad = quad.getDistanceToPoint(ball.location);
-		
-		// PROBLEM IS HERE: Sometimes, if the ball is on the quad, there is a collision, sometimes not
-		// need to figure out which are collisions...
-		if (AbstractShape.areEqual(0, distanceToQuad)){
-			Log.w(TAG, "Returning null because distancetoquad is zero");
-			return null;
-		}
 		
 		// if the quad is too far away, return
 		if (distanceToQuad > travelled.getLength())
@@ -71,6 +99,16 @@ public final class Collision {
 		
 		final IVector intersection = 
 				quad.getIntersectionWithPlane(ball.location, travelled);
+		
+		// PROBLEM IS HERE: Sometimes, if the ball is on the quad, there is a collision, sometimes not
+		// need to figure out which are collisions...
+		if (AbstractShape.areEqual(0, distanceToQuad)){
+			// no collision if last movement ended in a collision on the same point
+			if (lastMovementCollision != null && lastMovementCollision.collisionPoint.equals(intersection)){
+				Log.i(TAG, "Ignoring collision because another collision happened on last move on same point");
+				return null;
+			}
+		}
 		
 		final float lambdax = (intersection.getX() - ball.location.getX()) / travelled.getX();
 		final float lambday = (intersection.getY() - ball.location.getY()) / travelled.getY();
