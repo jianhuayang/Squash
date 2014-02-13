@@ -241,7 +241,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					1.0f, 0.0f);
 		else if (setCameraRotation){
 			setCameraRotation = false;
-			resetCamera();
+//			resetCamera();
 			Matrix.rotateM(mViewMatrix, 0, 90 * (Settings.getCameraMode() - 1),
 					0.0f, 1.0f, 0.0f);	
 		}
@@ -359,8 +359,10 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public void resetCamera() {
 		Matrix.setIdentityM(mViewMatrix, 0);
 		
-		final IVector camPos = Settings.getCameraPosition(); 
+		final IVector camPos = Settings.getCameraPosition().multiply(-1); 
 		Matrix.translateM(mViewMatrix, 0, camPos.getX(), camPos.getY(), camPos.getZ());
+		
+		setCameraRotation = true;
 	}
 
 	public void setObjectVisibility(final int objectId, final boolean visible) {

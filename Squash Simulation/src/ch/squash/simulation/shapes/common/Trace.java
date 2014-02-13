@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class Trace extends AbstractShape {
 	private final static String TAG = Trace.class.getSimpleName();
-	public final static float MIN_DISTANCE_OF_POINTS = 0.02f;
+	public final static float MIN_DISTANCE_OF_POINTS = 0.01f;
 	public final static int MAX_TRACE_SEGMENTS = 50;
 	private final IVector[] mPoints = new IVector[MAX_TRACE_SEGMENTS + 1];
 	private boolean isReset;

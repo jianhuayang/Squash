@@ -18,8 +18,7 @@ public final class MovementEngine {
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 5000;		// ms
 	public final static float SLOW_FACTOR = 1f;
-	public final static float AIR_FRICTION_FACTOR = 0.97f;
-	public final static float COLLISION_FRICTION_FACTOR = 0.8f;
+	public final static float COLLISION_FRICTION_FACTOR = 0.575f;
 	private final int mSoundBounce;
 //	private final int mSoundFloor;
 	private final int mSoundFrontWall;
