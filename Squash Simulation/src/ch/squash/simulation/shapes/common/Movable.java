@@ -4,6 +4,7 @@ import android.util.Log;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.Ball;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
@@ -14,6 +15,7 @@ public class Movable {
 	public final PhysicalVector gravitation;
 	public final PhysicalVector speed;
 	public final PhysicalVector normal;
+	public final PhysicalVector airFriction;
 
 	public final PhysicalVector[] vectorArrows;
 	
@@ -34,7 +36,10 @@ public class Movable {
 				0.5f, 0f, 0.5f, 1 });
 		normal = new PhysicalVector("force_normal", origin.clone(), new float[3],
 				new float[] { 0, 0.8f, 0.8f, 1 });
-		vectorArrows = new PhysicalVector[] { gravitation, speed, normal };
+		airFriction = new PhysicalVector("air_friction", origin.clone(), new float[3], new float[] {
+				0.7f, 0.5f, 0, 1 });
+		
+		vectorArrows = new PhysicalVector[] { gravitation, speed, normal, airFriction };
 		
 		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{ 0.35f, 0.35f, 0.35f, 1 });
 	}
@@ -66,9 +71,17 @@ public class Movable {
 	
 	// move in seconds to use Si-units
 	private void move(float dt) {
+		// prepare air friction
+		IVector totalForce = speed.getNormalizedVector().multiply(
+				-((Ball)mShape).FRICTION_CONSTANT * speed.getLength() * speed.getLength());
+		airFriction.setDirection(totalForce);
+		
 		// add forces
-		IVector totalForce = new Vector(gravitation.getDirection());
-
+		totalForce = totalForce.add(gravitation);
+		
+//		gravitation.setDirection(gravitation.multiply(0.5f));	// for drawing purposes
+		airFriction.setDirection(airFriction.multiply(5));		// for drawing purposes
+		
 		normal.setDirection(0, 0, 0);
 		for (final AbstractShape s : SquashRenderer.getInstance().courtSolids)
 			if (Collision.isOnSolid(mShape, s)){
@@ -77,13 +90,11 @@ public class Movable {
 				
 				normal.setDirection(n);
 			}
-		
+	
 		// calculate new speed v = v0 + a*t
-		speed.setDirection(
-				(speed.getDirection()[0] + totalForce.getX() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
-				(speed.getDirection()[1] + totalForce.getY() * dt) * MovementEngine.AIR_FRICTION_FACTOR,
-				(speed.getDirection()[2] + totalForce.getZ() * dt) * MovementEngine.AIR_FRICTION_FACTOR);
-
+		speed.setDirection(speed.add(totalForce.multiply(dt)));
+		Log.w(TAG, "speed=" + speed + ", airfr=" + airFriction + ", grav=" + gravitation + ", total=" + totalForce + ", n=" + normal);
+		
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
 		// PROBABLY WRONG!!! during the interval, the motion is described as gleichfoermig, not gleichmaessig beschleunigt
 		final IVector distance = speed.multiply(dt * MovementEngine.SLOW_FACTOR);
@@ -137,6 +148,7 @@ public class Movable {
 
 	public void reset() {
 		speed.setDirection(Settings.getBallStartSpeed());		// watch out with new movables...
+		airFriction.setDirection(0, 0, 0);
 		mTrace.reset();
 		mShape.moveTo(Settings.getBallStartPosition());
 	}
