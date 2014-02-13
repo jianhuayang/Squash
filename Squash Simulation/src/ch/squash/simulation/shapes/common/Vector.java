@@ -105,7 +105,7 @@ public class Vector implements IVector {
 
 	@Override
 	public IVector getNormalizedVector() {
-		return getLength() == 0 ? null : multiply(1 / getLength());
+		return getLength() == 0 ? this : multiply(1 / getLength());
 	}
 
 	@Override

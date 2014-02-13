@@ -82,7 +82,7 @@ public class VectorTest extends TestCase {
 	}
 
 	public void testGetNormalizedVector() {
-		assertEquals(null, v0.getNormalizedVector());
+		assertEquals(new Vector(0, 0, 0), v0.getNormalizedVector());
 		assertEquals(new Vector(1, 0, 0), v1.getNormalizedVector());
 		assertEquals(new Vector(0, 1, 0), v2.getNormalizedVector());
 		assertEquals(new Vector(0, 0, 1), v3.getNormalizedVector());
