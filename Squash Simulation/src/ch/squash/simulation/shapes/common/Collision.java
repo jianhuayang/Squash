@@ -100,6 +100,10 @@ public final class Collision {
 		final IVector intersection = 
 				quad.getIntersectionWithPlane(ball.location, travelled);
 		
+		// no collision possible if the ball is parallel to the quad
+		if (intersection == null)
+			return null;
+		
 		// PROBLEM IS HERE: Sometimes, if the ball is on the quad, there is a collision, sometimes not
 		// need to figure out which are collisions...
 		if (AbstractShape.areEqual(0, distanceToQuad)){
