@@ -8,16 +8,28 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 public final class Collision {
 	private final static String TAG = Collision.class.getSimpleName();
 
+	// point where collision took place
 	public final IVector collisionPoint;
+	
+	// percentage of travelled distance until collision
 	public final float travelPercentage;
+	
+	// normal force of solid onto movable
 	public final IVector normalForce;
+
+	// normal vector of solid
 	public final IVector solidNormalVector;
 	
-	private Collision(final IVector collisionPoint, final float travelPercentage, final IVector normalForce, final IVector solidNormalVector) {
+	// angle between incoming trajectory and solid (0 = parallel, pi/2 = vertical)
+	public final float collisionAngle;
+	
+	private Collision(final IVector collisionPoint, final float travelPercentage, 
+			final IVector normalForce, final IVector solidNormalVector, final float angle) {
 		this.collisionPoint = collisionPoint;
 		this.travelPercentage = travelPercentage;
 		this.normalForce = normalForce;
 		this.solidNormalVector = solidNormalVector;
+		this.collisionAngle = angle;
 	}
 	
 	public static boolean isOnSolid(final AbstractShape moving, final AbstractShape stationary){
@@ -143,8 +155,8 @@ public final class Collision {
 		// collision happens, return collision object	
 		// TODO: check necessity of parameters for collision ctor
 		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
-		Log.w(TAG, "Ball is at " + ball.location + ", travelling " + travelled + " to inters=" + intersection);
-		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector());
+//		Log.w(TAG, "Ball is at " + ball.location + ", travelling " + travelled + " to inters=" + intersection);
+		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector(), getIncidenceAngle(travelled, quad.getNormalVector()));
 	}
 
 	private static IVector getNormalForce(final IVector areaNormal){
@@ -152,5 +164,11 @@ public final class Collision {
 		final float angle = (float) Math.acos(areaNormal.multiply(a) / areaNormal.getLength() / a.getLength());
 		
 		return Movable.getGravitation().multiply(-(float)Math.cos(angle));
+	}
+	
+	private static float getIncidenceAngle(final IVector trajectory, final IVector solidNormal){
+		final float angle = trajectory.getAngle(solidNormal);
+		
+		return (float)(angle - Math.PI / 2); 
 	}
 }
