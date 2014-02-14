@@ -23,7 +23,7 @@ public class Vector implements IVector {
 	public float multiply(final IVector other) {
 		float result = 0;
 		for (int i = 0; i < DIMENSION; i++)
-			result += mDirection[i] * ((Vector) other).mDirection[i];
+			result += mDirection[i] * other.getDirection()[i];
 
 		return result;
 	}
