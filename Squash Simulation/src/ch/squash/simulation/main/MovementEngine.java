@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
+import android.widget.Toast;
 import ch.squash.simulation.R;
 import ch.squash.simulation.shapes.common.Movable;
 
@@ -18,7 +19,8 @@ public final class MovementEngine {
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 5000;		// ms
 	public final static float SLOW_FACTOR = 1f;
-	public final static float COLLISION_FRICTION_FACTOR = 0.575f;
+	public final static float COLLISION_FRICTION_FACTOR = 0.75f;	// value >=0; 0 = no friction, 1 = "normal" friction, 2 = "double" friction
+	public final static float COLLISION_REFRACTION_FACTOR = 0.45f;	// usage same as friction factor 
 	private final int mSoundBounce;
 //	private final int mSoundFloor;
 	private final int mSoundFrontWall;
@@ -64,6 +66,12 @@ public final class MovementEngine {
 		isRunning = false;
 		
 		Log.w(TAG, "MovementEngine has stopped");
+
+		SquashActivity.getInstance().runOnUiThread(new Runnable() {
+			public void run() {
+				Toast.makeText(SquashActivity.getInstance(), "MovementEngine stopped automatically", Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 
 	public static void playSound(final String desc) {
