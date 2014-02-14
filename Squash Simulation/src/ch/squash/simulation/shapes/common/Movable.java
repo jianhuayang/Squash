@@ -80,30 +80,19 @@ public class Movable {
 	// move in seconds to use Si-units
 	private void move(float dt) {
 		// prepare air friction
-		IVector totalForce = speed.getNormalizedVector().multiply(
+		final IVector totalForce = speed.getNormalizedVector().multiply(
 				-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength());
 		airFriction.setDirection(totalForce);
 		
-		// add forces
-		totalForce = totalForce.add(gravitation);
+		// add other forces
+		totalForce.setDirection(totalForce.add(gravitation).add(normal));
 		
-		airFriction.setDirection(airFriction.multiply(5));		// for drawing purposes
+		// for drawing purposes
+		airFriction.setDirection(airFriction.multiply(5));
 		
-		normal.setDirection(0, 0, 0);
-		for (final AbstractShape s : SquashRenderer.getInstance().courtSolids)
-			if (Collision.isOnSolid(mShape, s)){
-				if (!AbstractShape.areEqual(0, normal.getLength()))
-					Log.w(TAG, mShape.tag + " lies on more than one solid shape!");
-				final IVector n = ((Quadrilateral)s).getNormalizedVector().multiply(getGravitation().getLength());
-				totalForce = totalForce.add(n);
-				
-				normal.add(n);
-			}
-	
 		// calculate new speed v = v0 + a*t
 		//					   a = F / m * t
-//		final float accLength = totalForce.getLength() / ((Ball)mShape).weight;
-		final IVector acceleration = totalForce; //.getNormalizedVector().multiply(accLength);
+		final IVector acceleration = totalForce;		//		:/
 		speed.setDirection(speed.add(acceleration.multiply(dt)));
 //		Log.d(TAG, "speed=" + speed + ", airfr=" + airFriction + ", grav=" + gravitation + ", total=" + totalForce + ", n=" + normal);
 		
@@ -120,28 +109,37 @@ public class Movable {
 				final Collision collision = Collision.getCollision(mShape, distance, solid, lastMovementCollision);
 	
 				if (collision != null) {
+					// do miscellaneous stuff
 					collided = true;
 					lastMovementCollision = collision;
 					
 					MovementEngine.playSound(solid.tag);
-					if (!(solid instanceof Quadrilateral)) {
-						Log.wtf(TAG, "Shouldnt collide with unsolid shape!");
-						continue;
-					}
 					
 					mShape.moveTo(collision.collisionPoint);
 	
+					normal.setDirection(collision.normalForce);
+
+					// calculate ausfallswinkel (= einfallswinkel, must change that)
 					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
-//					final IVector 1oldSpeed = speed.multiply(1);	// get a copy of the current speed for log
 					final IVector newSpeed = (speed.add(
-							n.multiply(-2 * speed.multiply(n)))).multiply(MovementEngine.COLLISION_FRICTION_FACTOR);	// formula for ausfallswinkel
+							n.multiply(-2 * speed.multiply(n))));	// formula for ausfallswinkel
 					
-					speed.setDirection(newSpeed);
+					// adjust speed
+					// the smaller the angle, the more the ball slows down, the lower the factor
+					// speed * (1 - friction_factor * %)
+					final float halfPi = (float) (Math.PI / 2);
+					float speedFactor = (collision.collisionAngle) / halfPi / MovementEngine.COLLISION_FRICTION_FACTOR;
+					// don't accelerate!
+					if (speedFactor > 1)
+						speedFactor = 1;
+					speed.setDirection(newSpeed.multiply(speedFactor));
+					
+					Log.e(TAG, "angle=" + (collision.collisionAngle * 180 / Math.PI) + ", factor=" + speedFactor);
 					
 //					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", location=" + mShape.location);
 
+					// do rest of the movement
 					dt = dt * (1 - collision.travelPercentage);
-
 					move(dt);
 					return;
 				}
@@ -155,6 +153,8 @@ public class Movable {
 			return;
 		
 		mShape.moveTo(mShape.location.add(distance));
+		
+		normal.setDirection(0, 0, 0);
 	}
 
 	public void reset() {
