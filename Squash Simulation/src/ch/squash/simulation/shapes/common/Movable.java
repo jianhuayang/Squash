@@ -158,7 +158,7 @@ public class Movable {
 					IVector newSpeed = (speed.add(
 							n.multiply(-(1 + refractionFactor) * speed.multiply(n)))).
 							getNormalizedVector().multiply(newSpeedLength);	// formula for ausfallswinkel
-					newSpeed = speed.multiply(-1);
+					newSpeed.setDirection(speed.multiply(-1));
 					
 					// adjust speed
 					// the smaller the angle, the more the ball slows down, the lower the factor
