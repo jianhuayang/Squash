@@ -5,7 +5,6 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Ball;
-import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();
@@ -79,28 +78,41 @@ public class Movable {
 	
 	// move in seconds to use Si-units
 	private void move(float dt) {
-		// prepare air friction
-		final IVector totalForce = speed.getNormalizedVector().multiply(
-				-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength());
-		airFriction.setDirection(totalForce);
+		final float epot = mShape.location.getY() * gravitation.getLength();
+		final float ekin = 0.5f * speed.getLength() * speed.getLength();
+		Log.w(TAG, "epot=" + epot + ",\tekin= " + ekin +",\tsum=" + (epot+ekin));
 		
+//		speed.getNormalizedVector().multiply(
+//				-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength() * 10);
+//		airFriction.setDirection(totalForce);
 		// add other forces
-		totalForce.setDirection(totalForce.add(gravitation).add(normal));
+//		totalForce.setDirection(totalForce.add(gravitation)); //.add(normal));
 		
-		// for drawing purposes
-		airFriction.setDirection(airFriction.multiply(5));
-		
-		// calculate new speed v = v0 + a*t
-		//					   a = F / m * t
-		final IVector acceleration = totalForce;		//		:/
-		speed.setDirection(speed.add(acceleration.multiply(dt)));
-//		Log.d(TAG, "speed=" + speed + ", airfr=" + airFriction + ", grav=" + gravitation + ", total=" + totalForce + ", n=" + normal);
-		
+		// calculate forces
+		// every force is calculated without weight so it equals the acceleration
+		final IVector totalForce = gravitation.getVector();
+		final IVector acceleration = totalForce;
+
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
-		final IVector distance = speed.multiply(dt * MovementEngine.SLOW_FACTOR);
-				
-		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance + ", force=" + totalForce);
+		final IVector distance = speed.multiply(dt).add(acceleration.multiply(dt * dt * 0.5f));		
+		// calculate new speed v = v0 + a*t
+		speed.setDirection(speed.add(acceleration.multiply(dt)));
+
 		
+		float ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
+		float dekin = ekin2 - ekin;
+		float depot = distance.getY() * gravitation.getLength();
+		
+//		distance = distance.multiply(-depot);
+//		
+//		ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
+//		dekin = ekin2 - ekin;
+//		depot = distance.getY() * gravitation.getLength();
+
+		Log.v(TAG, "depot=" + depot + "\tdekin=" + dekin + "\tdiff=" + (depot + dekin));
+				
+//		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance + ", force=" + totalForce);
+
 		boolean collided = true;
 		while (collided){
 			collided = false;
@@ -119,26 +131,49 @@ public class Movable {
 	
 					normal.setDirection(collision.normalForce);
 
+//					final IVector oldSpeed = speed.multiply(1);
+					
 					// calculate ausfallswinkel (= einfallswinkel, must change that)
 					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
-					final IVector newSpeed = (speed.add(
-							n.multiply(-2 * speed.multiply(n))));	// formula for ausfallswinkel
+					
+					final float halfPi = (float) (Math.PI / 2);
+					final float angleFactor = collision.collisionAngle / halfPi;
+					float speedFactor = angleFactor / MovementEngine.COLLISION_FRICTION_FACTOR;
+					
+					float refractionFactor = angleFactor / MovementEngine.COLLISION_REFRACTION_FACTOR;
+					
+					if (speedFactor > 1)
+						speedFactor = 1;
+					if (speedFactor < 0)
+						speedFactor = 0;
+					if (refractionFactor > 1)
+						refractionFactor = 1;
+					if (refractionFactor < 0)
+						refractionFactor = 0;
+
+					refractionFactor = 1;
+					speedFactor = 1;
+					
+					final float newSpeedLength = speed.getLength() * speedFactor;
+					IVector newSpeed = (speed.add(
+							n.multiply(-(1 + refractionFactor) * speed.multiply(n)))).
+							getNormalizedVector().multiply(newSpeedLength);	// formula for ausfallswinkel
+					newSpeed = speed.multiply(-1);
 					
 					// adjust speed
 					// the smaller the angle, the more the ball slows down, the lower the factor
 					// speed * (1 - friction_factor * %)
-					final float halfPi = (float) (Math.PI / 2);
-					float speedFactor = (collision.collisionAngle) / halfPi / MovementEngine.COLLISION_FRICTION_FACTOR;
-					// don't accelerate!
-					if (speedFactor > 1)
-						speedFactor = 1;
-					speed.setDirection(newSpeed.multiply(speedFactor));
+					Log.e(TAG, "Setting speed from " + speed + " to " + newSpeed);
+					speed.setDirection(newSpeed);
 					
-					Log.e(TAG, "angle=" + (collision.collisionAngle * 180 / Math.PI) + ", factor=" + speedFactor);
+//					final double outAng = (halfPi - newSpeed.getAngle(((Quadrilateral)solid).getNormalVector())) / Math.PI * 180;
+//					Log.e(TAG, "angle=" + (collision.collisionAngle * 180 / Math.PI) + ", speedf=" + speedFactor + ", refractionf=" + refractionFactor);
+//					Log.w(TAG, "outang=" + outAng);
 					
 //					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", location=" + mShape.location);
 
 					// do rest of the movement
+//					while (true){}
 					dt = dt * (1 - collision.travelPercentage);
 					move(dt);
 					return;
