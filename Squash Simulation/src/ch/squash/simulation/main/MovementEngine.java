@@ -7,6 +7,7 @@ import android.media.SoundPool;
 import android.util.Log;
 import android.widget.Toast;
 import ch.squash.simulation.R;
+import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
@@ -76,6 +77,9 @@ public final class MovementEngine {
 	}
 
 	public static void playSound(final String desc) {
+		if (Settings.isMute())
+			return;
+		
 		if ("floor inside".equals(desc))
 			mInstance.mSoundPool.play(mInstance.mSoundBounce, 1, 1, 1, 0, 1);
 		else if ("front wall inside".equals(desc))

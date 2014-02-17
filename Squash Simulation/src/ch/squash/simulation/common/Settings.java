@@ -28,6 +28,7 @@ public final class Settings {
 	private final String KEY_SELECT_OBECTS;
 	private final String KEY_CAMERA_MODE;
 	private final String KEY_RESET;
+	private final String KEY_MUTE;
 
 	private final String KEY_CAMERA_POSITION_X;
 	private final String KEY_CAMERA_POSITION_Y;
@@ -92,6 +93,8 @@ public final class Settings {
 				.getString(R.string.key_camera_mode);
 		KEY_RESET = SquashActivity.getInstance().getResources()
 				.getString(R.string.key_reset);
+		KEY_MUTE = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_mute);
 
 		KEY_CAMERA_POSITION_X = SquashActivity.getInstance().getResources()
 				.getString(R.string.key_camera_position_x);
@@ -169,6 +172,10 @@ public final class Settings {
 	public static boolean isReset() {
 		return getInstance().mSharedPrefs.getBoolean(getInstance().KEY_RESET,
 				false);
+	}
+	
+	public static boolean isMute() {
+		return getInstance().mSharedPrefs.getBoolean(getInstance().KEY_MUTE, false);
 	}
 
 	public static int getCameraMode() {

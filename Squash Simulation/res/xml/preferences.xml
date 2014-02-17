@@ -2,6 +2,12 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="@string/key_mute"
+        android:summary="@string/summary_mute"
+        android:title="@string/title_mute" >
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="@string/key_reset"
         android:summary="@string/summary_reset"
         android:title="@string/title_reset" >
