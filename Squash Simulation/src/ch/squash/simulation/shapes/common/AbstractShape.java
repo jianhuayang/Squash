@@ -204,15 +204,18 @@ public abstract class AbstractShape {
 	}
 
 	public static float getPointPointDistance(final float[] p1, final float[] p2) {
-		double result = -1;
-
-		if (p1.length == p2.length) {
+		double result = 0;
+		
+		if (p1.length == p2.length){
 			for (int i = 0; i < p1.length; i++)
 				result += Math.pow(p1[i] - p2[i], 2);
-		} else {
+			
+			result = Math.sqrt(result);
+		}else{
 			Log.e(TAG, "Both points must have the same amount of dimensions");
+			result = -1;
 		}
-
-		return (float) Math.sqrt(result);
+		
+		return (float) result;
 	}
 }
