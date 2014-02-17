@@ -183,33 +183,36 @@ public abstract class AbstractShape {
 		return areEqual(a, b, 10 * Float.MIN_NORMAL);
 	}
 	
-	public static boolean areEqual(final float a, final float b, float epsilon) {
+	public static boolean areEqual(final float a, final float b, final float epsilon) {
 		final float absA = Math.abs(a);
 		final float absB = Math.abs(b);
 		final float diff = Math.abs(a - b);
 
+		boolean result;
+		
 		if (a == b) { // shortcut, handles infinities
-			return true;
+			result = true;
 		} else if (a == 0 || b == 0 || diff < Float.MIN_NORMAL) {
 			// a or b is zero or both are extremely close to it
 			// relative error is less meaningful here
-			return diff < (epsilon * Float.MIN_NORMAL);
+			result = diff < (epsilon * Float.MIN_NORMAL);
 		} else { // use relative error
-			return diff / (absA + absB) < epsilon;
+			result = diff / (absA + absB) < epsilon;
 		}
+		
+		return result;
 	}
-	
-	public static float getPointPointDistance(final float[] p1, final float[] p2){
-		if (p1.length != p2.length){
+
+	public static float getPointPointDistance(final float[] p1, final float[] p2) {
+		double result = -1;
+
+		if (p1.length == p2.length) {
+			for (int i = 0; i < p1.length; i++)
+				result += Math.pow(p1[i] - p2[i], 2);
+		} else {
 			Log.e(TAG, "Both points must have the same amount of dimensions");
-			return -1;
 		}
-		
-		double result = 0;
-		
-		for (int i = 0; i < p1.length; i++)
-			result += Math.pow(p1[i] - p2[i], 2);
-		
+
 		return (float) Math.sqrt(result);
 	}
 }

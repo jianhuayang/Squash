@@ -4,7 +4,6 @@ import android.util.Log;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
-import ch.squash.simulation.shapes.shapes.Ball;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();
@@ -23,6 +22,8 @@ public class Movable {
 
 	private long mNextMovement = System.currentTimeMillis(); // ms
 
+	private int moveSkipCount;
+	
 	public static IVector getGravitation() {
 		return new Vector(0, -9.81f, 0);
 	}
@@ -40,18 +41,16 @@ public class Movable {
 		
 		vectorArrows = new PhysicalVector[] { gravitation, speed, normal, airFriction };
 		
-		mTrace = new Trace(shape.tag + "\'s trace", 0, 0, 0, null, new float[]{ 0.35f, 0.35f, 0.35f, 1 });
+		mTrace = new Trace(shape.tag + "\'s trace", new float[]{ 0.35f, 0.35f, 0.35f, 1 });
 	}
 
 	public void resetClock() {
 		mNextMovement = System.currentTimeMillis() + MovementEngine.DELAY_BETWEEN_MOVEMENTS;
 	}
 
-	private int moveSkipCount;
-	
 	public void move() {
 		final long now = System.currentTimeMillis();
-		long sleep = mNextMovement - now;
+		final long sleep = mNextMovement - now;
 		mNextMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
 		
 		if (sleep > 0)
@@ -77,7 +76,7 @@ public class Movable {
 	}
 	
 	// move in seconds to use Si-units
-	private void move(float dt) {
+	private void move(final float dt) {
 		final float epot = mShape.location.getY() * gravitation.getLength();
 		final float ekin = 0.5f * speed.getLength() * speed.getLength();
 		Log.w(TAG, "epot=" + epot + ",\tekin= " + ekin +",\tsum=" + (epot+ekin));
@@ -99,9 +98,9 @@ public class Movable {
 		speed.setDirection(speed.add(acceleration.multiply(dt)));
 
 		
-		float ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
-		float dekin = ekin2 - ekin;
-		float depot = distance.getY() * gravitation.getLength();
+		final float ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
+		final float dekin = ekin2 - ekin;
+		final float depot = distance.getY() * gravitation.getLength();
 		
 //		distance = distance.multiply(-depot);
 //		
@@ -134,7 +133,7 @@ public class Movable {
 //					final IVector oldSpeed = speed.multiply(1);
 					
 					// calculate ausfallswinkel (= einfallswinkel, must change that)
-					final IVector n = (Vector) collision.solidNormalVector.getNormalizedVector();
+					final IVector n = collision.solidNormalVector.getNormalizedVector();
 					
 					final float halfPi = (float) (Math.PI / 2);
 					final float angleFactor = collision.collisionAngle / halfPi;
@@ -155,8 +154,8 @@ public class Movable {
 					speedFactor = 1;
 					
 					final float newSpeedLength = speed.getLength() * speedFactor;
-					IVector newSpeed = (speed.add(
-							n.multiply(-(1 + refractionFactor) * speed.multiply(n)))).
+					final IVector newSpeed = speed.add(
+							n.multiply(-(1 + refractionFactor) * speed.multiply(n))).
 							getNormalizedVector().multiply(newSpeedLength);	// formula for ausfallswinkel
 					newSpeed.setDirection(speed.multiply(-1));
 					
@@ -174,8 +173,7 @@ public class Movable {
 
 					// do rest of the movement
 //					while (true){}
-					dt = dt * (1 - collision.travelPercentage);
-					move(dt);
+					move(dt * (1 - collision.travelPercentage));
 					return;
 				}
 			}

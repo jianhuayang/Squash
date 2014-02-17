@@ -115,15 +115,11 @@ public final class Collision {
 		// no collision possible if the ball is parallel to the quad
 		if (intersection == null)
 			return null;
-		
-		// PROBLEM IS HERE: Sometimes, if the ball is on the quad, there is a collision, sometimes not
-		// need to figure out which are collisions...
-		if (AbstractShape.areEqual(0, distanceToQuad)){
-			// no collision if last movement ended in a collision on the same point
-			if (lastMovementCollision != null && lastMovementCollision.collisionPoint.equals(intersection)){
-				Log.i(TAG, "Ignoring collision because another collision happened on last move on same point");
-				return null;
-			}
+
+		// no collision if last movement ended in a collision on the same point
+		if (AbstractShape.areEqual(0, distanceToQuad) && lastMovementCollision != null && lastMovementCollision.collisionPoint.equals(intersection)){
+			Log.i(TAG, "Ignoring collision because another collision happened on last move on same point");
+			return null;
 		}
 		
 		final float lambdax = (intersection.getX() - ball.location.getX()) / travelled.getX();

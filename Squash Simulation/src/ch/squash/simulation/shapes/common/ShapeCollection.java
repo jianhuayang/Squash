@@ -9,6 +9,8 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 public class ShapeCollection {
 	public static final int OBJECT_COLLECTION_COURT = 0;
 
+	private final static String FLOOR_LINE = "floor line";
+	
 	private final List<AbstractShape> mOpaqueObjects = new ArrayList<AbstractShape>();
 
 	private final List<AbstractShape> mTransparentObjects = new ArrayList<AbstractShape>();
@@ -155,7 +157,7 @@ public class ShapeCollection {
 					3.2f - SquashRenderer.ONE_MM,
 					4.57f - SquashRenderer.COURT_LINE_WIDTH, -5.49f },
 					new float[] { 1f, 0f, 0f, 1f }, true));
-			mOpaqueObjects.add(new Quadrilateral("floor line",
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE,
 					new float[] { -SquashRenderer.COURT_LINE_WIDTH / 2f,
 							SquashRenderer.ONE_MM, 4.26f,
 							SquashRenderer.COURT_LINE_WIDTH / 2f,
@@ -167,7 +169,7 @@ public class ShapeCollection {
 							SquashRenderer.ONE_MM,
 							SquashRenderer.COURT_LINE_WIDTH / 2f },
 					new float[] { 1f, 0f, 0f, 1f }, false));
-			mOpaqueObjects.add(new Quadrilateral("floor line", new float[] {
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE, new float[] {
 					-3.2f, SquashRenderer.ONE_MM,
 					SquashRenderer.COURT_LINE_WIDTH / 2f, 3.2f,
 					SquashRenderer.ONE_MM,
@@ -177,7 +179,7 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					-SquashRenderer.COURT_LINE_WIDTH / 2f }, new float[] { 1f,
 					0f, 0f, 1f }, false));
-			mOpaqueObjects.add(new Quadrilateral("floor line", new float[] {
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE, new float[] {
 					-3.2f, SquashRenderer.ONE_MM,
 					1.6f + SquashRenderer.COURT_LINE_WIDTH / 2f,
 					-1.6f + SquashRenderer.COURT_LINE_WIDTH / 2f,
@@ -189,7 +191,7 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					1.6f + -SquashRenderer.COURT_LINE_WIDTH / 2f },
 					new float[] { 1f, 0f, 0f, 1f }, false));
-			mOpaqueObjects.add(new Quadrilateral("floor line", new float[] {
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE, new float[] {
 					-1.6f - SquashRenderer.COURT_LINE_WIDTH / 2f,
 					SquashRenderer.ONE_MM,
 					1.6f - SquashRenderer.COURT_LINE_WIDTH / 2f,
@@ -203,7 +205,7 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					+SquashRenderer.COURT_LINE_WIDTH / 2f }, new float[] { 1f,
 					0f, 0f, 1f }, false));
-			mOpaqueObjects.add(new Quadrilateral("floor line", new float[] {
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE, new float[] {
 					1.6f - SquashRenderer.COURT_LINE_WIDTH / 2f,
 					SquashRenderer.ONE_MM,
 					1.6f + SquashRenderer.COURT_LINE_WIDTH / 2f, 3.2f,
@@ -215,7 +217,7 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					1.6f + -SquashRenderer.COURT_LINE_WIDTH / 2f },
 					new float[] { 1f, 0f, 0f, 1f }, false));
-			mOpaqueObjects.add(new Quadrilateral("floor line", new float[] {
+			mOpaqueObjects.add(new Quadrilateral(FLOOR_LINE, new float[] {
 					1.6f - SquashRenderer.COURT_LINE_WIDTH / 2f,
 					SquashRenderer.ONE_MM,
 					1.6f - SquashRenderer.COURT_LINE_WIDTH / 2f,

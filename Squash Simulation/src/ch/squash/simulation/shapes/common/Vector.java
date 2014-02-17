@@ -81,15 +81,15 @@ public class Vector implements IVector {
 
 	@Override
 	public IVector add(final IVector other) {
+		Vector result = new Vector();
+		
 		if (other instanceof PhysicalVector)
-			return add(((PhysicalVector) other).getVector());
-
-		final Vector result = new Vector();
-
-		for (int i = 0; i < DIMENSION; i++)
-			result.mDirection[i] = mDirection[i]
-					+ ((Vector) other).mDirection[i];
-
+			result = (Vector)add(((PhysicalVector) other).getVector());
+		else{
+			for (int i = 0; i < DIMENSION; i++)
+				((Vector)result).mDirection[i] = mDirection[i]
+						+ ((Vector) other).mDirection[i];
+		}
 		return result;
 	}
 
@@ -110,14 +110,17 @@ public class Vector implements IVector {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (!(o instanceof Vector))
-			return false;
+		boolean equal = false;
 
-		final Vector v = (Vector) o;
+		if (o instanceof Vector) {
+			final Vector v = (Vector) o;
 
-		return AbstractShape.areEqual(v.getX(), getX()) && 
-				AbstractShape.areEqual(v.getY(), getY()) &&
-				AbstractShape.areEqual(v.getZ(), getZ());
+			equal = AbstractShape.areEqual(v.getX(), getX())
+					&& AbstractShape.areEqual(v.getY(), getY())
+					&& AbstractShape.areEqual(v.getZ(), getZ());
+		}
+
+		return equal;
 	}
 
 	@Override

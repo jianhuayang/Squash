@@ -348,10 +348,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		if (programHandle == 0) {
 			Log.e(TAG, "Error creating program");
-			return -1;
 		}
 
-		return programHandle;
+		return programHandle == 0 ? -1 : programHandle;
 	}
 
 	// own methods

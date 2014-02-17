@@ -14,9 +14,9 @@ public class Trace extends AbstractShape {
 	
 	private final float[] mColor;
 	
-	private int mTraceIndex = 0;
+	private int mTraceIndex;
 	
-	public void addPoint(IVector point){		
+	public void addPoint(final IVector point){		
 		if (mNextTrace != null && !mNextTrace.isReset){
 			mNextTrace.addPoint(point);
 			return;
@@ -29,14 +29,14 @@ public class Trace extends AbstractShape {
 		}
 		else if (mTraceIndex == mPoints.length){
 			// see if there's a re-usable trace
-			if (mNextTrace != null){
+			if (mNextTrace == null){
+				// start new trace if current list is full
+				mNextTrace = new Trace(tag, mColor);
+				Log.w(TAG, "Adding new trace to " + tag);
+			}else{
 				// reuse trace
 				mNextTrace.isReset = false;
 				Log.w(TAG, "Re-using old trace of " + tag);
-			}else{
-				// start new trace if current list is full
-				mNextTrace = new Trace(tag, 0, 0, 0, null, mColor);
-				Log.w(TAG, "Adding new trace to " + tag);
 			}
 			mNextTrace.addPoint(point);
 		}
@@ -55,11 +55,10 @@ public class Trace extends AbstractShape {
 		mPositions.position(0);
 	}
 
-	public Trace(String tag, float x, float y, float z, float[] mVertexData,
-			float[] color) {
+	public Trace(final String tag, final float[] color) {
 		super(tag, 0, 0, 0, new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2], color);
 		
-		mColor = color;
+		mColor = color.clone();
 		
 		initialize(GLES20.GL_LINES, SolidType.NONE, null);
 	}
@@ -77,7 +76,7 @@ public class Trace extends AbstractShape {
 	}
 	
 	@Override
-	protected float[] getColorData(float[] color) {
+	protected float[] getColorData(final float[] color) {
 		final float[] result = new float[(MAX_TRACE_SEGMENTS + 2) * 2 * color.length];
 
 		for (int i = 0; i < result.length / color.length; i++)
