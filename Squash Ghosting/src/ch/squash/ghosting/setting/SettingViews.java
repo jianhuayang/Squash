@@ -31,7 +31,7 @@ final public class SettingViews {
 
 	// values
 	private final static String[] CORNERS = { "custom", "10", "6", "front",
-			"back", "right leg", "left leg" };
+			"back", "right leg", "left leg", "defenisve", "middle" };
 	private final String[] LONG_TIMES;
 	private final String[] SHORT_TIMES;
 

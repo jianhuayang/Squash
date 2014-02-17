@@ -17,6 +17,8 @@ public class SquashView extends GLSurfaceView {
 	private final static String CORNER_BACK = "back";
 	private final static String CORNER_LEFT_LEG = "left leg";
 	private final static String CORNER_RIGHT_LEG = "right leg";
+	private final static String CORNER_DEFENSIVE = "defensive";
+	private final static String CORNER_MIDDLE = "middle";
     
     public SquashView(final Context context) {
         super(context);
@@ -33,16 +35,16 @@ public class SquashView extends GLSurfaceView {
     		return;
     	}
     	
-    	setCornerVisible(0, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_LEFT_LEG));
-    	setCornerVisible(1, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_RIGHT_LEG));
-    	setCornerVisible(2, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_RIGHT_LEG));
-    	setCornerVisible(3, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_LEFT_LEG));
-    	setCornerVisible(4, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG));
-    	setCornerVisible(5, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG));
-    	setCornerVisible(6, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG));
-    	setCornerVisible(7, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG));
-    	setCornerVisible(8, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG));
-    	setCornerVisible(9, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG));
+    	setCornerVisible(0, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_LEFT_LEG) || cornerLayout.equals(CORNER_DEFENSIVE));
+    	setCornerVisible(1, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_RIGHT_LEG) || cornerLayout.equals(CORNER_DEFENSIVE));
+    	setCornerVisible(2, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_RIGHT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(3, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_LEFT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(4, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(5, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_FRONT) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(6, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(7, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG) || cornerLayout.equals(CORNER_MIDDLE));
+    	setCornerVisible(8, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_LEFT_LEG) || cornerLayout.equals(CORNER_DEFENSIVE));
+    	setCornerVisible(9, cornerLayout.equals(CORNER_10) || cornerLayout.equals(CORNER_6) || cornerLayout.equals(CORNER_BACK) || cornerLayout.equals(CORNER_RIGHT_LEG) || cornerLayout.equals(CORNER_DEFENSIVE));
     }
     
 	public static void setCornerVisible(final int corner, final boolean visible) {
