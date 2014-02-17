@@ -65,6 +65,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public float angleInDegrees;
 	private float oldAngle;
 
+	public boolean setCameraRotation = true;		// set rotation on startup
+	
 	public static SquashRenderer getInstance() {
 		synchronized (LOCK) {
 			if (mInstance == null)
@@ -73,8 +75,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		return mInstance;
 	}
 
-	public boolean setCameraRotation = true;		// set rotation on startup
-	
 	public SquashRenderer() {
 		// add objects
 		final ShapeCollection axis = new ShapeCollection();
@@ -304,10 +304,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		if (shaderHandle == 0) {
 			Log.e(TAG, "Error creating shader");
-			return -1;
 		}
 
-		return shaderHandle;
+		return shaderHandle == 0 ? -1 : shaderHandle;
 	}
 
 	private int createAndLinkProgram(final int vertexShaderHandle,
@@ -370,8 +369,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public void setBallPosition(final IVector ballStartPosition) {
-		for (ShapeCollection s : mObjects)
-			for (AbstractShape a : s.getOpaqueObjects())
+		for (final ShapeCollection s : mObjects)
+			for (final AbstractShape a : s.getOpaqueObjects())
 				if ("SquashBall".equals(a.tag)){
 					a.moveTo(Settings.getBallStartPosition());
 					return;

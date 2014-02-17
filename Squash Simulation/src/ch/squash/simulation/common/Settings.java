@@ -196,7 +196,7 @@ public final class Settings {
 	}
 	
 	public static IVector getCameraPosition(){
-		final IVector result;
+		IVector result;
 		try{
 			result = new Vector(
 					Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_CAMERA_POSITION_X, 
@@ -211,13 +211,13 @@ public final class Settings {
 			setString(getInstance().KEY_CAMERA_POSITION_Y, SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_y));
 			setString(getInstance().KEY_CAMERA_POSITION_Z, SquashActivity.getInstance().getResources().getString(R.string.default_camera_position_z));
 			Toast.makeText(SquashActivity.getInstance(), "Reset camera position", Toast.LENGTH_SHORT).show();
-			return getCameraPosition();
+			result = getCameraPosition();
 		}
 		return result;
 	}
 
 	public static IVector getBallStartPosition(){
-		final IVector result; 
+		IVector result; 
 		try{
 			result = new Vector(
 				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_POSITION_X,
@@ -232,13 +232,13 @@ public final class Settings {
 			setString(getInstance().KEY_BALL_POSITION_Y, SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_y));
 			setString(getInstance().KEY_BALL_POSITION_Z, SquashActivity.getInstance().getResources().getString(R.string.default_ball_position_z));
 			Toast.makeText(SquashActivity.getInstance(), "Reset ball position", Toast.LENGTH_SHORT).show();
-			return getBallStartPosition();
+			result = getBallStartPosition();
 		}
 		return result;
 	}
 	
 	public static IVector getBallStartSpeed(){
-		final IVector result; 
+		IVector result; 
 		try{
 			result = new Vector(
 				Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_BALL_SPEED_X,
@@ -253,7 +253,7 @@ public final class Settings {
 			setString(getInstance().KEY_BALL_SPEED_Y, SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_y));
 			setString(getInstance().KEY_BALL_SPEED_Z, SquashActivity.getInstance().getResources().getString(R.string.default_ball_speed_z));
 			Toast.makeText(SquashActivity.getInstance(), "Reset ball speed", Toast.LENGTH_SHORT).show();
-			return getBallStartSpeed();
+			result = getBallStartSpeed();
 		}
 		return result;
 	}

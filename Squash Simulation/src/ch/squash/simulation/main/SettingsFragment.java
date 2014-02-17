@@ -109,25 +109,27 @@ public class SettingsFragment extends PreferenceFragment implements
 	}
 
 	private String getSummary(final String key) {
+		String result = null;
 		if (key.equals(Settings.getKeyDrawMode()))
-			return DRAW_MODE_SUMMARIES.get(Settings.getDrawMode());
+			result = DRAW_MODE_SUMMARIES.get(Settings.getDrawMode());
 		else if (key.equals(Settings.getKeySelectObjects()))
-			return SquashActivity.getInstance().getResources()
+			result = SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_select_objects);
 		else if (key.equals(Settings.getKeyCameraMode()))
-			return CAMERA_MODE_SUMMARIES.get(Settings.getCameraMode());
+			result = CAMERA_MODE_SUMMARIES.get(Settings.getCameraMode());
 		else if (key.equals(Settings.getKeyReset()))
-			return SquashActivity.getInstance().getResources()
+			result = SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_reset);
 		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
-			return "x = " + Settings.getValue(key);
+			result = "x = " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
-			return "y = " + Settings.getValue(key);
+			result = "y = " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
-			return "z = " + Settings.getValue(key);
-
-		Log.e(TAG, "Unknown key: " + key);
-		return null;
+			result = "z = " + Settings.getValue(key);
+		else
+			Log.e(TAG, "Unknown key: " + key);
+		
+		return result;
 	}
 
 	@Override

@@ -20,12 +20,6 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 		MovementEngine.pause();
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-//		MovementEngine.resume();
-	}
-
 	public SquashView(final Context context) {
 		super(context);
 
@@ -36,7 +30,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
 		mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-		    public void onLongPress(MotionEvent e) {
+		    public void onLongPress(final MotionEvent e) {
 		    	MovementEngine.pause();
 		    	MovementEngine.resetMovables();
 		    	
@@ -55,10 +49,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 		if (mLongPress){
 			// only reset longpress flag if it was completed (if the action is UP)
 			mLongPress = event.getAction() != MotionEvent.ACTION_UP;
-			return true;
-		}
-		
-		if (event.getAction() == MotionEvent.ACTION_UP){
+		} else if (event.getAction() == MotionEvent.ACTION_UP){
 	    	Toast.makeText(SquashActivity.getInstance(),
 	    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
 			MovementEngine.toggleRunning();

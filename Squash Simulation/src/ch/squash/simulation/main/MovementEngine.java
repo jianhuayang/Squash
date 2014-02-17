@@ -13,7 +13,7 @@ import ch.squash.simulation.shapes.common.Movable;
 public final class MovementEngine {
 	private final static String TAG = MovementEngine.class.getSimpleName();
 	private final Movable[] mMovables;
-	private boolean isRunning;
+	private boolean mIsRunning;
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
@@ -30,14 +30,14 @@ public final class MovementEngine {
 	private final SoundPool mSoundPool;
 
 	public static void pause() {
-		mInstance.isRunning = false;
+		mInstance.mIsRunning = false;
 	}
 
 	public static void resume() {
-		if (mInstance.isRunning)
+		if (mInstance.mIsRunning)
 			return;
 
-		mInstance.isRunning = true;
+		mInstance.mIsRunning = true;
 
 		new Thread() {
 			@Override
@@ -54,7 +54,7 @@ public final class MovementEngine {
 			im.resetClock();
 
 		final long end = Calendar.getInstance().getTimeInMillis() + ENGINE_DURATION;
-		while (isRunning && Calendar.getInstance().getTimeInMillis() < end) {
+		while (mIsRunning && Calendar.getInstance().getTimeInMillis() < end) {
 			for (final Movable im : mMovables)
 				im.move();
 
@@ -64,7 +64,7 @@ public final class MovementEngine {
 				Log.e(TAG, "Error while sleepint", e);
 			}
 		}
-		isRunning = false;
+		mIsRunning = false;
 		
 		Log.w(TAG, "MovementEngine has stopped");
 
@@ -129,13 +129,13 @@ public final class MovementEngine {
 	}
 
 	public static void toggleRunning() {
-		if (mInstance.isRunning)
+		if (mInstance.mIsRunning)
 			pause();
 		else
 			resume();
 	}
 	
 	public static boolean isRunning(){
-		return mInstance.isRunning;
+		return mInstance.mIsRunning;
 	}
 }
