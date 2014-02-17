@@ -42,8 +42,7 @@ public class Quadrilateral extends AbstractShape {
 		final IVector n = getNormalVector();
 		int nonZero = -1;
 		for (int i = 0; i < 3; i++)
-			if (n.getDirection()[i] != 0)
-				if (Math.abs(n.getDirection()[i]) == n.getLength())
+			if (n.getDirection()[i] != 0 && Math.abs(n.getDirection()[i]) == n.getLength())
 					if (nonZero == -1)
 						nonZero = i;
 					else
@@ -79,16 +78,15 @@ public class Quadrilateral extends AbstractShape {
 		System.arraycopy(normEdges, 9, result, 12, 3);
 		System.arraycopy(normEdges, 0, result, 15, 3);
 
-		if (!bothSides)
-			return result;
-
-		System.arraycopy(normEdges, 0, result, 18, 3);
-		System.arraycopy(normEdges, 9, result, 21, 3);
-		System.arraycopy(normEdges, 6, result, 24, 3);
-		System.arraycopy(normEdges, 6, result, 27, 3);
-		System.arraycopy(normEdges, 3, result, 30, 3);
-		System.arraycopy(normEdges, 0, result, 33, 3);
-
+		if (bothSides){
+			System.arraycopy(normEdges, 0, result, 18, 3);
+			System.arraycopy(normEdges, 9, result, 21, 3);
+			System.arraycopy(normEdges, 6, result, 24, 3);
+			System.arraycopy(normEdges, 6, result, 27, 3);
+			System.arraycopy(normEdges, 3, result, 30, 3);
+			System.arraycopy(normEdges, 0, result, 33, 3);
+		}
+		
 		return result;
 	}
 
@@ -102,7 +100,7 @@ public class Quadrilateral extends AbstractShape {
 				- edges[2]);
 	}
 
-	public IVector getNormalVector() {
+	public final IVector getNormalVector() {
 		return getU().getCrossProduct(getV());
 	}
 

@@ -17,9 +17,9 @@ public class Ball extends AbstractShape {
 	private static int mLevels;
 
 	public final float frictionConstant;
-	private final static float cW = 0.45f;
+	private final static float CW = 0.45f;
 	public final float weight;
-	private final static float density = 7.16f;
+	private final static float DENSITY = 7.16f;
 	
 	public float getRadius() {
 		return mRadius;
@@ -33,9 +33,9 @@ public class Ball extends AbstractShape {
 		
 		// air friction: F = 1/2 * rho * c_w * A * v^2
 		// constant: 1/2 * rho * c_w * A
-		frictionConstant = (float) (0.5 * 1.293 * cW * Math.PI * radius * radius);
+		frictionConstant = (float) (0.5 * 1.293 * CW * Math.PI * radius * radius);
 
-		weight = (float) (density * Math.PI * radius * radius);
+		weight = (float) (DENSITY * Math.PI * radius * radius);
 		
 		initialize(GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this,
 				new float[] { x, y, z }));
@@ -63,12 +63,15 @@ public class Ball extends AbstractShape {
 
 	private static float getRad(final float radius, final int i,
 			final float dz, final float zOffset, final boolean reversing) {
+		float result;
 		if (reversing)
-			return (float) Math.sqrt(radius * radius
+			result = (float) Math.sqrt(radius * radius
 					- Math.pow((mLevels - i) * dz + zOffset, 2));
 		else
-			return (float) Math.sqrt(radius * radius
+			result = (float) Math.sqrt(radius * radius
 					- Math.pow((i) * dz + zOffset, 2));
+		
+		return result;
 	}
 
 	private static float[] getVertices(final float radius, final int edges) {
