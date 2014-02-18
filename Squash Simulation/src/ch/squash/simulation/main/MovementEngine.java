@@ -18,10 +18,7 @@ public final class MovementEngine {
 	private final static Object LOCK = new Object();
 	private final static int INTERVAL = 10; // ms
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
-	private final static int ENGINE_DURATION = 5000;		// ms
-//	public final static float SLOW_FACTOR = 1f;
-	public final static float COLLISION_FRICTION_FACTOR = 0.75f;	// value >=0; 0 = no friction, 1 = "normal" friction, 2 = "double" friction
-	public final static float COLLISION_REFRACTION_FACTOR = 0.45f;	// usage same as friction factor 
+	private final static int ENGINE_DURATION = 500000;		// ms
 	private final int mSoundBounce;
 //	private final int mSoundFloor;
 	private final int mSoundFrontWall;
