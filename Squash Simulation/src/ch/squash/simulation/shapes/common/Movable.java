@@ -4,6 +4,8 @@ import android.util.Log;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.Ball;
+import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();
@@ -12,7 +14,6 @@ public class Movable {
 
 	public final PhysicalVector gravitation;
 	public final PhysicalVector speed;
-	public final PhysicalVector normal;
 	public final PhysicalVector airFriction;
 
 	public final PhysicalVector[] vectorArrows;
@@ -34,12 +35,10 @@ public class Movable {
 				getGravitation().getDirection(), new float[] { 0, 0.5f, 0, 1 });
 		speed = new PhysicalVector("speed", origin.clone(), new float[3], new float[] {
 				0.5f, 0f, 0.5f, 1 });
-		normal = new PhysicalVector("force_normal", origin.clone(), new float[3],
-				new float[] { 0, 0.8f, 0.8f, 1 });
 		airFriction = new PhysicalVector("air_friction", origin.clone(), new float[3], new float[] {
 				0.7f, 0.5f, 0, 1 });
 		
-		vectorArrows = new PhysicalVector[] { gravitation, speed, normal, airFriction };
+		vectorArrows = new PhysicalVector[] { gravitation, speed, airFriction };
 		
 		mTrace = new Trace(shape.tag + "\'s trace", new float[]{ 0.35f, 0.35f, 0.35f, 1 });
 	}
@@ -77,41 +76,21 @@ public class Movable {
 	
 	// move in seconds to use Si-units
 	private void move(final float dt) {
-		final float epot = mShape.location.getY() * gravitation.getLength();
-		final float ekin = 0.5f * speed.getLength() * speed.getLength();
-		Log.w(TAG, "epot=" + epot + ",\tekin= " + ekin +",\tsum=" + (epot+ekin));
-		
-//		speed.getNormalizedVector().multiply(
-//				-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength() * 10);
-//		airFriction.setDirection(totalForce);
-		// add other forces
-//		totalForce.setDirection(totalForce.add(gravitation)); //.add(normal));
+		float epot = mShape.location.getY() * gravitation.getLength();
+		float ekin = 0.5f * speed.getLength() * speed.getLength();
+		Log.v(TAG, "Energy before move: pot=" + epot + ",\tkin= " + ekin +",\tsum=" + (epot+ekin));
+
+		// set air friction
+		airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength()));
 		
 		// calculate forces
 		// every force is calculated without weight so it equals the acceleration
-		final IVector totalForce = gravitation.getVector();
+		final IVector totalForce = gravitation.add(airFriction);
 		final IVector acceleration = totalForce;
 
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
 		final IVector distance = speed.multiply(dt).add(acceleration.multiply(dt * dt * 0.5f));		
-		// calculate new speed v = v0 + a*t
-		speed.setDirection(speed.add(acceleration.multiply(dt)));
-
 		
-		final float ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
-		final float dekin = ekin2 - ekin;
-		final float depot = distance.getY() * gravitation.getLength();
-		
-//		distance = distance.multiply(-depot);
-//		
-//		ekin2 = 0.5f * (float)Math.pow(speed.getLength(), 2);
-//		dekin = ekin2 - ekin;
-//		depot = distance.getY() * gravitation.getLength();
-
-		Log.v(TAG, "depot=" + depot + "\tdekin=" + dekin + "\tdiff=" + (depot + dekin));
-				
-//		Log.d(TAG, "Starting round of collisions. location=" + mShape.location + ", distance=" + distance + ", force=" + totalForce);
-
 		boolean collided = true;
 		while (collided){
 			collided = false;
@@ -128,18 +107,21 @@ public class Movable {
 					
 					mShape.moveTo(collision.collisionPoint);
 	
-					normal.setDirection(collision.normalForce);
-
-//					final IVector oldSpeed = speed.multiply(1);
+					final float curDt = dt * collision.travelPercentage;
+					final float newDt = dt - curDt;
 					
+					// calculate new speed v = v0 + a*t
+					speed.setDirection(speed.add(acceleration.multiply(curDt)));
+
 					// calculate ausfallswinkel (= einfallswinkel, must change that)
 					final IVector n = collision.solidNormalVector.getNormalizedVector();
+
+					final float collisionAngle = (float)(collision.collisionAngle * 180 / Math.PI);
 					
-					final float halfPi = (float) (Math.PI / 2);
-					final float angleFactor = collision.collisionAngle / halfPi;
-					float speedFactor = angleFactor / MovementEngine.COLLISION_FRICTION_FACTOR;
-					
-					float refractionFactor = angleFactor / MovementEngine.COLLISION_REFRACTION_FACTOR;
+					float speedFactor = collisionAngle * 0.0075f + 0.125f;
+					float refractionFactor = collisionAngle * 0.005f + 0.55f;
+
+					Log.d(TAG, "Slowing down by " + ((1 - speedFactor) * 100) + "% after a collision at " + collisionAngle);
 					
 					if (speedFactor > 1)
 						speedFactor = 1;
@@ -149,45 +131,41 @@ public class Movable {
 						refractionFactor = 1;
 					if (refractionFactor < 0)
 						refractionFactor = 0;
-
-					refractionFactor = 1;
-					speedFactor = 1;
 					
 					final float newSpeedLength = speed.getLength() * speedFactor;
+					
 					final IVector newSpeed = speed.add(
 							n.multiply(-(1 + refractionFactor) * speed.multiply(n))).
 							getNormalizedVector().multiply(newSpeedLength);	// formula for ausfallswinkel
-					newSpeed.setDirection(speed.multiply(-1));
-					
-					// adjust speed
-					// the smaller the angle, the more the ball slows down, the lower the factor
-					// speed * (1 - friction_factor * %)
-					Log.e(TAG, "Setting speed from " + speed + " to " + newSpeed);
 					speed.setDirection(newSpeed);
 					
-//					final double outAng = (halfPi - newSpeed.getAngle(((Quadrilateral)solid).getNormalVector())) / Math.PI * 180;
-//					Log.e(TAG, "angle=" + (collision.collisionAngle * 180 / Math.PI) + ", speedf=" + speedFactor + ", refractionf=" + refractionFactor);
-//					Log.w(TAG, "outang=" + outAng);
+					final double outAng = (Math.PI / 2 - newSpeed.getAngle(((Quadrilateral)solid).getNormalVector())) / Math.PI * 180;
+					Log.d(TAG, "inangle=" + collisionAngle + ", outangle=" + outAng);
 					
-//					Log.i(TAG, "oldspeed=" + oldSpeed + ", newspeed=" + newSpeed + ", location=" + mShape.location);
-
-					// do rest of the movement
-//					while (true){}
-					move(dt * (1 - collision.travelPercentage));
+					final float oldTot = epot + ekin;
+					epot = mShape.location.getY() * gravitation.getLength();
+					ekin = 0.5f * speed.getLength() * speed.getLength();
+					Log.i(TAG, "Energy delta after collision: " + ((ekin + epot) / oldTot * 100) + "%");
+					
+					move(newDt);
 					return;
 				}
 			}
 		}
+
+		// reset variables
+		lastMovementCollision = null;
 		
-		if (!collided)
-			lastMovementCollision = null;
-		
+		// calculate new speed v = v0 + a*t
+		speed.setDirection(speed.add(acceleration.multiply(dt)));
+			
 		if (!MovementEngine.isRunning())
 			return;
 		
 		mShape.moveTo(mShape.location.add(distance));
 		
-		normal.setDirection(0, 0, 0);
+		epot = mShape.location.getY() * gravitation.getLength();
+		ekin = 0.5f * speed.getLength() * speed.getLength();
 	}
 
 	public void reset() {
@@ -196,5 +174,4 @@ public class Movable {
 		mTrace.reset();
 		mShape.moveTo(Settings.getBallStartPosition());
 	}
-
 }
