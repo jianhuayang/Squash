@@ -17,7 +17,7 @@ public class Ball extends AbstractShape {
 	private static int mLevels;
 
 	public final float frictionConstant;
-	private final static float CW = 0.45f;
+	private final static float CW = 3f;		// apparently should e around 0.45
 	public final float weight;
 	private final static float DENSITY = 7.16f;
 	
