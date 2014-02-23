@@ -5,18 +5,27 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.shapes.common.IVector;
 
 public class SquashActivity extends Activity {
 	private final static String TAG = SquashActivity.class.getSimpleName();
 	private SquashView squashView;
+	private TextView hudFps;
+	private TextView hudBall;
 	private static final int RESULT_SETTINGS = 1;
+	private final static int UI_UPDATE_INTERVAL = 200; // ms
+	private boolean isUpdateUi = true;
 
 	// static access
 	private static SquashActivity mInstance;
@@ -46,10 +55,22 @@ public class SquashActivity extends Activity {
 		}
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		hudFps = new TextView(this);
+		hudFps.setTextColor(Color.RED);
+		hudFps.setGravity(Gravity.RIGHT);
+		hudBall = new TextView(this);
+		hudBall.setTextColor(Color.BLUE);
+		hudBall.setGravity(Gravity.LEFT);
+
 		squashView = new SquashView(this);
 
 		setContentView(squashView);
+		final FrameLayout parent = (FrameLayout) squashView.getParent();
+		parent.addView(hudFps);
+		parent.addView(hudBall);
 
+		updateUi();
+		
 		Log.i(TAG, "SquashActivity created");
 	}
 
@@ -88,11 +109,44 @@ public class SquashActivity extends Activity {
 	protected void onPause() {
 		squashView.onPause();
 		super.onPause();
+		isUpdateUi = false;
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		squashView.onResume();
+		mInstance.updateUi();
+	}
+
+	private void updateUi() {
+		isUpdateUi = true;
+		
+		new Thread() {
+			@Override
+			public void run() {
+				while (isUpdateUi) {
+					mInstance.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							// update *ps
+							hudFps.setText(String.format("%.2f", SquashRenderer.getFps()) + " fps\n" 
+									+ String.format("%.2f", MovementEngine.getMps()) + " mps");
+							// update ball
+							final IVector location =  SquashRenderer.getSquashBall().getLocation();
+							final IVector speed =  SquashRenderer.getSquashBall().getMovable().speed;
+							hudBall.setText("Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ()) + 
+									"\nSpeed:\t\t\t" + String.format("%.2f", speed.getX()) + "/" + String.format("%.2f", speed.getY()) + "/" + String.format("%.2f", speed.getZ()));
+						}
+					});
+
+					try {
+						Thread.sleep(UI_UPDATE_INTERVAL);
+					} catch (InterruptedException e) {
+						Log.e(TAG, "Error while sleepint", e);
+					}
+				}
+			}
+		}.start();
 	}
 }
