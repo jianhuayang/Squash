@@ -16,7 +16,6 @@ public final class MovementEngine {
 	private boolean mIsRunning;
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
-	private final static int INTERVAL = 10; // ms
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 500000;		// ms
 	private final int mSoundBounce;
@@ -26,6 +25,9 @@ public final class MovementEngine {
 	private final int mSoundBeep;
 	private final SoundPool mSoundPool;
 
+	private float mps;	// movements per second
+	private long lastFrame;
+	
 	public static void pause() {
 		mInstance.mIsRunning = false;
 	}
@@ -44,6 +46,10 @@ public final class MovementEngine {
 		}.start();
 	}
 
+	public static float getMps(){
+		return mInstance.mps;
+	}
+	
 	private void doWork() {
 		Log.w(TAG, "New thread starting to do work of MovementEngine");
 		
@@ -54,12 +60,13 @@ public final class MovementEngine {
 		while (mIsRunning && Calendar.getInstance().getTimeInMillis() < end) {
 			for (final Movable im : mMovables)
 				im.move();
+			
 
-			try {
-				Thread.sleep(INTERVAL);
-			} catch (InterruptedException e) {		
-				Log.e(TAG, "Error while sleepint", e);
-			}
+			final long now = System.currentTimeMillis();
+			final long delta = now - lastFrame;
+			if (delta != 0)
+				mps = 0.5f * (mps + 1000 / delta);
+			lastFrame = now;
 		}
 		mIsRunning = false;
 		
@@ -71,6 +78,7 @@ public final class MovementEngine {
 					Toast.makeText(SquashActivity.getInstance(), "MovementEngine stopped automatically", Toast.LENGTH_SHORT).show();
 				}
 			});
+		mps = 0;
 	}
 
 	public static void playSound(final String desc) {
