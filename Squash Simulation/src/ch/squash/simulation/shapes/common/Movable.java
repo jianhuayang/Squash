@@ -5,7 +5,6 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Ball;
-import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();
@@ -69,7 +68,7 @@ public class Movable {
 			moveSkipCount++;
 		}
 		else{
-			move((moveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f * MovementEngine.SPEED_FACTOR);
+			move((moveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f * Settings.getSpeedFactor());
 			moveSkipCount = 0;
 		}
 	}
@@ -86,7 +85,13 @@ public class Movable {
 		
 		// calculate forces
 		// every force is calculated without weight so it equals the acceleration
-		final IVector totalForce = gravitation.add(airFriction);
+		IVector totalForce = gravitation.add(airFriction);
+		if (lastMovementCollision != null && speed.getY() < 0.2f){
+			Log.e(TAG, "rollin");
+			totalForce = airFriction;
+			speed.setDirection(speed.getX(), 0, speed.getZ());
+		}
+		
 		final IVector acceleration = totalForce;
 
 		// calculate travelling distance s = v0*t + 1/2*a*t^2
@@ -117,31 +122,10 @@ public class Movable {
 					// calculate ausfallswinkel (= einfallswinkel, must change that)
 					final IVector n = collision.solidNormalVector.getNormalizedVector();
 
-					final float collisionAngle = (float)(collision.collisionAngle * 180 / Math.PI);
-					
-					float speedFactor = collisionAngle * 0.007f + 0.15f;
-					float refractionFactor = collisionAngle * 0.015f + 0.6f;
-
-					Log.d(TAG, "Slowing down by " + ((1 - speedFactor) * 100) + "% after a collision at " + collisionAngle);
-					
-					if (speedFactor > 1)
-						speedFactor = 1;
-					if (speedFactor < 0)
-						speedFactor = 0;
-					if (refractionFactor > 1)
-						refractionFactor = 1;
-					if (refractionFactor < 0)
-						refractionFactor = 0;
-					
-					final float newSpeedLength = speed.getLength() * speedFactor;
-					
 					final IVector newSpeed = speed.add(
-							n.multiply(-(1 + refractionFactor) * speed.multiply(n))).
-							getNormalizedVector().multiply(newSpeedLength);	// formula for ausfallswinkel
-					speed.setDirection(newSpeed);
+							n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution());	// formula for ausfallswinkel
 					
-					final double outAng = (Math.PI / 2 - newSpeed.getAngle(((Quadrilateral)solid).getNormalVector())) / Math.PI * 180;
-					Log.d(TAG, "inangle=" + collisionAngle + ", outangle=" + outAng);
+					speed.setDirection(newSpeed);
 					
 					final float oldTot = epot + ekin;
 					epot = mShape.location.getY() * gravitation.getLength();
