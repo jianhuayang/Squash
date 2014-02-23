@@ -18,6 +18,7 @@ public final class MovementEngine {
 	private final static Object LOCK = new Object();
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 500000;		// ms
+	public final static float SPEED_FACTOR = 0.1f;
 	private final int mSoundBounce;
 //	private final int mSoundFloor;
 	private final int mSoundFrontWall;

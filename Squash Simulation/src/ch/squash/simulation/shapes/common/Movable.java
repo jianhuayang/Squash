@@ -9,7 +9,7 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
 	private final static String TAG = Movable.class.getSimpleName();
-
+	
 	private final AbstractShape mShape;
 
 	public final PhysicalVector gravitation;
@@ -69,7 +69,7 @@ public class Movable {
 			moveSkipCount++;
 		}
 		else{
-			move((moveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f);
+			move((moveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS / 1000f * MovementEngine.SPEED_FACTOR);
 			moveSkipCount = 0;
 		}
 	}
@@ -79,9 +79,10 @@ public class Movable {
 		float epot = mShape.location.getY() * gravitation.getLength();
 		float ekin = 0.5f * speed.getLength() * speed.getLength();
 		Log.v(TAG, "Energy before move: pot=" + epot + ",\tkin= " + ekin +",\tsum=" + (epot+ekin));
+		Log.w(TAG, "Speed=" + speed);
 
 		// set air friction
-		airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).frictionConstant * speed.getLength() * speed.getLength()));
+		airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).DRAG_FACTOR * speed.getLength() * speed.getLength()));
 		
 		// calculate forces
 		// every force is calculated without weight so it equals the acceleration
@@ -118,8 +119,8 @@ public class Movable {
 
 					final float collisionAngle = (float)(collision.collisionAngle * 180 / Math.PI);
 					
-					float speedFactor = collisionAngle * 0.0075f + 0.125f;
-					float refractionFactor = collisionAngle * 0.005f + 0.55f;
+					float speedFactor = collisionAngle * 0.007f + 0.15f;
+					float refractionFactor = collisionAngle * 0.015f + 0.6f;
 
 					Log.d(TAG, "Slowing down by " + ((1 - speedFactor) * 100) + "% after a collision at " + collisionAngle);
 					
@@ -169,9 +170,9 @@ public class Movable {
 	}
 
 	public void reset() {
-		speed.setDirection(Settings.getBallStartSpeed());		// watch out with new movables...
 		airFriction.setDirection(0, 0, 0);
 		mTrace.reset();
 		mShape.moveTo(Settings.getBallStartPosition());
+		speed.setDirection(Settings.getBallStartSpeed());		// watch out with new movables...
 	}
 }
