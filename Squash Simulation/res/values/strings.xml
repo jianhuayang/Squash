@@ -57,4 +57,16 @@
 	<string name="default_ball_speed_x">3</string>
 	<string name="default_ball_speed_y">1</string>
 	<string name="default_ball_speed_z">-1</string>
+	
+
+	<string name="key_speed_factor">speed_factor</string>
+	<string name="title_speed_factor">Speed Factor</string>
+	<string name="summary_speed_factor">Set Speed at which the MovementEngine runs</string>
+	<string name="default_speed_factor">1</string>
+	
+	<string name="key_coefficient_of_restitution">coefficient_of_restitution</string>
+	<string name="title_coefficient_of_restitution">Coefficient of Restitution</string>
+	<string name="summary_coefficient_of_restitution">Set Coefficient of Restitution</string>
+	<string name="default_coefficient_of_restitution">0.75</string>
+	
 </resources>
