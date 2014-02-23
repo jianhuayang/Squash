@@ -68,6 +68,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public float angleInDegrees;
 	private float oldAngle;
 
+	private final Ball mSquashBall;
+	
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
 	public static SquashRenderer getInstance() {
@@ -79,6 +81,10 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public SquashRenderer() {
+		final IVector ballStart = Settings.getBallStartPosition();
+		mSquashBall = new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
+				new float[] { 0, 0, 0, 1 });
+				
 		// add objects
 		final ShapeCollection axis = new ShapeCollection();
 		axis.addObject(new DottedLine("xAxis", -5, 0, 0, 5, 0, 0, 1f, new float[] { 1f,
@@ -94,11 +100,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		misc.addObject(new Arrow("DummyArrow", 0, -1, -5, 0, 1, -5,
 				new float[] { 1, 1, 0, 1 }), false);
 
-		final IVector ballStart = Settings.getBallStartPosition();
 		mObjects = new ShapeCollection[] {
 				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_COURT),
-				new ShapeCollection(new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
-						new float[] { 0, 0, 0, 1 }), false), axis, misc,
+				new ShapeCollection(mSquashBall, false), axis, misc,
 				new ShapeCollection(new DummyShape(), false) };
 
 		courtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
@@ -389,5 +393,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	
 	public static float getFps(){
 		return mInstance.fps;
+	}
+	
+	public static Ball getSquashBall(){
+		return mInstance.mSquashBall;
 	}
 }
