@@ -16,10 +16,8 @@ public class Ball extends AbstractShape {
 	private static int mEdges;
 	private static int mLevels;
 
-	public final float frictionConstant;
-	private final static float CW = 3f;		// apparently should e around 0.45
-	public final float weight;
-	private final static float DENSITY = 7.16f;
+	private final static float DRAG_COEFFICIENT = 0.47f;
+	public final float DRAG_FACTOR;		// 1/2 * rho * C_d * A
 	
 	public float getRadius() {
 		return mRadius;
@@ -31,12 +29,10 @@ public class Ball extends AbstractShape {
 
 		mRadius = radius;
 		
-		// air friction: F = 1/2 * rho * c_w * A * v^2
-		// constant: 1/2 * rho * c_w * A
-		frictionConstant = (float) (0.5 * 1.293 * CW * Math.PI * radius * radius);
+		// air friction: F = 1/2 * rho * C_d * A * v^2
+		// constant: 1/2 * rho * C_d * A
+		DRAG_FACTOR = (float) (0.5 * 1.2 * DRAG_COEFFICIENT * Math.PI * radius * radius);
 
-		weight = (float) (DENSITY * Math.PI * radius * radius);
-		
 		initialize(GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this,
 				new float[] { x, y, z }));
 
