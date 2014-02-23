@@ -218,4 +218,8 @@ public abstract class AbstractShape {
 		
 		return (float) result;
 	}
+	
+	public IVector getLocation(){
+		return location;
+	}
 }
