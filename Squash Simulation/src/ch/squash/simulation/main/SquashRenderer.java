@@ -236,7 +236,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public void onDrawFrame(final GL10 glUnused) {
 		final long now = System.currentTimeMillis();
 		final long delta = now - lastFrame;
-		fps = 0.5f * (fps + 1000 / delta);
+		if (delta != 0)
+			fps = 0.5f * (fps + 1000 / delta);
 		lastFrame = now;
 		
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
