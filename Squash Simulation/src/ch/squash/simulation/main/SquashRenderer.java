@@ -61,6 +61,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	private final ShapeCollection[] mObjects;
 	public AbstractShape[] courtSolids;
 
+	private float fps;
+	private long lastFrame;
+	
 	// for dynamic movement
 	public float angleInDegrees;
 	private float oldAngle;
@@ -208,6 +211,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				pointFragmentShaderHandle, new String[] { "a_Position" });
 
 		resetCamera();
+		lastFrame = System.currentTimeMillis();
 
 		Log.i(TAG, "Surface created");
 	}
@@ -230,6 +234,11 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	
 	@Override
 	public void onDrawFrame(final GL10 glUnused) {
+		final long now = System.currentTimeMillis();
+		final long delta = now - lastFrame;
+		fps = 0.5f * (fps + 1000 / delta);
+		lastFrame = now;
+		
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
 		// Do a complete rotation every 10 seconds.
@@ -375,5 +384,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					return;
 				}
 		Log.e(TAG, "Apparently, new ball position could not be set since the ball object couldn\'t be found...");
+	}
+	
+	public static float getFps(){
+		return mInstance.fps;
 	}
 }
