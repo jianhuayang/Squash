@@ -7,27 +7,22 @@ import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Ball;
 
 public class Movable {
+	// static
 	private final static String TAG = Movable.class.getSimpleName();
 	
+	// shapes
 	private final AbstractShape mShape;
-
+	public final PhysicalVector[] vectorArrows;
 	public final PhysicalVector gravitation;
 	public final PhysicalVector speed;
 	public final PhysicalVector airFriction;
-
-	public final PhysicalVector[] vectorArrows;
-	
 	public final Trace mTrace;
-	public Collision lastMovementCollision;
-
+	
+	// data for between movements
+	private Collision lastMovementCollision;
 	private long mNextMovement = System.currentTimeMillis(); // ms
-
 	private int moveSkipCount;
 	
-	public static IVector getGravitation() {
-		return new Vector(0, -9.81f, 0);
-	}
-
 	public Movable(final AbstractShape shape, final float[] origin) {
 		mShape = shape;
 		gravitation = new PhysicalVector("force_gravitation", origin.clone(),
@@ -40,6 +35,10 @@ public class Movable {
 		vectorArrows = new PhysicalVector[] { gravitation, speed, airFriction };
 		
 		mTrace = new Trace(shape.tag + "\'s trace", new float[]{ 0.35f, 0.35f, 0.35f, 1 });
+	}
+
+	public static IVector getGravitation() {
+		return new Vector(0, -9.81f, 0);
 	}
 
 	public void resetClock() {
@@ -81,7 +80,7 @@ public class Movable {
 		Log.w(TAG, "Speed=" + speed);
 
 		// set air friction
-		airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).DRAG_FACTOR * speed.getLength() * speed.getLength()));
+		airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
 		
 		// calculate forces
 		// every force is calculated without weight so it equals the acceleration
@@ -101,7 +100,7 @@ public class Movable {
 		while (collided){
 			collided = false;
 			
-			for (final AbstractShape solid : SquashRenderer.getInstance().courtSolids) {
+			for (final AbstractShape solid : SquashRenderer.getCourtSolids()) {
 				final Collision collision = Collision.getCollision(mShape, distance, solid, lastMovementCollision);
 	
 				if (collision != null) {

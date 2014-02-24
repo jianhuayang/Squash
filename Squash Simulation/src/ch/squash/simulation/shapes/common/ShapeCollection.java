@@ -3,16 +3,18 @@ package ch.squash.simulation.shapes.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class ShapeCollection {
-	public static final int OBJECT_COLLECTION_COURT = 0;
-
+	// constant
+	private final static String TAG = ShapeCollection.class.getSimpleName();
+	public final static int OBJECT_COLLECTION_COURT = 0;
 	private final static String FLOOR_LINE = "floor line";
-	
-	private final List<AbstractShape> mOpaqueObjects = new ArrayList<AbstractShape>();
 
+	// collections
+	private final List<AbstractShape> mOpaqueObjects = new ArrayList<AbstractShape>();
 	private final List<AbstractShape> mTransparentObjects = new ArrayList<AbstractShape>();
 
 	public List<AbstractShape> getOpaqueObjects() {
@@ -57,7 +59,7 @@ public class ShapeCollection {
 			mOpaqueObjects.add(object);
 	}
 
-	// instantiates court
+	// instantiates specific collection
 	public ShapeCollection(final int collectionId) {
 		if (collectionId == OBJECT_COLLECTION_COURT) {
 			// floor (opaque)
@@ -231,6 +233,8 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					+SquashRenderer.COURT_LINE_WIDTH / 2f }, new float[] { 1f,
 					0f, 0f, 1f }, false));
+		} else {
+			Log.e(TAG, "Unknown ShapeCollection ID: " + collectionId);
 		}
 	}
 }

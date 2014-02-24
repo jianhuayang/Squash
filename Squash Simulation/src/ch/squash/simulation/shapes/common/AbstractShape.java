@@ -12,35 +12,72 @@ import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.DummyShape;
 
 public abstract class AbstractShape {
+	// constant
 	private final static String TAG = AbstractShape.class.getSimpleName();
+	private static final int BYTES_PER_FLOAT = 4;
+	private static final int POSITION_DATA_SIZE = 3;
+	private static final int COLOR_DATA_SIZE = 4;
+
+	// data - drawing
 	protected FloatBuffer mPositions;
 	protected FloatBuffer mColors;
-
-	protected static final int BYTES_PER_FLOAT = 4;
-	protected static final int POSITION_DATA_SIZE = 3;
-	protected static final int COLOR_DATA_SIZE = 4;
-	protected static final int NORMAL_DATA_SIZE = 3;
-
-	protected float[] mModelMatrix = new float[16];
-	protected float[] mMVPMatrix = new float[16];
-
 	private int mDrawMode;
-	
-	public final String tag;
-
 	private int mVertexCount;
 	private boolean mVisible = true;
 	private boolean isInitialized;
-
+	
+	// data - shape
+	public final String tag;
 	protected final IVector origin;
 	protected final IVector location;
-
 	private SolidType mSolidType;
-	protected Movable mMovable;
+	private Movable mMovable;
 
-	public enum SolidType {
-		NONE, SPHERE, AREA
-	};
+	// matrices
+	private float[] mModelMatrix = new float[16];
+	private float[] mMVPMatrix = new float[16];
+
+	public AbstractShape(final String tag, final float x, final float y, final float z, final float[] mVertexData, final float[] color) {
+		mVertexCount = mVertexData.length / POSITION_DATA_SIZE;
+		final float[] mColorData = getColorData(color);
+
+		this.tag = tag;
+		location = new Vector(x, y, z);
+		origin = new Vector(x, y, z);
+		
+		// Initialize the buffers.
+		mPositions = ByteBuffer
+				.allocateDirect(mVertexData.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mPositions.put(mVertexData).position(0);
+
+		mColors = ByteBuffer.allocateDirect(mColorData.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mColors.put(mColorData).position(0);
+	}
+	
+	@SuppressWarnings("unused")
+	private AbstractShape() {
+		location = null;
+		origin = null;
+		tag = null;
+	}
+
+	public void initialize(final int drawMode, final SolidType type, final Movable movable) {
+		mDrawMode = drawMode;
+		mSolidType = type;
+		mMovable = movable;
+
+		if (movable != null){
+			for (final PhysicalVector v : mMovable.vectorArrows) {
+				v.moveTo(location);
+			}
+		}
+		
+		isInitialized = true;
+	}
+
+	protected abstract float[] getColorData(final float[] color);
 
 	public void setVisible(final boolean visible) {
 		mVisible = visible;
@@ -61,22 +98,7 @@ public abstract class AbstractShape {
 	public boolean isMovable() {
 		return mMovable != null;
 	}
-
-	@SuppressWarnings("unused")
-	private AbstractShape() {
-		location = null;
-		origin = null;
-		tag = null;
-	}
-
-	public void initialize(final int drawMode, final SolidType type, final Movable movable) {
-		mDrawMode = drawMode;
-		mSolidType = type;
-		mMovable = movable;
-
-		isInitialized = true;
-	}
-
+	
 	public void setNewVertices(final float[] positionData) {
 		mVertexCount = positionData.length / POSITION_DATA_SIZE;
 		mPositions = ByteBuffer
@@ -84,28 +106,7 @@ public abstract class AbstractShape {
 				.order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mPositions.put(positionData).position(0);
 	}
-
-	protected abstract float[] getColorData(final float[] color);
 	
-	public AbstractShape(final String tag, final float x, final float y, final float z, final float[] mVertexData, final float[] color) {
-		mVertexCount = mVertexData.length / POSITION_DATA_SIZE;
-		final float[] mColorData = getColorData(color);
-
-		this.tag = tag;
-		location = new Vector(x, y, z);
-		origin = new Vector(x, y, z);
-		
-		// Initialize the buffers.
-		mPositions = ByteBuffer
-				.allocateDirect(mVertexData.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder()).asFloatBuffer();
-		mPositions.put(mVertexData).position(0);
-
-		mColors = ByteBuffer.allocateDirect(mColorData.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder()).asFloatBuffer();
-		mColors.put(mColorData).position(0);
-	}
-
 	public void draw() {
 		if (!isInitialized) {
 			Log.e(TAG, "Drawing uninitialized shape: " + toString());

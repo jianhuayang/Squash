@@ -1,7 +1,6 @@
 package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
-import ch.squash.simulation.shapes.common.AbstractShape.SolidType;
 import ch.squash.simulation.shapes.shapes.Ball;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
@@ -41,8 +40,6 @@ public final class Collision {
 			error = "Checking collision of unsolid shapes";
 		if (!moving.isMovable())
 			error = "Moving shape is not moving";
-		if (moving.getMovable().speed.getLength() == 0)
-			error = "Moving shape is not moving";
 		if (stationary.isMovable()
 				&& stationary.getMovable().speed.getLength() != 0)
 			error = "Stationary shape is moving";
@@ -73,7 +70,7 @@ public final class Collision {
 		if (!moving.isMovable())
 			error = "Moving shape is not moving";
 		if (moving.getMovable().speed.getLength() == 0)
-			error = "Moving shape is not moving";
+			return null;	// no collision if the shape is not moving
 		if (stationary.isMovable()
 				&& stationary.getMovable().speed.getLength() != 0)
 			error = "Stationary shape is moving";
@@ -149,9 +146,7 @@ public final class Collision {
 		}
 		
 		// collision happens, return collision object	
-		// TODO: check necessity of parameters for collision ctor
 		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
-//		Log.w(TAG, "Ball is at " + ball.location + ", travelling " + travelled + " to inters=" + intersection);
 		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector(), getIncidenceAngle(travelled, quad.getNormalVector()));
 	}
 
