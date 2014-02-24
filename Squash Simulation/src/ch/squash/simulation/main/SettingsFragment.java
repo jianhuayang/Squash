@@ -22,6 +22,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
 	private static final Dictionary<Integer, String> DRAW_MODE_SUMMARIES = new Hashtable<Integer, String>();
 	private static final Dictionary<Integer, String> CAMERA_MODE_SUMMARIES = new Hashtable<Integer, String>();
+	
 	static {
 		DRAW_MODE_SUMMARIES.put(-1, "Use default draw mode");
 		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, "Draw lines");
@@ -84,6 +85,14 @@ public class SettingsFragment extends PreferenceFragment implements
 		Log.i(TAG, "SettingsFragment created");
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (Settings.isReset())
+			Settings.setBoolean(Settings.getKeyReset(), false);
+	}
+
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		final Preference pref = findPreference(key);
 
@@ -135,13 +144,5 @@ public class SettingsFragment extends PreferenceFragment implements
 			Log.e(TAG, "Unknown key: " + key);
 		
 		return result;
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
-		if (Settings.isReset())
-			Settings.setBoolean(Settings.getKeyReset(), false);
 	}
 }

@@ -24,30 +24,17 @@ import ch.squash.simulation.shapes.shapes.DummyShape;
 import ch.squash.simulation.shapes.shapes.Tetrahedron;
 
 public class SquashRenderer implements GLSurfaceView.Renderer {
+	// static
 	private static final String TAG = SquashRenderer.class.getSimpleName();
-
-	// static access
+	private static final Object LOCK = new Object();
 	private static SquashRenderer mInstance;
-	private final static Object LOCK = new Object();
-
-	// matrices - camera and projection
-	public float[] mViewMatrix = new float[16];
-	public float[] mProjectionMatrix = new float[16];
-
-	// handles
-	public int mMVPMatrixHandle;
-	public int mMVMatrixHandle;
-	public int mPositionHandle;
-	public int mColorHandle;
-	private int mPerVertexProgramHandle;
-	public int mPointProgramHandle;
-
-	private final static int CYCLE_DURATION = 20000;
 	
+	// constants
 	// dimensions
 	public final static float ONE_MM = 0.001f;
 	public final static float ONE_CM = 0.01f;
 	public final static float COURT_LINE_WIDTH = 5 * ONE_CM;
+	private final static int CYCLE_DURATION = 20000;
 
 	// object-related
 	public final static int OBJECT_COURT = 0;
@@ -58,28 +45,33 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public final static int[] OBJECTS = new int[] { OBJECT_COURT, OBJECT_BALL,
 			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE };
 
+	// matrices - camera and projection
+	public float[] mViewMatrix = new float[16];
+	public float[] mProjectionMatrix = new float[16];
+
+	// handles
+	public int mMVPMatrixHandle;
+	public int mMVMatrixHandle;
+	public int mPositionHandle;
+	public int mColorHandle;
+	public int mPointProgramHandle;
+	private int mPerVertexProgramHandle;
+
+	// objects
 	private final ShapeCollection[] mObjects;
-	public AbstractShape[] courtSolids;
-
-	private float fps;
-	private long lastFrame;
-	
-	// for dynamic movement
-	public float angleInDegrees;
-	private float oldAngle;
-
+	private AbstractShape[] mCourtSolids;
 	private final Ball mSquashBall;
 	
+	// misc
+	private float mFps;
+	private long mLastFrame;
+	
+	// for dynamic movement
+	private float mAngleInDegrees;
+	private float mOldAngle;
+
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
-	public static SquashRenderer getInstance() {
-		synchronized (LOCK) {
-			if (mInstance == null)
-				mInstance = new SquashRenderer();
-		}
-		return mInstance;
-	}
-
 	public SquashRenderer() {
 		final IVector ballStart = Settings.getBallStartPosition();
 		mSquashBall = new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
@@ -105,7 +97,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				new ShapeCollection(mSquashBall, false), axis, misc,
 				new ShapeCollection(new DummyShape(), false) };
 
-		courtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
+		mCourtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
 				mObjects[0].getOpaqueObjects().get(2),
 				mObjects[0].getOpaqueObjects().get(4),
 				mObjects[0].getTransparentObjects().get(0),
@@ -125,6 +117,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		MovementEngine.initialize(movables.toArray(new Movable[movables.size()]));
 
 		Log.i(TAG, "SquashRenderer created");
+	}
+
+	public static SquashRenderer getInstance() {
+		synchronized (LOCK) {
+			if (mInstance == null)
+				mInstance = new SquashRenderer();
+		}
+		return mInstance;
 	}
 
 	private String getVertexShader() {
@@ -215,7 +215,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				pointFragmentShaderHandle, new String[] { "a_Position" });
 
 		resetCamera();
-		lastFrame = System.currentTimeMillis();
+		mLastFrame = System.currentTimeMillis();
 
 		Log.i(TAG, "Surface created");
 	}
@@ -239,19 +239,19 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	@Override
 	public void onDrawFrame(final GL10 glUnused) {
 		final long now = System.currentTimeMillis();
-		final long delta = now - lastFrame;
+		final long delta = now - mLastFrame;
 		if (delta != 0)
-			fps = 0.5f * (fps + 1000 / delta);
-		lastFrame = now;
+			mFps = 0.5f * (mFps + 1000 / delta);
+		mLastFrame = now;
 		
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
 		// Do a complete rotation every 10 seconds.
 		final long time = SystemClock.uptimeMillis() % CYCLE_DURATION;
-		angleInDegrees = (360.0f / CYCLE_DURATION) * ((int) time);
+		mAngleInDegrees = (360.0f / CYCLE_DURATION) * ((int) time);
 
 		if (Settings.isCameraRotating())
-			Matrix.rotateM(mViewMatrix, 0, angleInDegrees - oldAngle, 0.0f,
+			Matrix.rotateM(mViewMatrix, 0, mAngleInDegrees - mOldAngle, 0.0f,
 					1.0f, 0.0f);
 		else if (setCameraRotation){
 			setCameraRotation = false;
@@ -260,7 +260,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					0.0f, 1.0f, 0.0f);	
 		}
 		
-		oldAngle = angleInDegrees;
+		mOldAngle = mAngleInDegrees;
 
 		// Set our per-vertex lighting program.
 		GLES20.glUseProgram(mPerVertexProgramHandle);
@@ -392,10 +392,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	}
 	
 	public static float getFps(){
-		return mInstance.fps;
+		return mInstance.mFps;
 	}
 	
 	public static Ball getSquashBall(){
 		return mInstance.mSquashBall;
+	}
+	
+	public static AbstractShape[] getCourtSolids(){
+		return mInstance.mCourtSolids;
 	}
 }

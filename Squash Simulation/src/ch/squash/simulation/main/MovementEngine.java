@@ -11,22 +11,31 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
+	// static
 	private final static String TAG = MovementEngine.class.getSimpleName();
-	private final Movable[] mMovables;
-	private boolean mIsRunning;
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
+
+	// constants
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
 	private final static int ENGINE_DURATION = 500000;		// ms
+	
+	// objects
+	private final Movable[] mMovables;
+
+	// sound
+	private final SoundPool mSoundPool;
 	private final int mSoundBounce;
-//	private final int mSoundFloor;
 	private final int mSoundFrontWall;
 	private final int mSoundTin;
 	private final int mSoundBeep;
-	private final SoundPool mSoundPool;
 
-	private float mps;	// movements per second
-	private long lastFrame;
+	// control
+	private boolean mIsRunning;
+
+	// other
+	private float mMps;	// movements per second
+	private long mLastFrame;
 	
 	public static void pause() {
 		mInstance.mIsRunning = false;
@@ -47,7 +56,7 @@ public final class MovementEngine {
 	}
 
 	public static float getMps(){
-		return mInstance.mps;
+		return mInstance.mMps;
 	}
 	
 	private void doWork() {
@@ -63,10 +72,10 @@ public final class MovementEngine {
 			
 
 			final long now = System.currentTimeMillis();
-			final long delta = now - lastFrame;
+			final long delta = now - mLastFrame;
 			if (delta != 0)
-				mps = 0.5f * (mps + 1000 / delta);
-			lastFrame = now;
+				mMps = 0.5f * (mMps + 1000 / delta);
+			mLastFrame = now;
 		}
 		mIsRunning = false;
 		
@@ -78,7 +87,7 @@ public final class MovementEngine {
 					Toast.makeText(SquashActivity.getInstance(), "MovementEngine stopped automatically", Toast.LENGTH_SHORT).show();
 				}
 			});
-		mps = 0;
+		mMps = 0;
 	}
 
 	public static void playSound(final String desc) {
@@ -111,8 +120,6 @@ public final class MovementEngine {
 		mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
 		mSoundBounce = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.bounce, 1);
-//		mSoundFloor = mSoundPool.load(SquashActivity.getInstance(),
-//				R.raw.floor, 1);
 		mSoundFrontWall = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.frontwall, 1);
 		mSoundTin = mSoundPool.load(SquashActivity.getInstance(),

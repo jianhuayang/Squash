@@ -19,21 +19,22 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.IVector;
 
 public class SquashActivity extends Activity {
+	// static
 	private final static String TAG = SquashActivity.class.getSimpleName();
-	private SquashView squashView;
-	private TextView hudFps;
-	private TextView hudBall;
-	private static final int RESULT_SETTINGS = 1;
-	private final static int UI_UPDATE_INTERVAL = 200; // ms
-	private boolean isUpdateUi = true;
-
-	// static access
 	private static SquashActivity mInstance;
 
-	public static SquashActivity getInstance() {
-		return mInstance;
-	}
-
+	// constants
+	private final static int RESULT_SETTINGS = 1;
+	private final static int UI_UPDATE_INTERVAL = 200; // ms
+	
+	// views
+	private SquashView mSquashView;
+	private TextView mTxtHudFps;
+	private TextView mTxtHudBall;
+	
+	// misc
+	private boolean mIsUpdateUi = true;
+	
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,19 +56,19 @@ public class SquashActivity extends Activity {
 		}
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		hudFps = new TextView(this);
-		hudFps.setTextColor(Color.RED);
-		hudFps.setGravity(Gravity.RIGHT);
-		hudBall = new TextView(this);
-		hudBall.setTextColor(Color.BLUE);
-		hudBall.setGravity(Gravity.LEFT);
+		mTxtHudFps = new TextView(this);
+		mTxtHudFps.setTextColor(Color.RED);
+		mTxtHudFps.setGravity(Gravity.RIGHT);
+		mTxtHudBall = new TextView(this);
+		mTxtHudBall.setTextColor(Color.BLUE);
+		mTxtHudBall.setGravity(Gravity.LEFT);
 
-		squashView = new SquashView(this);
+		mSquashView = new SquashView(this);
 
-		setContentView(squashView);
-		final FrameLayout parent = (FrameLayout) squashView.getParent();
-		parent.addView(hudFps);
-		parent.addView(hudBall);
+		setContentView(mSquashView);
+		final FrameLayout parent = (FrameLayout) mSquashView.getParent();
+		parent.addView(mTxtHudFps);
+		parent.addView(mTxtHudBall);
 
 		updateUi();
 		
@@ -84,7 +85,7 @@ public class SquashActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		if (item.getItemId() == R.id.menu_settings) {
-			squashView.onPause();
+			mSquashView.onPause();
 
 			final Intent i = new Intent(this, SettingsActivity.class);
 			startActivityForResult(i, RESULT_SETTINGS);
@@ -100,42 +101,42 @@ public class SquashActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == RESULT_SETTINGS) {
-			squashView.onResume();
+			mSquashView.onResume();
 			Log.d(TAG, "SettingsActivity finished");
 		}
 	}
 
 	@Override
 	protected void onPause() {
-		squashView.onPause();
+		mSquashView.onPause();
 		super.onPause();
-		isUpdateUi = false;
+		mIsUpdateUi = false;
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		squashView.onResume();
+		mSquashView.onResume();
 		mInstance.updateUi();
 	}
 
 	private void updateUi() {
-		isUpdateUi = true;
+		mIsUpdateUi = true;
 		
 		new Thread() {
 			@Override
 			public void run() {
-				while (isUpdateUi) {
+				while (mIsUpdateUi) {
 					mInstance.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							// update *ps
-							hudFps.setText(String.format("%.2f", SquashRenderer.getFps()) + " fps\n" 
+							mTxtHudFps.setText(String.format("%.2f", SquashRenderer.getFps()) + " fps\n" 
 									+ String.format("%.2f", MovementEngine.getMps()) + " mps");
 							// update ball
 							final IVector location =  SquashRenderer.getSquashBall().getLocation();
 							final IVector speed =  SquashRenderer.getSquashBall().getMovable().speed;
-							hudBall.setText("Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ()) + 
+							mTxtHudBall.setText("Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ()) + 
 									"\nSpeed:\t\t\t" + String.format("%.2f", speed.getX()) + "/" + String.format("%.2f", speed.getY()) + "/" + String.format("%.2f", speed.getZ()));
 						}
 					});
@@ -148,5 +149,9 @@ public class SquashActivity extends Activity {
 				}
 			}
 		}.start();
+	}
+	
+	public static SquashActivity getInstance() {
+		return mInstance;
 	}
 }
