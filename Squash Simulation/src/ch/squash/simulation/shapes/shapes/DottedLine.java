@@ -2,6 +2,7 @@ package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
 import ch.squash.simulation.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.SolidType;
 
 public class DottedLine extends AbstractShape {
 	// only to be used during initialization!!!

@@ -3,6 +3,7 @@ package ch.squash.simulation.shapes.shapes;
 import android.opengl.GLES20;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.SolidType;
 import ch.squash.simulation.shapes.common.Vector;
 
 public class Arrow extends AbstractShape {

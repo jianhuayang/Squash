@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.Movable;
+import ch.squash.simulation.shapes.common.SolidType;
 
 public class Ball extends AbstractShape {
 	// static
