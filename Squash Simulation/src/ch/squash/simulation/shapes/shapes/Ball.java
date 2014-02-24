@@ -3,26 +3,23 @@ package ch.squash.simulation.shapes.shapes;
 import android.opengl.GLES20;
 import android.util.Log;
 import ch.squash.simulation.shapes.common.AbstractShape;
-import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.Movable;
-import ch.squash.simulation.shapes.common.PhysicalVector;
-import ch.squash.simulation.shapes.common.Vector;
 
 public class Ball extends AbstractShape {
+	// static
 	private final static String TAG = Ball.class.getSimpleName();
 
-	private final float mRadius;
-
+	// only to be used during initialization!!!
 	private static int mEdges;
 	private static int mLevels;
 
+	// constants
 	private final static float DRAG_COEFFICIENT = 0.47f;
-	public final float DRAG_FACTOR;		// 1/2 * rho * C_d * A
+	private final float DRAG_FACTOR;		// 1/2 * rho * C_d * A
 	
-	public float getRadius() {
-		return mRadius;
-	}
-
+	// misc
+	private final float mRadius;
+	
 	public Ball(final String tag, final float x, final float y, final float z,
 			final float radius, final int edges, final float[] color) {
 		super(tag, x, y, z, getVertices(radius, edges), color);
@@ -35,11 +32,6 @@ public class Ball extends AbstractShape {
 
 		initialize(GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this,
 				new float[] { x, y, z }));
-
-		final IVector position = new Vector(x, y, z);
-		for (final PhysicalVector v : mMovable.vectorArrows) {
-			v.moveTo(position);
-		}
 	}
 
 	private static void prepareEdgeCount() {
@@ -54,7 +46,7 @@ public class Ball extends AbstractShape {
 			Log.w(TAG, "Edges halved");
 		}
 
-		Log.d(TAG, "edges: " + mEdges + ", levels: " + mLevels);
+		Log.v(TAG, "Ball has " + mEdges + " edges and " + mLevels + ".");
 	}
 
 	private static float getRad(final float radius, final int i,
@@ -261,5 +253,13 @@ public class Ball extends AbstractShape {
 			System.arraycopy(color, 0, result, i * color.length, color.length);
 
 		return result;
+	}
+	
+	public float getDragFactor(){
+		return DRAG_FACTOR;
+	}
+	
+	public float getRadius() {
+		return mRadius;
 	}
 }
