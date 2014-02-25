@@ -6,6 +6,12 @@ public interface IVector {
 	float getY();
 
 	float getZ();
+
+	void setX(final float x);
+	
+	void setY(final float y);
+	
+	void setZ(final float z);
 	
 	float[] getDirection();
 

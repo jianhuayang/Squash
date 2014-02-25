@@ -71,6 +71,21 @@ public class Vector implements IVector {
 	}
 
 	@Override
+	public void setX(final float x) {
+		mDirection[0] = x;
+	}
+
+	@Override
+	public void setY(final float y) {
+		mDirection[1] = y;
+	}
+
+	@Override
+	public void setZ(final float z) {
+		mDirection[2] = z;
+	}
+
+	@Override
 	public float[] getDirection() {
 		return mDirection.clone();
 	}

@@ -116,4 +116,22 @@ public class PhysicalVector implements IVector {
 	public void setDirection(final IVector other){
 		setDirection(other.getX(), other.getY(), other.getZ());
 	}
+
+	@Override
+	public void setX(final float x) {
+		mVector.setX(x);
+		setNewCoordinates();
+	}
+
+	@Override
+	public void setY(final float y) {
+		mVector.setY(y);
+		setNewCoordinates();
+	}
+
+	@Override
+	public void setZ(final float z) {
+		mVector.setZ(z);
+		setNewCoordinates();
+	}
 }
