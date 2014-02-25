@@ -10,6 +10,8 @@ public final class Collision {
 	// point where collision took place
 	public final IVector collisionPoint;
 	
+	public final IVector shapeLocationOnCollision;
+	
 	// percentage of travelled distance until collision
 	public final float travelPercentage;
 	
@@ -22,13 +24,17 @@ public final class Collision {
 	// angle between incoming trajectory and solid (0 = parallel, pi/2 = vertical)
 	public final float collisionAngle;
 	
-	private Collision(final IVector collisionPoint, final float travelPercentage, 
-			final IVector normalForce, final IVector solidNormalVector, final float angle) {
+	public final AbstractShape collidedSolid;
+	
+	private Collision(final IVector collisionPoint, final float travelPercentage, final IVector normalForce,
+			final IVector solidNormalVector, final float angle, final AbstractShape collidedSolid, final IVector shapeLocationOnCollision) {
 		this.collisionPoint = collisionPoint;
 		this.travelPercentage = travelPercentage;
 		this.normalForce = normalForce;
 		this.solidNormalVector = solidNormalVector;
 		this.collisionAngle = angle;
+		this.collidedSolid = collidedSolid;
+		this.shapeLocationOnCollision = shapeLocationOnCollision;
 	}
 	
 	public static boolean isOnSolid(final AbstractShape moving, final AbstractShape stationary){
@@ -100,7 +106,7 @@ public final class Collision {
 			final Quadrilateral quad, final Collision lastMovementCollision) {
 		// TODO: Not treat ball as a point anymore (but as a sphere)		
 		// get distance to quad
-		final float distanceToQuad = quad.getDistanceToPoint(ball.location);
+		final float distanceToQuad = quad.getDistanceToPoint(ball.location) -ball.getRadius();
 		
 		// if the quad is too far away, return
 		if (distanceToQuad > travelled.getLength())
@@ -145,9 +151,12 @@ public final class Collision {
 			return null;
 		}
 		
-		// collision happens, return collision object	
+		// collision happens, return collision object
+		
+		final IVector shapeLocationOnCollision = intersection.add(travelled.getNormalizedVector().multiply(-ball.getRadius()));
 		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
-		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()), quad.getNormalVector(), getIncidenceAngle(travelled, quad.getNormalVector()));
+		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()),
+				quad.getNormalVector(), getIncidenceAngle(travelled, quad.getNormalVector()), quad, shapeLocationOnCollision);
 	}
 
 	private static IVector getNormalForce(final IVector areaNormal){
