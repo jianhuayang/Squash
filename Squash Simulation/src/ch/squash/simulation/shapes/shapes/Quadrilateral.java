@@ -274,6 +274,10 @@ public class Quadrilateral extends AbstractShape {
 	public boolean isPointInQuad(final IVector p) {
 		return getDistanceToPoint(p) == 0f;
 	}
+	
+	public int getNonZeroDimension(){
+		return mNormalVectorNonzeroDimension;
+	}
 
 	@Override
 	protected float[] getColorData(final float[] color) {
