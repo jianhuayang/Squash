@@ -403,9 +403,9 @@ public class ShapeCollection {
 			}
 			
 			for (int j = 0; j < STAND_COUNT_BACK; j++)
-			for (int i = 0; i < chairs; i++)
-				mOpaqueObjects.add(new Chair("chair", -halfArenaWidth + i * (STAND_CHAIR_SIZE + space), (j+1) * STAND_STEP_HEIGHT,
-						5.26f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
+				for (int i = 0; i < chairs; i++)
+					mOpaqueObjects.add(new Chair("chair", -halfArenaWidth + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
+							5.26f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
 			
 		} else {
 			Log.e(TAG, "Unknown ShapeCollection ID: " + collectionId);
