@@ -11,7 +11,15 @@ public class ShapeCollection {
 	// constant
 	private final static String TAG = ShapeCollection.class.getSimpleName();
 	public final static int OBJECT_COLLECTION_COURT = 0;
+	public final static int OBJECT_COLLECTION_ARENA = 1;
 	private final static String FLOOR_LINE = "floor line";
+	private final static float[] COLOR_FLOOR = new float[]{ 1, 0, 0, 1 };
+	private final static float[] COLOR_STAND = new float[]{ 0, 1, 0, 1 };
+	private final static float[] COLOR_STAND_OUTSIDE = new float[]{ 0, 0, 1, 1 };
+	private final static float STAND_STEP_WIDTH = 0.7f;
+	private final static float STAND_STEP_HEIGHT = 0.3f;
+	private final static int STAND_COUNT_FRONT_SIDE = 5;
+	private final static int STAND_COUNT_BACK = 8;
 
 	// collections
 	private final List<AbstractShape> mOpaqueObjects = new ArrayList<AbstractShape>();
@@ -233,6 +241,149 @@ public class ShapeCollection {
 					SquashRenderer.ONE_MM,
 					+SquashRenderer.COURT_LINE_WIDTH / 2f }, new float[] { 1f,
 					0f, 0f, 1f }, false));
+		} else if (collectionId == OBJECT_COLLECTION_ARENA){
+			// floor "up"
+			mOpaqueObjects.add(new Quadrilateral("floor_behind", new float[]{
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 4.26f, -4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f, 4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 4.26f },
+					COLOR_FLOOR, false));
+			mOpaqueObjects.add(new Quadrilateral("floor_before", new float[]{
+					-4.2f, 0, -6.49f, -4.2f, 0, -5.49f, 4.2f, 0, -5.49f, 4.2f, 0, -6.49f },
+					COLOR_FLOOR, false));
+			mOpaqueObjects.add(new Quadrilateral("floor_left", new float[]{
+					-4.2f, 0, -5.49f, -4.2f, 0, 4.26f, -3.2f, 0, 4.26f, -3.2f, 0, -5.49f },
+					COLOR_FLOOR, false));
+			mOpaqueObjects.add(new Quadrilateral("floor_right", new float[]{
+					3.2f, 0, -5.49f, 3.2f, 0, 4.26f, 4.2f, 0, 4.26f, 4.2f, 0, -5.49f },
+					COLOR_FLOOR, false));
+			// floor "down"
+			mOpaqueObjects.add(new Quadrilateral("floor_bottom", new float[]{
+					4.26f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					-4.26f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					-4.26f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					4.26f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					}, COLOR_STAND_OUTSIDE, false));
+			
+			// stands - backwall
+			for (int i = 0; i < STAND_COUNT_BACK; i++){
+				// inside
+				mOpaqueObjects.add(new Quadrilateral("stand_back", new float[]{
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						 4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						 4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH},
+						 COLOR_STAND, false));
+				mOpaqueObjects.add(new Quadrilateral("stand_back", new float[]{
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						 4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						 4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH},
+						 COLOR_STAND, false));
+				// outside
+				mOpaqueObjects.add(new Quadrilateral("stand_back_outside", new float[]{
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + i * STAND_STEP_WIDTH,
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						}, COLOR_STAND_OUTSIDE, false));
+				mOpaqueObjects.add(new Quadrilateral("stand_back_outside", new float[]{
+						4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + i * STAND_STEP_WIDTH,
+						4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
+						4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 5.26f + (i+1) * STAND_STEP_WIDTH,
+						}, COLOR_STAND_OUTSIDE, false));
+			}
+			// outside
+			mOpaqueObjects.add(new Quadrilateral("stand_back_outside", new float[]{
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_BACK * STAND_STEP_HEIGHT, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_BACK * STAND_STEP_HEIGHT, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
+					}, COLOR_STAND_OUTSIDE, false));
+
+			// stands - left sidewall
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+				mOpaqueObjects.add(new Quadrilateral("stand_left", new float[]{
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH},
+						COLOR_STAND, false));
+				mOpaqueObjects.add(new Quadrilateral("stand_left", new float[]{
+						-4.2f - (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						-4.2f - (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - (i+1) * STAND_STEP_WIDTH},
+						COLOR_STAND, false));
+				// outside
+				mOpaqueObjects.add(new Quadrilateral("stand_left_outside", new float[]{
+						-4.2f - (i+1) * STAND_STEP_WIDTH, 0, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, 0, 4.26f,
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						-4.2f - (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f
+						}, COLOR_STAND_OUTSIDE, false));
+			}
+			// outside
+			mOpaqueObjects.add(new Quadrilateral("stand_left_outside", new float[]{
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 4.26f,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, 4.26f,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					}, COLOR_STAND_OUTSIDE, false));
+
+			// stands - frontwall
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+				mOpaqueObjects.add(new Quadrilateral("stand_front", new float[]{
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						-4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						4.2f + i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH},
+						COLOR_STAND, false));
+				mOpaqueObjects.add(new Quadrilateral("stand_front", new float[]{
+						-4.2f - (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - (i+1) * STAND_STEP_WIDTH,
+						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						4.2f + (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - (i+1) * STAND_STEP_WIDTH},
+						COLOR_STAND, false));			}
+			// outside
+			mOpaqueObjects.add(new Quadrilateral("stand_front_outside", new float[]{
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					}, COLOR_STAND_OUTSIDE, false));
+
+			// stands - right sidewall
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+				mOpaqueObjects.add(new Quadrilateral("stand_right", new float[]{
+						4.2f + i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 4.26f,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
+						4.2f + i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH},
+						COLOR_STAND, false));
+				mOpaqueObjects.add(new Quadrilateral("stand_right", new float[]{
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						4.2f + (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						4.2f + (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - (i+1) * STAND_STEP_WIDTH,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH},
+						COLOR_STAND, false));
+				// outside
+				mOpaqueObjects.add(new Quadrilateral("stand_right_outside", new float[]{
+						4.2f + i * STAND_STEP_WIDTH, 0, 4.26f,
+						4.2f + (i+1) * STAND_STEP_WIDTH, 0, 4.26f,
+						4.2f + (i+1) * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
+						}, COLOR_STAND_OUTSIDE, false));
+			}
+			// outside
+			mOpaqueObjects.add(new Quadrilateral("stand_right_outside", new float[]{
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 4.26f,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, -6.49f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH,
+					4.2f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, STAND_COUNT_FRONT_SIDE * STAND_STEP_HEIGHT, 4.26f,
+					}, COLOR_STAND_OUTSIDE, false));
+			
+			// outside
 		} else {
 			Log.e(TAG, "Unknown ShapeCollection ID: " + collectionId);
 		}
