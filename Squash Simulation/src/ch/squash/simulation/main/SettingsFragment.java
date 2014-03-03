@@ -57,17 +57,18 @@ public class SettingsFragment extends PreferenceFragment implements
 				.getKeySelectObjects());
 
 		mslp.setEntries(new String[] { "Court", "Ball", "Coordinate axis",
-				"Miscellaneous objects", "Forces", "Arena" });
+				"Miscellaneous objects", "Forces", "Arena", "Chairs" });
 		mslp.setEntryValues(new String[] {
 				Integer.toString(SquashRenderer.OBJECT_COURT),
 				Integer.toString(SquashRenderer.OBJECT_BALL),
 				Integer.toString(SquashRenderer.OBJECT_AXIS),
 				Integer.toString(SquashRenderer.OBJECT_MISC),
 				Integer.toString(SquashRenderer.OBJECT_FORCE),
-				Integer.toString(SquashRenderer.OBJECT_ARENA) });
+				Integer.toString(SquashRenderer.OBJECT_ARENA),
+				Integer.toString(SquashRenderer.OBJECT_CHAIRS) });
 
 		listPref = (ListPreference) findPreference(Settings.getKeyCameraMode());
-		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5" });
+		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5", "6" });
 		listPref.setSummary(getSummary(Settings.getKeyCameraMode()));
 
 		findPreference(Settings.getKeyCameraPositionX()).setSummary(getSummary(Settings.getKeyCameraPositionX()));

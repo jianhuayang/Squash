@@ -43,8 +43,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public final static int OBJECT_MISC = 3;
 	public final static int OBJECT_FORCE = 4;
 	public final static int OBJECT_ARENA = 5;
+	public final static int OBJECT_CHAIRS = 6;
 	public final static int[] OBJECTS = new int[] { OBJECT_COURT, OBJECT_BALL,
-			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE, OBJECT_ARENA };
+			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE, OBJECT_ARENA, OBJECT_CHAIRS };
 
 	// matrices - camera and projection
 	public float[] mViewMatrix = new float[16];
@@ -97,7 +98,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_COURT),
 				new ShapeCollection(mSquashBall, false), axis, misc,
 				new ShapeCollection(new DummyShape(), false),
-				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_ARENA)};
+				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_ARENA),
+				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_CHAIRS) };
 
 		mCourtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
 				mObjects[0].getOpaqueObjects().get(2),
