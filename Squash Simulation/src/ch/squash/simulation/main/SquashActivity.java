@@ -42,8 +42,8 @@ public class SquashActivity extends Activity {
 		mInstance = this;
 
 		// ensure the camera is not rotating on startup
-		if (Settings.getCameraMode() == 0)
-			Settings.setCameraMode(1);
+//		if (Settings.getCameraMode() == 0)
+//			Settings.setCameraMode(1);
 
 		// ensure that if nothing would be drawn, ball court and forces are
 		// drawn instead
