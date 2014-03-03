@@ -134,11 +134,17 @@ public class SettingsFragment extends PreferenceFragment implements
 		else if (key.equals(Settings.getKeyReset()))
 			result = SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_reset);
-		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
+		else if (key.equals(Settings.getKeyCameraPositionX()))
+			result = "left/right: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
 			result = "x = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
+		else if (key.equals(Settings.getKeyCameraPositionY()))
+			result = "down/up: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
 			result = "y = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
+		else if (key.equals(Settings.getKeyCameraPositionZ()))
+			result = "front/back: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
 			result = "z = " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()))
 			result = Settings.getValue(key).toString();
