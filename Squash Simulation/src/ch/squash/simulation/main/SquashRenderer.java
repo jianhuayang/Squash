@@ -42,8 +42,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public final static int OBJECT_AXIS = 2;
 	public final static int OBJECT_MISC = 3;
 	public final static int OBJECT_FORCE = 4;
+	public final static int OBJECT_ARENA = 5;
 	public final static int[] OBJECTS = new int[] { OBJECT_COURT, OBJECT_BALL,
-			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE };
+			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE, OBJECT_ARENA };
 
 	// matrices - camera and projection
 	public float[] mViewMatrix = new float[16];
@@ -95,7 +96,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		mObjects = new ShapeCollection[] {
 				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_COURT),
 				new ShapeCollection(mSquashBall, false), axis, misc,
-				new ShapeCollection(new DummyShape(), false) };
+				new ShapeCollection(new DummyShape(), false),
+				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_ARENA)};
 
 		mCourtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
 				mObjects[0].getOpaqueObjects().get(2),
@@ -152,9 +154,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// overriding methods
 	@Override
 	public void onSurfaceCreated(final GL10 glUnused, final EGLConfig config) {
-		// Set the background clear color to black.
+		// Set the background clear color to .
 		GLES20.glClearColor(0, 0, 0, 0);
-		GLES20.glClearColor(1, 1, 1, 0);
+//		GLES20.glClearColor(1, 1, 1, 0);
 
 		// Use culling to remove back faces.
 		GLES20.glEnable(GLES20.GL_CULL_FACE);
@@ -230,8 +232,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		// while the width will vary as per aspect ratio.
 		final float ratio = (float) width / height;
 
-		// matrix, offset, left, right, bottom, top, near, far
-		Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
+		// matrix, offset, left, right, bottom, top, near, far		<--- "far" determines how far into the distance that you can see!
+		Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 40);
 
 		Log.i(TAG, "Surface changed");
 	}
