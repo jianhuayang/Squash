@@ -20,13 +20,13 @@ public class ShapeCollection {
 	private final static float[] COLOR_STAND_VERTICAL = new float[]{ 0, 0.1f, 0.3f, 1 };
 	private final static float[] COLOR_STAND_HORIZONTAL = new float[]{ 0.1f, 0f, 0.2f, 1 };
 	private final static float[] COLOR_STAND_OUTSIDE = new float[]{ 0.2f, 0.2f, 0.2f, 1 };
+	private final static float[] COLOR_CHAIR = new float[]{ 0.3f, 0, 1, 1 };
 	private final static float STAND_STEP_WIDTH = 0.7f;
 	private final static float STAND_STEP_HEIGHT = 0.3f;
 	private final static float STAND_CHAIR_SIZE = 0.5f;
-	private final static int STAND_COUNT_FRONT_SIDE = 5;
-	private final static int STAND_COUNT_BACK = 8;
+	private final static int STAND_COUNT_FRONT_SIDE = 7;
+	private final static int STAND_COUNT_BACK = 10;
 
-	private final static float[] COLOR_CHAIR = new float[]{ 0.8f, 0, 0.8f, 1 };
 	
 	// collections
 	private final List<AbstractShape> mOpaqueObjects = new ArrayList<AbstractShape>();
@@ -392,21 +392,94 @@ public class ShapeCollection {
 
 		} else if (collectionId == OBJECT_COLLECTION_CHAIRS) {
 			final float arenaWidth = 2 * STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH + 2 + 6.4f;
-			final float halfArenaWidth = arenaWidth / 2;
 			
 			// back
-			float space = arenaWidth;
+			float standWidth = arenaWidth;
+			float space = standWidth;
 			float chairs = 0;
+			float startPosition = -arenaWidth / 2;
 			while (space > 0.2f){
 				chairs++;
-				space = (arenaWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				space = (standWidth- chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+			}
+			chairs--;
+			
+			for (int j = 0; j < STAND_COUNT_BACK; j++){
+				if (j % 2 == 1){
+					chairs--;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}else{
+					chairs++;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+				
+				for (int i = 0; i < chairs; i++)
+					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
+							5.26f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
 			}
 			
-			for (int j = 0; j < STAND_COUNT_BACK; j++)
+			// front
+			for (int j = 0; j < STAND_COUNT_FRONT_SIDE; j++){
+				startPosition = -4.2f - j * STAND_STEP_WIDTH;
+				chairs = 0;
+				standWidth = 8.4f + 2 * j * STAND_STEP_WIDTH;
+				space = standWidth;
+				while (space > 0.2f){
+					chairs++;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+				
+				if (j % 2 == 1){
+					chairs--;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+				
 				for (int i = 0; i < chairs; i++)
-					mOpaqueObjects.add(new Chair("chair", -halfArenaWidth + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
-							5.26f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
-			
+					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
+							-6.49f - (j+1) * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 2));
+			}	
+
+			// right
+			for (int j = 0; j < STAND_COUNT_FRONT_SIDE; j++){
+				startPosition = -6.49f - j * STAND_STEP_WIDTH;
+				chairs = 0;
+				standWidth = 10.75f + j * STAND_STEP_WIDTH;
+				space = standWidth;
+				while (space > 0.2f){
+					chairs++;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+
+				if (j % 2 == 1){
+					chairs--;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+				
+				for (int i = 0; i < chairs; i++)
+					mOpaqueObjects.add(new Chair("chair", 4.2f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, (j+1) * STAND_STEP_HEIGHT,
+							startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 3));
+			}
+
+			// left
+			for (int j = 0; j < STAND_COUNT_FRONT_SIDE; j++){
+				startPosition = -6.49f - j * STAND_STEP_WIDTH;
+				chairs = 0;
+				standWidth = 10.75f + j * STAND_STEP_WIDTH;
+				space = standWidth;
+				while (space > 0.2f){
+					chairs++;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+
+				if (j % 2 == 1){
+					chairs--;
+					space = (standWidth - chairs * STAND_CHAIR_SIZE) / (chairs - 1);
+				}
+				
+				for (int i = 0; i < chairs; i++)
+					mOpaqueObjects.add(new Chair("chair", -4.2f - (j+1) * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, (j+1) * STAND_STEP_HEIGHT,
+							startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 1));
+			}
 		} else {
 			Log.e(TAG, "Unknown ShapeCollection ID: " + collectionId);
 		}
