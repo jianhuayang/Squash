@@ -1,24 +1,65 @@
 package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
+import android.util.Log;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.SolidType;
 
 public class Chair extends AbstractShape {
+	private final static String TAG = Chair.class.getSimpleName();
 	private final static int EDGE_COUNT = 288;
-	
+
 	public Chair(final String tag, final float x, final float y, final float z, final float length, final float width, final float height, final float[] color) {
-		super(tag, x, y, z, getVertices(length, width, height), color);
+		super(tag, x, y, z, getVertices(length, width, height, 0), color);
 
 		initialize(GLES20.GL_TRIANGLES, SolidType.OTHER, null);
 	}
 
-	private static float[] getVertices(final float length, final float width, final float height) {
+	public Chair(final String tag, final float x, final float y, final float z, final float length, final float width, final float height, final float[] color, final int rotation) {
+		super(tag, x, y, z, getVertices(length, width, height, rotation), color);
+
+		initialize(GLES20.GL_TRIANGLES, SolidType.OTHER, null);
+	}
+
+	private static float[] getVertices(final float length, final float width, final float height, final int rotation) {
 		final float[] edges = new float[3 * EDGE_COUNT];
+
+		final float thickness = (length + width + height) / 3 / 10;
 		
-		final float[] stick = getStick((length + width) / 2 / 10, height / 3);
-		final float[] seat = getSeat(length, width, height / 3, height / 10);
-		final float[] back = getBack(length, width, height * 13 / 30, height, height / 10);
+		float lengthStart = length / 2 - thickness;
+		float lengthEnd = length / 2;
+		float widthStart = -width / 2;
+		float widthEnd = width / 2;
+		
+		if (rotation == 0){
+			// no adjustments needed
+		}else if (rotation == 1){
+			float tmp = lengthStart;
+			lengthStart = -widthStart;
+			widthStart = -tmp;
+			tmp = lengthEnd;
+			lengthEnd = -widthEnd;
+			widthEnd = -tmp;
+		}else if (rotation == 2){
+			lengthStart *= -1;
+			lengthEnd *= -1;
+			widthStart *= -1;
+			widthEnd *= -1;
+		}else if (rotation == 3){
+			float tmp = lengthStart;
+			lengthStart = widthStart;
+			widthStart = tmp;
+			tmp = lengthEnd;
+			lengthEnd = widthEnd;
+			widthEnd = tmp;
+		}else{
+			Log.e(TAG, "Invalid number for rotation: " + rotation + ", expected int between 0 and 3");
+			return null;
+		}
+		
+		final float[] stick = getStick(thickness, height / 3);
+		final float[] seat = getSeat(length, width, height / 3, thickness);
+		final float[] back = getBack(lengthStart, lengthEnd, widthStart, widthEnd, height * 13 / 30, height, thickness);
 		
 		System.arraycopy(stick, 0, edges, 0, stick.length);
 		System.arraycopy(seat, 0, edges, stick.length, seat.length);
@@ -27,117 +68,114 @@ public class Chair extends AbstractShape {
 		return edges;
 	}
 
-	private static float[] getBack(final float length, final float width, final float startHeight, final float endHeight, final float thick){
+	private static float[] getBack(final float lengthStart, final float lengthEnd, final float widthStart, final float widthEnd,
+			final float startHeight, final float endHeight, final float thick){
 		final float[] edges = new float[90];
 		
-		final float halfLength = length / 2;
-		final float halfWidth = width / 2;
-		final float startLength = thick - halfLength;
-
 		// front
-		edges[ 0] = -halfWidth;
+		edges[ 0] = widthStart;
 		edges[ 1] = startHeight;
-		edges[ 2] = startLength;
-		edges[ 3] = halfWidth;
+		edges[ 2] = lengthStart;
+		edges[ 3] = widthEnd;
 		edges[ 4] = startHeight;
-		edges[ 5] = startLength;
-		edges[ 6] = halfWidth;
+		edges[ 5] = lengthStart;
+		edges[ 6] = widthEnd;
 		edges[ 7] = endHeight;
-		edges[ 8] = startLength;
+		edges[ 8] = lengthStart;
 
-		edges[ 9] = halfWidth;
+		edges[ 9] = widthEnd;
 		edges[10] = endHeight;
-		edges[11] = startLength;
-		edges[12] = -halfWidth;
+		edges[11] = lengthStart;
+		edges[12] = widthStart;
 		edges[13] = endHeight;
-		edges[14] = startLength;
-		edges[15] = -halfWidth;
+		edges[14] = lengthStart;
+		edges[15] = widthStart;
 		edges[16] = startHeight;
-		edges[17] = startLength;
+		edges[17] = lengthStart;
 
 		// right
-		edges[18] = halfWidth;
+		edges[18] = widthEnd;
 		edges[19] = startHeight;
-		edges[20] = startLength;
-		edges[21] = halfWidth;
+		edges[20] = lengthStart;
+		edges[21] = widthEnd;
 		edges[22] = startHeight;
-		edges[23] = -halfLength;
-		edges[24] = halfWidth;
+		edges[23] = lengthEnd;
+		edges[24] = widthEnd;
 		edges[25] = endHeight;
-		edges[26] = -halfLength;
+		edges[26] = lengthEnd;
 
-		edges[27] = halfWidth;
+		edges[27] = widthEnd;
 		edges[28] = endHeight;
-		edges[29] = -halfLength;
-		edges[30] = halfWidth;
+		edges[29] = lengthEnd;
+		edges[30] = widthEnd;
 		edges[31] = endHeight;
-		edges[32] = startLength;
-		edges[33] = halfWidth;
+		edges[32] = lengthStart;
+		edges[33] = widthEnd;
 		edges[34] = startHeight;
-		edges[35] = startLength;
+		edges[35] = lengthStart;
 
 		// back
-		edges[36] = halfWidth;
+		edges[36] = widthEnd;
 		edges[37] = startHeight;
-		edges[38] = -halfLength;
-		edges[39] = -halfWidth;
+		edges[38] = lengthEnd;
+		edges[39] = widthStart;
 		edges[40] = startHeight;
-		edges[41] = -halfLength;
-		edges[42] = -halfWidth;
+		edges[41] = lengthEnd;
+		edges[42] = widthStart;
 		edges[43] = endHeight;
-		edges[44] = -halfLength;
+		edges[44] = lengthEnd;
 		
-		edges[45] = -halfWidth;
+		edges[45] = widthStart;
 		edges[46] = endHeight;
-		edges[47] = -halfLength;
-		edges[48] = halfWidth;
+		edges[47] = lengthEnd;
+		edges[48] = widthEnd;
 		edges[49] = endHeight;
-		edges[50] = -halfLength;
-		edges[51] = halfWidth;
+		edges[50] = lengthEnd;
+		edges[51] = widthEnd;
 		edges[52] = startHeight;
-		edges[53] = -halfLength;
+		edges[53] = lengthEnd;
 
 		// left
-		edges[54] = -halfWidth;
+		edges[54] = widthStart;
 		edges[55] = startHeight;
-		edges[56] = -halfLength;
-		edges[57] = -halfWidth;
+		edges[56] = lengthEnd;
+		edges[57] = widthStart;
 		edges[58] = startHeight;
-		edges[59] = startLength;
-		edges[60] = -halfWidth;
+		edges[59] = lengthStart;
+		edges[60] = widthStart;
 		edges[61] = endHeight;
-		edges[62] = startLength;
+		edges[62] = lengthStart;
 		
-		edges[63] = -halfWidth;
+		edges[63] = widthStart;
 		edges[64] = endHeight;
-		edges[65] = startLength;
-		edges[66] = -halfWidth;
+		edges[65] = lengthStart;
+		edges[66] = widthStart;
 		edges[67] = endHeight;
-		edges[68] = -halfLength;
-		edges[69] = -halfWidth;
+		edges[68] = lengthEnd;
+		edges[69] = widthStart;
 		edges[70] = startHeight;
-		edges[71] = -halfLength;
+		edges[71] = lengthEnd;
 
 		// top
-		edges[72] = -halfWidth;
+		edges[72] = widthStart;
 		edges[73] = endHeight;
-		edges[74] = startLength;
-		edges[75] = halfWidth;
+		edges[74] = lengthStart;
+		edges[75] = widthEnd;
 		edges[76] = endHeight;
-		edges[77] = startLength;
-		edges[78] = halfWidth;
+		edges[77] = lengthStart;
+		edges[78] = widthEnd;
 		edges[79] = endHeight;
-		edges[80] = -halfLength;
+		edges[80] = lengthEnd;
 		
-		edges[81] = halfWidth;
+		edges[81] = widthEnd;
 		edges[82] = endHeight;
-		edges[83] = -halfLength;
-		edges[84] = -halfWidth;
+		edges[83] = lengthEnd;
+		edges[84] = widthStart;
 		edges[85] = endHeight;
-		edges[86] = -halfLength;
-		edges[87] = -halfWidth;
+		edges[86] = lengthEnd;
+		edges[87] = widthStart;
 		edges[88] = endHeight;
-		edges[89] = startLength;
+		edges[89] = lengthStart;
 		
 		return edges;
 	}
