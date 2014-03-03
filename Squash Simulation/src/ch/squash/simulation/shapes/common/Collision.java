@@ -37,6 +37,10 @@ public final class Collision {
 		this.shapeLocationOnCollision = shapeLocationOnCollision;
 	}
 	
+	public static Collision getDummyCollision(){
+		return new Collision(null, 0, null, null, 0, null, null);
+	}
+	
 	public static boolean isOnSolid(final AbstractShape moving, final AbstractShape stationary){
 		String error = null;
 
@@ -65,7 +69,7 @@ public final class Collision {
 				+ stationary + " not implemented");
 		return false;
 	}
-
+	
 	public static Collision getCollision(final AbstractShape moving, final IVector travelled, final AbstractShape stationary, final Collision lastMovementCollision) {
 		String error = null;
 
