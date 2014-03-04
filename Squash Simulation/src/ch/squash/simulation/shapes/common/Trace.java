@@ -4,18 +4,30 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 public class Trace extends AbstractShape {
+	// constant
 	private final static String TAG = Trace.class.getSimpleName();
-	public final static float MIN_DISTANCE_OF_POINTS = 0.01f;
-	public final static int MAX_TRACE_SEGMENTS = 50;
+	private final static float MIN_DISTANCE_OF_POINTS = 0.01f;
+	private final static int MAX_TRACE_SEGMENTS = 50;
+	
+	// data
 	private final IVector[] mPoints = new IVector[MAX_TRACE_SEGMENTS + 1];
-	private boolean isReset;
-	
-	private Trace mNextTrace;
-	
 	private final float[] mColor;
 	
+	// control
+	private boolean isReset;
 	private int mTraceIndex;
-	
+
+	// misc
+	private Trace mNextTrace;
+
+	public Trace(final String tag, final float[] color) {
+		super(tag, 0, 0, 0, new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2], color);
+		
+		mColor = color.clone();
+		
+		initialize(GLES20.GL_LINES, SolidType.NONE, null);
+	}
+
 	public void addPoint(final IVector point){		
 		if (mNextTrace != null && !mNextTrace.isReset){
 			mNextTrace.addPoint(point);
@@ -53,14 +65,6 @@ public class Trace extends AbstractShape {
 		mPositions.position(6 * (mTraceIndex++));
 		mPositions.put(data);
 		mPositions.position(0);
-	}
-
-	public Trace(final String tag, final float[] color) {
-		super(tag, 0, 0, 0, new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2], color);
-		
-		mColor = color.clone();
-		
-		initialize(GLES20.GL_LINES, SolidType.NONE, null);
 	}
 
 	public void reset(){

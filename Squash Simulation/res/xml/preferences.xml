@@ -92,4 +92,19 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
+    <EditTextPreference
+        android:defaultValue="@string/default_speed_factor"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="@string/key_speed_factor"
+        android:summary="@string/summary_speed_factor"
+        android:title="@string/title_speed_factor" >
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="@string/default_coefficient_of_restitution"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="@string/key_coefficient_of_restitution"
+        android:summary="@string/summary_coefficient_of_restitution"
+        android:title="@string/title_coefficient_of_restitution" >
+    </EditTextPreference>
+
 </PreferenceScreen>

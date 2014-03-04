@@ -12,14 +12,9 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 	private final static String TAG = SquashView.class.getSimpleName();
 
 	private final GestureDetector mGestureDetector;
+	
 	private static boolean mLongPress;
 	
-	@Override
-	public void onPause() {
-		super.onPause();
-		MovementEngine.pause();
-	}
-
 	public SquashView(final Context context) {
 		super(context);
 
@@ -42,7 +37,13 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 		
 		Log.i(TAG, "SquashView created");
 	}
-	
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		MovementEngine.pause();
+	}
+
 	public boolean onTouchEvent(final MotionEvent event) {
 		mGestureDetector.onTouchEvent(event);
 		

@@ -7,17 +7,20 @@ import android.opengl.GLES20;
 import android.util.Log;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.SolidType;
 import ch.squash.simulation.shapes.common.Vector;
 
 public class Quadrilateral extends AbstractShape {
+	// static
 	private final static String TAG = Quadrilateral.class.getSimpleName();
 
-	public final float[] edges;
-	
-	public final int normalVectorNonzeroDimension;
-
+	// only to be used during initialization!!!
 	private static boolean mBothSides;
-
+	
+	// misc
+	private final float[] mEdges;
+	
+	private final int mNormalVectorNonzeroDimension;
 	/**
 	 * Instantiates new quadrilateral
 	 * 
@@ -31,12 +34,9 @@ public class Quadrilateral extends AbstractShape {
 		super(tag, getMiddle(edges)[0], getMiddle(edges)[1],
 				getMiddle(edges)[2], getVertices(edges, bothSides), color);
 
-		this.edges = edges.clone();
+		this.mEdges = edges.clone();
 
 		initialize(GLES20.GL_TRIANGLES, SolidType.AREA, null);
-		
-		// TODO: Check that all edges lie in same plane
-		// use linear combination of u and v to get from e0 to e3
 		
 		// Check that quad is ortoghonal
 		final IVector n = getNormalVector();
@@ -48,7 +48,7 @@ public class Quadrilateral extends AbstractShape {
 					else
 						Log.e(TAG, "more than one nonzero dimension, quad is not ortoghonal");
 		
-		normalVectorNonzeroDimension = nonZero;	
+		mNormalVectorNonzeroDimension = nonZero;	
 	}
 
 	private static float[] getMiddle(final float[] edges) {
@@ -91,13 +91,13 @@ public class Quadrilateral extends AbstractShape {
 	}
 
 	private IVector getU() {
-		return new Vector(edges[3] - edges[0], edges[4] - edges[1], edges[5]
-				- edges[2]);
+		return new Vector(mEdges[3] - mEdges[0], mEdges[4] - mEdges[1], mEdges[5]
+				- mEdges[2]);
 	}
 
 	private IVector getV() {
-		return new Vector(edges[9] - edges[0], edges[10] - edges[1], edges[11]
-				- edges[2]);
+		return new Vector(mEdges[9] - mEdges[0], mEdges[10] - mEdges[1], mEdges[11]
+				- mEdges[2]);
 	}
 
 	public final IVector getNormalVector() {
@@ -113,24 +113,23 @@ public class Quadrilateral extends AbstractShape {
 	}
 
 	public float getDistanceFromQuadPlaneToPoint(final IVector p){
-		return Math.abs(p.getDirection()[normalVectorNonzeroDimension] - edges[normalVectorNonzeroDimension]);
+		return Math.abs(p.getDirection()[mNormalVectorNonzeroDimension] - mEdges[mNormalVectorNonzeroDimension]);
 	}
 
 	public IVector getIntersectionWithPlane(final IVector start, final IVector direction){
-		if (direction.getDirection()[normalVectorNonzeroDimension] == 0)
+		if (direction.getDirection()[mNormalVectorNonzeroDimension] == 0)
 			return null;
 		
-		final float lambda = (edges[normalVectorNonzeroDimension] - start.getDirection()[normalVectorNonzeroDimension]) / direction.getDirection()[normalVectorNonzeroDimension];
+		final float lambda = (mEdges[mNormalVectorNonzeroDimension] - start.getDirection()[mNormalVectorNonzeroDimension]) / direction.getDirection()[mNormalVectorNonzeroDimension];
 
 		return new Vector(
-				normalVectorNonzeroDimension == 0 ? edges[0] : start.getX() + lambda * direction.getX(),
-				normalVectorNonzeroDimension == 1 ? edges[1] : start.getY() + lambda * direction.getY(), 
-				normalVectorNonzeroDimension == 2 ? edges[2] : start.getZ() + lambda * direction.getZ());
+				mNormalVectorNonzeroDimension == 0 ? mEdges[0] : start.getX() + lambda * direction.getX(),
+				mNormalVectorNonzeroDimension == 1 ? mEdges[1] : start.getY() + lambda * direction.getY(), 
+				mNormalVectorNonzeroDimension == 2 ? mEdges[2] : start.getZ() + lambda * direction.getZ());
 	}
 	
 	public float getDistanceToPoint(final IVector p) {
-//		Log.i(TAG, "Testing whether " + p + " lies in quad " + tag);
-		if (normalVectorNonzeroDimension < 0 || normalVectorNonzeroDimension > 2){
+		if (mNormalVectorNonzeroDimension < 0 || mNormalVectorNonzeroDimension > 2){
 			Log.e(TAG, "Cannot calculate distance of point to nonorthogonal quad");
 			return -1;
 		}
@@ -141,14 +140,14 @@ public class Quadrilateral extends AbstractShape {
 		float[] q = new float[2]; // projection of p onto quad area
 		float[] e = new float[8]; // edges in 2d (2 relevant components of quad area)
 		float[] v = p.getDirection();
-		dVertical = Math.abs(v[normalVectorNonzeroDimension] - edges[normalVectorNonzeroDimension]);
-		v[normalVectorNonzeroDimension] = edges[normalVectorNonzeroDimension];
+		dVertical = Math.abs(v[mNormalVectorNonzeroDimension] - mEdges[mNormalVectorNonzeroDimension]);
+		v[mNormalVectorNonzeroDimension] = mEdges[mNormalVectorNonzeroDimension];
 
-		if (normalVectorNonzeroDimension == 0)
+		if (mNormalVectorNonzeroDimension == 0)
 			q[0] = v[1];
 		else
 			q[0] = v[0];
-		if (normalVectorNonzeroDimension == 2)
+		if (mNormalVectorNonzeroDimension == 2)
 			q[1] = v[1];
 		else
 			q[1] = v[2];
@@ -156,10 +155,10 @@ public class Quadrilateral extends AbstractShape {
 		int index = 0;
 		for (int j = 0; j < 4; j++)
 			for (int k = 0; k < 3; k++)
-				if (k == normalVectorNonzeroDimension)
+				if (k == mNormalVectorNonzeroDimension)
 					continue;
 				else
-					e[index++] = edges[3 * j + k];
+					e[index++] = mEdges[3 * j + k];
 
 		// find violated edges
 		float m;
@@ -274,6 +273,10 @@ public class Quadrilateral extends AbstractShape {
 
 	public boolean isPointInQuad(final IVector p) {
 		return getDistanceToPoint(p) == 0f;
+	}
+	
+	public int getNonZeroDimension(){
+		return mNormalVectorNonzeroDimension;
 	}
 
 	@Override

@@ -22,6 +22,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
 	private static final Dictionary<Integer, String> DRAW_MODE_SUMMARIES = new Hashtable<Integer, String>();
 	private static final Dictionary<Integer, String> CAMERA_MODE_SUMMARIES = new Hashtable<Integer, String>();
+	
 	static {
 		DRAW_MODE_SUMMARIES.put(-1, "Use default draw mode");
 		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, "Draw lines");
@@ -56,16 +57,18 @@ public class SettingsFragment extends PreferenceFragment implements
 				.getKeySelectObjects());
 
 		mslp.setEntries(new String[] { "Court", "Ball", "Coordinate axis",
-				"Miscellaneous objects", "Forces" });
+				"Miscellaneous objects", "Forces", "Arena", "Chairs" });
 		mslp.setEntryValues(new String[] {
 				Integer.toString(SquashRenderer.OBJECT_COURT),
 				Integer.toString(SquashRenderer.OBJECT_BALL),
 				Integer.toString(SquashRenderer.OBJECT_AXIS),
 				Integer.toString(SquashRenderer.OBJECT_MISC),
-				Integer.toString(SquashRenderer.OBJECT_FORCE) });
+				Integer.toString(SquashRenderer.OBJECT_FORCE),
+				Integer.toString(SquashRenderer.OBJECT_ARENA),
+				Integer.toString(SquashRenderer.OBJECT_CHAIRS) });
 
 		listPref = (ListPreference) findPreference(Settings.getKeyCameraMode());
-		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4" });
+		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5", "6" });
 		listPref.setSummary(getSummary(Settings.getKeyCameraMode()));
 
 		findPreference(Settings.getKeyCameraPositionX()).setSummary(getSummary(Settings.getKeyCameraPositionX()));
@@ -78,7 +81,18 @@ public class SettingsFragment extends PreferenceFragment implements
 		findPreference(Settings.getKeyBallSpeedY()).setSummary(getSummary(Settings.getKeyBallSpeedY()));
 		findPreference(Settings.getKeyBallSpeedZ()).setSummary(getSummary(Settings.getKeyBallSpeedZ()));
 
+		findPreference(Settings.getKeySpeedFactor()).setSummary(getSummary(Settings.getKeySpeedFactor()));
+		findPreference(Settings.getKeyCoefficientOfRestitution()).setSummary(getSummary(Settings.getKeyCoefficientOfRestitution()));
+
 		Log.i(TAG, "SettingsFragment created");
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (Settings.isReset())
+			Settings.setBoolean(Settings.getKeyReset(), false);
 	}
 
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
@@ -120,23 +134,23 @@ public class SettingsFragment extends PreferenceFragment implements
 		else if (key.equals(Settings.getKeyReset()))
 			result = SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_reset);
-		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
+		else if (key.equals(Settings.getKeyCameraPositionX()))
+			result = "left/right: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
 			result = "x = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
+		else if (key.equals(Settings.getKeyCameraPositionY()))
+			result = "down/up: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
 			result = "y = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
+		else if (key.equals(Settings.getKeyCameraPositionZ()))
+			result = "front/back: " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
 			result = "z = " + Settings.getValue(key);
+		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()))
+			result = Settings.getValue(key).toString();
 		else
 			Log.e(TAG, "Unknown key: " + key);
 		
 		return result;
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
-		if (Settings.isReset())
-			Settings.setBoolean(Settings.getKeyReset(), false);
 	}
 }

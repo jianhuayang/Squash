@@ -2,6 +2,7 @@ package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
 import ch.squash.simulation.shapes.common.AbstractShape;
+import ch.squash.simulation.shapes.common.SolidType;
 
 public class Cube extends AbstractShape {
 	public Cube(final String tag, final float x, final float y, final float z, final float edge){

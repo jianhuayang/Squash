@@ -24,11 +24,28 @@ import ch.squash.simulation.shapes.shapes.DummyShape;
 import ch.squash.simulation.shapes.shapes.Tetrahedron;
 
 public class SquashRenderer implements GLSurfaceView.Renderer {
+	// static
 	private static final String TAG = SquashRenderer.class.getSimpleName();
-
-	// static access
+	private static final Object LOCK = new Object();
 	private static SquashRenderer mInstance;
-	private final static Object LOCK = new Object();
+	
+	// constants
+	// dimensions
+	public final static float ONE_MM = 0.001f;
+	public final static float ONE_CM = 0.01f;
+	public final static float COURT_LINE_WIDTH = 5 * ONE_CM;
+	private final static int CYCLE_DURATION = 20000;
+
+	// object-related
+	public final static int OBJECT_COURT = 0;
+	public final static int OBJECT_BALL = 1;
+	public final static int OBJECT_AXIS = 2;
+	public final static int OBJECT_MISC = 3;
+	public final static int OBJECT_FORCE = 4;
+	public final static int OBJECT_ARENA = 5;
+	public final static int OBJECT_CHAIRS = 6;
+	public final static int[] OBJECTS = new int[] { OBJECT_COURT, OBJECT_BALL,
+			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE, OBJECT_ARENA, OBJECT_CHAIRS };
 
 	// matrices - camera and projection
 	public float[] mViewMatrix = new float[16];
@@ -39,43 +56,29 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public int mMVMatrixHandle;
 	public int mPositionHandle;
 	public int mColorHandle;
-	private int mPerVertexProgramHandle;
 	public int mPointProgramHandle;
+	private int mPerVertexProgramHandle;
 
-	private final static int CYCLE_DURATION = 20000;
-	
-	// dimensions
-	public final static float ONE_MM = 0.001f;
-	public final static float ONE_CM = 0.01f;
-	public final static float COURT_LINE_WIDTH = 5 * ONE_CM;
-
-	// object-related
-	public final static int OBJECT_COURT = 0;
-	public final static int OBJECT_BALL = 1;
-	public final static int OBJECT_AXIS = 2;
-	public final static int OBJECT_MISC = 3;
-	public final static int OBJECT_FORCE = 4;
-	public final static int[] OBJECTS = new int[] { OBJECT_COURT, OBJECT_BALL,
-			OBJECT_AXIS, OBJECT_MISC, OBJECT_FORCE };
-
+	// objects
 	private final ShapeCollection[] mObjects;
-	public AbstractShape[] courtSolids;
-
+	private AbstractShape[] mCourtSolids;
+	private final Ball mSquashBall;
+	
+	// misc
+	private float mFps;
+	private long mLastFrame;
+	
 	// for dynamic movement
-	public float angleInDegrees;
-	private float oldAngle;
+	private float mAngleInDegrees;
+	private float mOldAngle;
 
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
-	public static SquashRenderer getInstance() {
-		synchronized (LOCK) {
-			if (mInstance == null)
-				mInstance = new SquashRenderer();
-		}
-		return mInstance;
-	}
-
 	public SquashRenderer() {
+		final IVector ballStart = Settings.getBallStartPosition();
+		mSquashBall = new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
+				new float[] { 0, 0, 0, 1 });
+				
 		// add objects
 		final ShapeCollection axis = new ShapeCollection();
 		axis.addObject(new DottedLine("xAxis", -5, 0, 0, 5, 0, 0, 1f, new float[] { 1f,
@@ -91,14 +94,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		misc.addObject(new Arrow("DummyArrow", 0, -1, -5, 0, 1, -5,
 				new float[] { 1, 1, 0, 1 }), false);
 
-		final IVector ballStart = Settings.getBallStartPosition();
 		mObjects = new ShapeCollection[] {
 				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_COURT),
-				new ShapeCollection(new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
-						new float[] { 0, 0, 0, 1 }), false), axis, misc,
-				new ShapeCollection(new DummyShape(), false) };
+				new ShapeCollection(mSquashBall, false), axis, misc,
+				new ShapeCollection(new DummyShape(), false),
+				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_ARENA),
+				new ShapeCollection(ShapeCollection.OBJECT_COLLECTION_CHAIRS) };
 
-		courtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
+		mCourtSolids = new AbstractShape[] { mObjects[0].getOpaqueObjects().get(0),
 				mObjects[0].getOpaqueObjects().get(2),
 				mObjects[0].getOpaqueObjects().get(4),
 				mObjects[0].getTransparentObjects().get(0),
@@ -118,6 +121,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		MovementEngine.initialize(movables.toArray(new Movable[movables.size()]));
 
 		Log.i(TAG, "SquashRenderer created");
+	}
+
+	public static SquashRenderer getInstance() {
+		synchronized (LOCK) {
+			if (mInstance == null)
+				mInstance = new SquashRenderer();
+		}
+		return mInstance;
 	}
 
 	private String getVertexShader() {
@@ -145,9 +156,9 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// overriding methods
 	@Override
 	public void onSurfaceCreated(final GL10 glUnused, final EGLConfig config) {
-		// Set the background clear color to black.
+		// Set the background clear color to .
 		GLES20.glClearColor(0, 0, 0, 0);
-		GLES20.glClearColor(1, 1, 1, 0);
+//		GLES20.glClearColor(1, 1, 1, 0);
 
 		// Use culling to remove back faces.
 		GLES20.glEnable(GLES20.GL_CULL_FACE);
@@ -208,6 +219,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				pointFragmentShaderHandle, new String[] { "a_Position" });
 
 		resetCamera();
+		mLastFrame = System.currentTimeMillis();
 
 		Log.i(TAG, "Surface created");
 	}
@@ -222,22 +234,28 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		// while the width will vary as per aspect ratio.
 		final float ratio = (float) width / height;
 
-		// matrix, offset, left, right, bottom, top, near, far
-		Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
+		// matrix, offset, left, right, bottom, top, near, far		<--- "far" determines how far into the distance that you can see!
+		Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 40);
 
 		Log.i(TAG, "Surface changed");
 	}
 	
 	@Override
 	public void onDrawFrame(final GL10 glUnused) {
+		final long now = System.currentTimeMillis();
+		final long delta = now - mLastFrame;
+		if (delta != 0)
+			mFps = 0.5f * (mFps + 1000 / delta);
+		mLastFrame = now;
+		
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
 		// Do a complete rotation every 10 seconds.
 		final long time = SystemClock.uptimeMillis() % CYCLE_DURATION;
-		angleInDegrees = (360.0f / CYCLE_DURATION) * ((int) time);
+		mAngleInDegrees = (360.0f / CYCLE_DURATION) * ((int) time);
 
 		if (Settings.isCameraRotating())
-			Matrix.rotateM(mViewMatrix, 0, angleInDegrees - oldAngle, 0.0f,
+			Matrix.rotateM(mViewMatrix, 0, mAngleInDegrees - mOldAngle, 0.0f,
 					1.0f, 0.0f);
 		else if (setCameraRotation){
 			setCameraRotation = false;
@@ -246,7 +264,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					0.0f, 1.0f, 0.0f);	
 		}
 		
-		oldAngle = angleInDegrees;
+		mOldAngle = mAngleInDegrees;
 
 		// Set our per-vertex lighting program.
 		GLES20.glUseProgram(mPerVertexProgramHandle);
@@ -375,5 +393,17 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					return;
 				}
 		Log.e(TAG, "Apparently, new ball position could not be set since the ball object couldn\'t be found...");
+	}
+	
+	public static float getFps(){
+		return mInstance.mFps;
+	}
+	
+	public static Ball getSquashBall(){
+		return mInstance.mSquashBall;
+	}
+	
+	public static AbstractShape[] getCourtSolids(){
+		return mInstance.mCourtSolids;
 	}
 }

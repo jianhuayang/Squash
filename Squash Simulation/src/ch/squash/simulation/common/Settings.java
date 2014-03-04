@@ -40,6 +40,9 @@ public final class Settings {
 	private final String KEY_BALL_SPEED_Y;
 	private final String KEY_BALL_SPEED_Z;
 	
+	private final String KEY_SPEED_FACTOR;
+	private final String KEY_COEFFICIENT_OF_RESTITUTION;
+	
 	public static String getKeyDrawMode(){
 		return getInstance().KEY_DRAW_MODE;
 	}
@@ -81,6 +84,13 @@ public final class Settings {
 		return getInstance().KEY_BALL_SPEED_Z;
 	}
 	
+	public static String getKeySpeedFactor(){
+		return getInstance().KEY_SPEED_FACTOR;
+	}
+	public static String getKeyCoefficientOfRestitution(){
+		return getInstance().KEY_COEFFICIENT_OF_RESTITUTION;
+	}
+	
 	private Settings() {
 		mSharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(SquashActivity.getInstance());
@@ -115,6 +125,11 @@ public final class Settings {
 		KEY_BALL_SPEED_Z = SquashActivity.getInstance().getResources()
 				.getString(R.string.key_ball_speed_z);
 
+		KEY_SPEED_FACTOR = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_speed_factor);
+		KEY_COEFFICIENT_OF_RESTITUTION = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_coefficient_of_restitution);
+		
 		Log.i(TAG, "Settings initialized");
 	}
 
@@ -256,5 +271,13 @@ public final class Settings {
 			result = getBallStartSpeed();
 		}
 		return result;
+	}
+
+	public static float getSpeedFactor(){
+		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_SPEED_FACTOR, "1"));
+	}
+	
+	public static float getCoefficientOfRestitution(){
+		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_COEFFICIENT_OF_RESTITUTION, "0.75"));
 	}
 }

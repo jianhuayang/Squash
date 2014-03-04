@@ -3,34 +3,16 @@ package ch.squash.simulation.shapes.common;
 import ch.squash.simulation.shapes.shapes.Arrow;
 
 public class PhysicalVector implements IVector {
-	public final static float ARROW_LENGTH_DIVISOR = 10;
+	// Constant
+	private final static float ARROW_LENGTH_DIVISOR = 10;
 
+	// public
+	public final String VectorTag;
+
+	// private
 	private final Arrow mArrow;
 	private final IVector mVector;
 	
-	public final String VectorTag;
-
-	public IVector getVector(){
-		return mVector;
-	}
-
-	private void setNewCoordinates() {
-		 mArrow.setNewVertices(Arrow.getVertices(0, 0, 0, mVector.getX()
-		 / ARROW_LENGTH_DIVISOR, mVector.getY() / ARROW_LENGTH_DIVISOR,
-		 mVector.getZ() / ARROW_LENGTH_DIVISOR));
-
-//		mArrow.setNewVertices(Arrow.getVertices(mArrow.location[0],
-//				mArrow.location[1], mArrow.location[2],
-//				(mArrow.location[0] + mVector.getX()) / ARROW_LENGTH_DIVISOR,
-//				(mArrow.location[0] + mVector.getY()) / ARROW_LENGTH_DIVISOR,
-//				(mArrow.location[0] + mVector.getZ()) / ARROW_LENGTH_DIVISOR));
-	}
-
-	@Override
-	public String toString() {
-		return mVector.toString();
-	}
-
 	public PhysicalVector(final String tag, final float[] origin, final float[] direction,
 			final float[] color) {
 		mArrow = new Arrow(tag, origin[0], origin[1], origin[2], origin[0]
@@ -40,6 +22,21 @@ public class PhysicalVector implements IVector {
 		mVector = new Vector(direction[0], direction[1], direction[2]);
 
 		VectorTag = tag;
+	}
+
+	@Override
+	public String toString() {
+		return VectorTag + " " + mVector.toString();
+	}
+
+	public IVector getVector(){
+		return mVector;
+	}
+
+	private void setNewCoordinates() {
+		 mArrow.setNewVertices(Arrow.getVertices(0, 0, 0, mVector.getX()
+		 / ARROW_LENGTH_DIVISOR, mVector.getY() / ARROW_LENGTH_DIVISOR,
+		 mVector.getZ() / ARROW_LENGTH_DIVISOR));
 	}
 
 	public void moveTo(final IVector fs) {
@@ -118,5 +115,23 @@ public class PhysicalVector implements IVector {
 	@Override
 	public void setDirection(final IVector other){
 		setDirection(other.getX(), other.getY(), other.getZ());
+	}
+
+	@Override
+	public void setX(final float x) {
+		mVector.setX(x);
+		setNewCoordinates();
+	}
+
+	@Override
+	public void setY(final float y) {
+		mVector.setY(y);
+		setNewCoordinates();
+	}
+
+	@Override
+	public void setZ(final float z) {
+		mVector.setZ(z);
+		setNewCoordinates();
 	}
 }

@@ -3,11 +3,10 @@ package ch.squash.simulation.shapes.shapes;
 import android.opengl.GLES20;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.common.SolidType;
 import ch.squash.simulation.shapes.common.Vector;
 
 public class Arrow extends AbstractShape {
-//	private final static String TAG = Arrow.class.getSimpleName();
-
 	public Arrow(final String tag, final float startx, final float starty, final float startz, final float endx,
 			final float endy, final float endz, final float[] color) {
 		super(tag, startx, starty, startz, getVertices(0, 0, 0, endx - startx, endy
@@ -86,34 +85,15 @@ public class Arrow extends AbstractShape {
 		vertices[ 4] = endy;
 		vertices[ 5] = endz;
 
-		vertices[ 6] = endx;
-		vertices[ 7] = endy;
-		vertices[ 8] = endz;
-		vertices[ 9] = mx + o[0].getX();
-		vertices[10] = my + o[0].getY();
-		vertices[11] = mz + o[0].getZ();
-
-		vertices[12] = endx;
-		vertices[13] = endy;
-		vertices[14] = endz;
-		vertices[15] = mx + o[1].getX();
-		vertices[16] = my + o[1].getY();
-		vertices[17] = mz + o[1].getZ();
-
-		vertices[18] = endx;
-		vertices[19] = endy;
-		vertices[20] = endz;
-		vertices[21] = mx + o[2].getX();
-		vertices[22] = my + o[2].getY();
-		vertices[23] = mz + o[2].getZ();
-
-		vertices[24] = endx;
-		vertices[25] = endy;
-		vertices[26] = endz;
-		vertices[27] = mx + o[3].getX();
-		vertices[28] = my + o[3].getY();
-		vertices[29] = mz + o[3].getZ();
-
+		for (int i = 0; i < 4; i++){
+			vertices[6 * (i + 1) + 0] = endx;
+			vertices[6 * (i + 1) + 1] = endy;
+			vertices[6 * (i + 1) + 2] = endz;
+			vertices[6 * (i + 1) + 3] = mx + o[i].getX();
+			vertices[6 * (i + 1) + 4] = my + o[i].getY();
+			vertices[6 * (i + 1) + 5] = mz + o[i].getZ();
+		}
+		
 		return vertices;
 	}
 

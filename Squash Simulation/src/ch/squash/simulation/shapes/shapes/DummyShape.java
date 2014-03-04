@@ -13,5 +13,4 @@ public class DummyShape extends AbstractShape {
 	protected float[] getColorData(final float[] color) {
 		return new float[0];
 	}
-
 }

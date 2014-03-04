@@ -11,24 +11,32 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.Movable;
 
 public final class MovementEngine {
+	// static
 	private final static String TAG = MovementEngine.class.getSimpleName();
-	private final Movable[] mMovables;
-	private boolean mIsRunning;
 	private static MovementEngine mInstance;
 	private final static Object LOCK = new Object();
-	private final static int INTERVAL = 10; // ms
+
+	// constants
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
-	private final static int ENGINE_DURATION = 5000;		// ms
-//	public final static float SLOW_FACTOR = 1f;
-	public final static float COLLISION_FRICTION_FACTOR = 0.75f;	// value >=0; 0 = no friction, 1 = "normal" friction, 2 = "double" friction
-	public final static float COLLISION_REFRACTION_FACTOR = 0.45f;	// usage same as friction factor 
+	private final static int ENGINE_DURATION = 500000;		// ms
+	
+	// objects
+	private final Movable[] mMovables;
+
+	// sound
+	private final SoundPool mSoundPool;
 	private final int mSoundBounce;
-//	private final int mSoundFloor;
 	private final int mSoundFrontWall;
 	private final int mSoundTin;
 	private final int mSoundBeep;
-	private final SoundPool mSoundPool;
 
+	// control
+	private boolean mIsRunning;
+
+	// other
+	private float mMps;	// movements per second
+	private long mLastFrame;
+	
 	public static void pause() {
 		mInstance.mIsRunning = false;
 	}
@@ -47,6 +55,10 @@ public final class MovementEngine {
 		}.start();
 	}
 
+	public static float getMps(){
+		return mInstance.mMps;
+	}
+	
 	private void doWork() {
 		Log.w(TAG, "New thread starting to do work of MovementEngine");
 		
@@ -57,12 +69,13 @@ public final class MovementEngine {
 		while (mIsRunning && Calendar.getInstance().getTimeInMillis() < end) {
 			for (final Movable im : mMovables)
 				im.move();
+			
 
-			try {
-				Thread.sleep(INTERVAL);
-			} catch (InterruptedException e) {		
-				Log.e(TAG, "Error while sleepint", e);
-			}
+			final long now = System.currentTimeMillis();
+			final long delta = now - mLastFrame;
+			if (delta != 0)
+				mMps = 0.5f * (mMps + 1000 / delta);
+			mLastFrame = now;
 		}
 		mIsRunning = false;
 		
@@ -74,6 +87,7 @@ public final class MovementEngine {
 					Toast.makeText(SquashActivity.getInstance(), "MovementEngine stopped automatically", Toast.LENGTH_SHORT).show();
 				}
 			});
+		mMps = 0;
 	}
 
 	public static void playSound(final String desc) {
@@ -106,8 +120,6 @@ public final class MovementEngine {
 		mSoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
 		mSoundBounce = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.bounce, 1);
-//		mSoundFloor = mSoundPool.load(SquashActivity.getInstance(),
-//				R.raw.floor, 1);
 		mSoundFrontWall = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.frontwall, 1);
 		mSoundTin = mSoundPool.load(SquashActivity.getInstance(),
