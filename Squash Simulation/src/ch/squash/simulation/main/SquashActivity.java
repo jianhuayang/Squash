@@ -17,6 +17,7 @@ import android.widget.TextView;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.shapes.common.IVector;
+import ch.squash.simulation.shapes.shapes.Ball;
 
 public class SquashActivity extends Activity {
 	// static
@@ -134,10 +135,18 @@ public class SquashActivity extends Activity {
 							mTxtHudFps.setText(String.format("%.2f", SquashRenderer.getFps()) + " fps\n" 
 									+ String.format("%.2f", MovementEngine.getMps()) + " mps");
 							// update ball
-							final IVector location =  SquashRenderer.getSquashBall().getLocation();
-							final IVector speed =  SquashRenderer.getSquashBall().getMovable().speed;
-							mTxtHudBall.setText("Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ()) + 
-									"\nSpeed:\t\t\t" + String.format("%.2f", speed.getX()) + "/" + String.format("%.2f", speed.getY()) + "/" + String.format("%.2f", speed.getZ()));
+							final Ball ball = SquashRenderer.getSquashBall();
+							final IVector location =  ball.getLocation();
+							final String locationString = "Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ());
+							final IVector speed =  ball.getMovable().speed;
+							final String speedString = "Speed:\t\t\t" + String.format("%.2f", speed.getX()) + "/" + String.format("%.2f", speed.getY()) + "/" + String.format("%.2f", speed.getZ());
+							final String energyString1 = "EPot=\t\t\t\t" + String.format("%.2f", ball.getMovable().getPotentialEnergy()) + 
+									"\t\tEKinLin=" + String.format("%.2f", ball.getMovable().getKineticLinearEnergy()); 
+							final String energyString2 = "EKinRot=\t" + String.format("%.2f", ball.getMovable().getKineticRotationalEnergy()) + 
+									"\t\tETherm=" + String.format("%.2f", ball.getMovable().getThermicEnergy());
+							final String energyString3 = "ETot=\t\t\t\t" + String.format("%.2f", ball.getMovable().getTotalEnergy());
+							
+							mTxtHudBall.setText(locationString + "\n" + speedString + "\n" + energyString1 + "\n" + energyString2 + "\n" + energyString3);
 						}
 					});
 
