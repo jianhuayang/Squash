@@ -4,6 +4,7 @@ import android.util.Log;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.shapes.shapes.Ball;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 
 public class Movable {
@@ -17,11 +18,6 @@ public class Movable {
 	public final PhysicalVector speed;
 	public final PhysicalVector airFriction;
 	public final Trace mTrace;
-
-	private float mEnergyPotential;
-	private float mEnergyKineticLinear;
-	private float mEnergyRotationalLinear;
-	private float mEnergyWarmth;
 
 	// data for between movements
 	private Collision lastMovementCollision;
@@ -95,16 +91,23 @@ public class Movable {
 			final Collision collision = Collision.getCollision(mShape,
 					distance, solid, lastMovementCollision);
 
-			if (collision != null
-					&& collision.travelPercentage < lastMovementCollision.travelPercentage)
-				lastMovementCollision = collision;
+			if (collision != null){
+				if (collision.travelPercentage < 0)
+					Log.e(TAG, "travelperc of " + solid.tag + " and ball is " + collision.travelPercentage);
+		
+				if (lastMovementCollision == null)
+					lastMovementCollision = collision;
+				else if (collision.travelPercentage < lastMovementCollision.travelPercentage)
+					lastMovementCollision = collision;
+			}
 		}
-
+		
+		// update shape position, forces, speed
 		if (lastMovementCollision == null)
 			if (rolling)
 				doRoll(dt);
 			else
-				doFly(dt);
+				doFly(dt, distance);
 		else
 			if (rolling)
 				doRollCollision(dt);
@@ -129,19 +132,6 @@ public class Movable {
 	}
 
 	private void doRoll(final float dt) {
-
-	}
-
-	private void doRollCollision(final float dt) {
-
-	}
-
-	private void doFly(final float dt) {
-		//
-		// airFriction.setDirection(speed.getNormalizedVector().multiply(-((Ball)mShape).getDragFactor()
-		// *
-		// speed.getLength() * speed.getLength()));
-		//
 		// // if (isRolling){
 		// // speed.setDirection(new Vector(speed.getX() + acceleration.getX() *
 		// dt, 0, speed.getZ() + acceleration.getZ() * dt));
@@ -151,55 +141,69 @@ public class Movable {
 		// // Log.e(TAG, "rolling");
 		// // }else{
 		// // reset variables
-		// lastMovementCollision = null;
-		//
-		// // calculate new speed v = v0 + a*t
-		// speed.setDirection(speed.add(acceleration.multiply(dt)));
-		// // }
-		//
-		// if (!MovementEngine.isRunning())
-		// return;
-		//
-		// mShape.moveTo(mShape.location.add(distance));
-		//
-		// epot = mShape.location.getY() * gravitation.getLength();
-		// ekin = 0.5f * speed.getLength() * speed.getLength();
+
+	}
+
+	private void doRollCollision(final float dt) {
+
+	}
+
+	private void doFly(final float dt, final IVector distance) {
+		// move shape
+		mShape.moveTo(mShape.location.add(distance));
+		
+		// set forces
+		airFriction.setDirection(speed.getNormalizedVector().multiply(
+				-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
+		
+		// calculate acceleration
+		final IVector acceleration = airFriction.add(gravitation);
+		
+		// update speed
+		speed.setDirection(speed.add(acceleration.multiply(dt)));
 	}
 
 	private void doFlyCollision(final float dt) {
-		// MovementEngine.playSound(solid.tag);
-		//
-		// mShape.moveTo(collision.shapeLocationOnCollision);
-		// Log.e(TAG, "shapecollisionlocation=" +
-		// collision.shapeLocationOnCollision);
-		//
-		// final float curDt = dt * collision.travelPercentage;
-		// final float newDt = dt - curDt;
-		//
-		// // calculate new speed v = v0 + a*t
-		// speed.setDirection(speed.add(acceleration.multiply(curDt)));
-		//
-		// // calculate ausfallswinkel (= einfallswinkel, must change that)
-		// final IVector n = collision.solidNormalVector.getNormalizedVector();
-		//
-		// final IVector newSpeed = speed.add(
-		// n.multiply(-2 *
-		// speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution());
-		// // formula for ausfallswinkel
-		//
-		// speed.setDirection(newSpeed);
-		//
-		// final float oldTot = epot + ekin;
-		// epot = mShape.location.getY() * gravitation.getLength();
-		// ekin = 0.5f * speed.getLength() * speed.getLength();
-		// Log.i(TAG, "Energy delta after collision: " + ((ekin + epot) / oldTot
-		// * 100) + "%");
-		//
-		// // while (true){}
-		// move(newDt);
-		// return;
-		// }
-		// }
+		// go to collision point
+		doFly(dt * lastMovementCollision.travelPercentage, lastMovementCollision.collisionPoint.add(mShape.location.multiply(-1)));
+		
+		// do collision stuff
+		MovementEngine.playSound(lastMovementCollision.collidedSolid.tag);
+		
+		final float curDt = dt * lastMovementCollision.travelPercentage;
+		final float newDt = dt - curDt;
+		
+		// calculate ausfallswinkel (= einfallswinkel, must change that)
+		final IVector n = lastMovementCollision.solidNormalVector.getNormalizedVector();
+		
+		final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
+		
+		speed.setDirection(newSpeed);
+		
+		// do rest of movement
+		final IVector newDistance = speed.multiply(newDt);
+		
+		doFly(newDt, newDistance);
+	}
 
+
+	public float getPotentialEnergy(){
+		return mShape.location.getY() * gravitation.getLength();
+	}
+	
+	public float getKineticLinearEnergy(){
+		return speed.getLength() * speed.getLength() * 0.5f;
+	}
+
+	public float getKineticRotationalEnergy(){
+		return 0;
+	}
+	
+	public float getThermicEnergy(){
+		return 0;
+	}
+	
+	public float getTotalEnergy(){
+		return getPotentialEnergy() + getKineticLinearEnergy() + getKineticRotationalEnergy() + getThermicEnergy();
 	}
 }
