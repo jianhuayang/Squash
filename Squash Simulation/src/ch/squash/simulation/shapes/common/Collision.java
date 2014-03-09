@@ -110,7 +110,7 @@ public final class Collision {
 			final Quadrilateral quad, final Collision lastMovementCollision) {
 		// TODO: Not treat ball as a point anymore (but as a sphere)		
 		// get distance to quad
-		final float distanceToQuad = quad.getDistanceToPoint(ball.location) -ball.getRadius();
+		final float distanceToQuad = quad.getDistanceToPoint(ball.location);
 		
 		// if the quad is too far away, return
 		if (distanceToQuad > travelled.getLength())
@@ -156,7 +156,6 @@ public final class Collision {
 		}
 		
 		// collision happens, return collision object
-		
 		final IVector shapeLocationOnCollision = intersection.add(travelled.getNormalizedVector().multiply(-ball.getRadius()));
 		Log.w(TAG, "Collision with " + quad.tag + " after " + distanceToQuad + "m from " + travelled.getLength() + "m (" + (distanceToQuad/travelled.getLength() * 100) + "%)");
 		return new Collision(intersection, distanceToQuad / travelled.getLength(), getNormalForce(quad.getNormalVector()),
