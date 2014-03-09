@@ -140,13 +140,14 @@ public class SquashActivity extends Activity {
 							final String locationString = "Location:\t" + String.format("%.2f", location.getX()) + "/" + String.format("%.2f", location.getY()) + "/" + String.format("%.2f", location.getZ());
 							final IVector speed =  ball.getMovable().speed;
 							final String speedString = "Speed:\t\t\t" + String.format("%.2f", speed.getX()) + "/" + String.format("%.2f", speed.getY()) + "/" + String.format("%.2f", speed.getZ());
+							final String temperatureString = "Temperature:\t\t" + String.format("%.2f", ball.temperature) + "°C";
 							final String energyString1 = "EPot=\t\t\t\t" + String.format("%.2f", ball.getMovable().getPotentialEnergy()) + 
 									"\t\tEKinLin=" + String.format("%.2f", ball.getMovable().getKineticLinearEnergy()); 
 							final String energyString2 = "EKinRot=\t" + String.format("%.2f", ball.getMovable().getKineticRotationalEnergy()) + 
 									"\t\tETherm=" + String.format("%.2f", ball.getMovable().getThermicEnergy());
 							final String energyString3 = "ETot=\t\t\t\t" + String.format("%.2f", ball.getMovable().getTotalEnergy());
 							
-							mTxtHudBall.setText(locationString + "\n" + speedString + "\n" + energyString1 + "\n" + energyString2 + "\n" + energyString3);
+							mTxtHudBall.setText(locationString + "\n" + speedString + "\n" + temperatureString + "\n" + energyString1 + "\n" + energyString2 + "\n" + energyString3);
 						}
 					});
 
