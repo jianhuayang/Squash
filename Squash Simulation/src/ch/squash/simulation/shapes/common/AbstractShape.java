@@ -32,6 +32,7 @@ public abstract class AbstractShape {
 	protected final IVector location;
 	private SolidType mSolidType;
 	private Movable mMovable;
+	public float temperature = 20;
 
 	// matrices
 	private float[] mModelMatrix = new float[16];
@@ -124,7 +125,7 @@ public abstract class AbstractShape {
 				for (final PhysicalVector v : mMovable.vectorArrows)
 					v.draw();
 			
-			mMovable.mTrace.draw();
+			mMovable.trace.draw();
 		}
 
 		// Pass in the position information
@@ -176,7 +177,7 @@ public abstract class AbstractShape {
 		if (isMovable()){
 			for (final PhysicalVector gs : mMovable.vectorArrows)
 				gs.moveTo(dv);
-			mMovable.mTrace.addPoint(dv);
+			mMovable.trace.addPoint(dv);
 		}
 	}
 
