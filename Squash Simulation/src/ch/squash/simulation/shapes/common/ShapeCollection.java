@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
-import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.graphic.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Chair;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 

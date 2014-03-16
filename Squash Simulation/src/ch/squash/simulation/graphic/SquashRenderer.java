@@ -1,16 +1,15 @@
-package ch.squash.simulation.main;
+package ch.squash.simulation.graphic;
 
 import java.util.ArrayList;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
 import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.main.MovementEngine;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.Movable;
@@ -35,7 +34,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public final static float ONE_CM = 0.01f;
 	public final static float COURT_LINE_WIDTH = 5 * ONE_CM;
 	private final static int CYCLE_DURATION = 20000;
-
 	// object-related
 	public final static int OBJECT_COURT = 0;
 	public final static int OBJECT_BALL = 1;
@@ -51,14 +49,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public float[] mViewMatrix = new float[16];
 	public float[] mProjectionMatrix = new float[16];
 
-	// handles
-	public int mMVPMatrixHandle;
-	public int mMVMatrixHandle;
-	public int mPositionHandle;
-	public int mColorHandle;
-	public int mPointProgramHandle;
-	private int mPerVertexProgramHandle;
-
 	// objects
 	private final ShapeCollection[] mObjects;
 	private AbstractShape[] mCourtSolids;
@@ -71,10 +61,10 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// for dynamic movement
 	private float mAngleInDegrees;
 	private float mOldAngle;
-
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
-	public SquashRenderer() {
+	// ctor
+	private SquashRenderer() {
 		final IVector ballStart = Settings.getBallStartPosition();
 		mSquashBall = new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
 				new float[] { 0, 0, 0, 1 });
@@ -123,6 +113,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		Log.i(TAG, "SquashRenderer created");
 	}
 
+	// public access
 	public static SquashRenderer getInstance() {
 		synchronized (LOCK) {
 			if (mInstance == null)
@@ -131,34 +122,11 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		return mInstance;
 	}
 
-	private String getVertexShader() {
-		return    "uniform mat4 u_MVPMatrix;      \n"
-				+ "attribute vec4 a_Position;     \n"
-				+ "attribute vec4 a_Color;        \n"
-				+ "varying vec4 v_Color;          \n"
-				+ "void main()                   \n"
-				+ "{                             \n"
-				+ "   v_Color = a_Color;          \n"
-				+ "   gl_Position = u_MVPMatrix   \n"
-				+ "               * a_Position;   \n"
-				+ "}                             \n";
-	}
-
-	protected String getFragmentShader() {
-		return    "precision mediump float;       \n"
-				+ "varying vec4 v_Color;          \n"
-				+ "void main()                   \n"
-				+ "{                             \n"
-				+ "   gl_FragColor = v_Color;     \n"
-				+ "}                             \n";
-	}
-
-	// overriding methods
+	// overridden methods
 	@Override
 	public void onSurfaceCreated(final GL10 glUnused, final EGLConfig config) {
-		// Set the background clear color to .
+		// Set the background clear color to black
 		GLES20.glClearColor(0, 0, 0, 0);
-//		GLES20.glClearColor(1, 1, 1, 0);
 
 		// Use culling to remove back faces.
 		GLES20.glEnable(GLES20.GL_CULL_FACE);
@@ -182,41 +150,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		Matrix.setLookAtM(mViewMatrix, 0, eye.getX(), eye.getY(), eye.getZ(), look.getX(), look.getY(),
 				look.getZ(), up.getX(), up.getY(), up.getZ());
-
-		final String vertexShader = getVertexShader();
-		final String fragmentShader = getFragmentShader();
-
-		final int vertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER,
-				vertexShader);
-		final int fragmentShaderHandle = compileShader(
-				GLES20.GL_FRAGMENT_SHADER, fragmentShader);
-
-		mPerVertexProgramHandle = createAndLinkProgram(vertexShaderHandle,
-				fragmentShaderHandle, new String[] { "a_Position", "a_Color" });
-
-		// Define a simple shader program for our point.
-		final String pointVertexShader = "uniform mat4 u_MVPMatrix;      \n"
-				+ "attribute vec4 a_Position;     \n"
-				+ "void main()                    \n"
-				+ "{                              \n"
-				+ "   gl_Position = u_MVPMatrix   \n"
-				+ "               * a_Position;   \n"
-				+ "   gl_PointSize = 5.0;         \n"
-				+ "}                              \n";
-
-		final String pointFragmentShader = "precision mediump float;       \n"
-				+ "void main()                    \n"
-				+ "{                              \n"
-				+ "   gl_FragColor = vec4(1.0,    \n"
-				+ "   1.0, 1.0, 1.0);             \n"
-				+ "}                              \n";
-
-		final int pointVertexShaderHandle = compileShader(
-				GLES20.GL_VERTEX_SHADER, pointVertexShader);
-		final int pointFragmentShaderHandle = compileShader(
-				GLES20.GL_FRAGMENT_SHADER, pointFragmentShader);
-		mPointProgramHandle = createAndLinkProgram(pointVertexShaderHandle,
-				pointFragmentShaderHandle, new String[] { "a_Position" });
 
 		resetCamera();
 		mLastFrame = System.currentTimeMillis();
@@ -259,25 +192,11 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 					1.0f, 0.0f);
 		else if (setCameraRotation){
 			setCameraRotation = false;
-//			resetCamera();
 			Matrix.rotateM(mViewMatrix, 0, 90 * (Settings.getCameraMode() - 1),
 					0.0f, 1.0f, 0.0f);	
 		}
 		
 		mOldAngle = mAngleInDegrees;
-
-		// Set our per-vertex lighting program.
-		GLES20.glUseProgram(mPerVertexProgramHandle);
-
-		// Set program handles for cube drawing.
-		mMVPMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle,
-				"u_MVPMatrix");
-		mMVMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle,
-				"u_MVMatrix");
-		mPositionHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle,
-				"a_Position");
-		mColorHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle,
-				"a_Color");
 
 		for (final ShapeCollection oc : mObjects)
 			for (final AbstractShape object : oc.getOpaqueObjects())
@@ -288,87 +207,6 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			for (final AbstractShape object : oc.getTransparentObjects())
 				object.draw();
 		GLES20.glDepthMask(true);
-//		for (GlShape object : courtSolids)
-//			object.draw();
-
-		GLES20.glUseProgram(mPointProgramHandle);
-	}
-
-	// gl methods
-	private int compileShader(final int shaderType, final String shaderSource) {
-		int shaderHandle = GLES20.glCreateShader(shaderType);
-
-		if (shaderHandle != 0) {
-			// Pass in the shader source.
-			GLES20.glShaderSource(shaderHandle, shaderSource);
-
-			// Compile the shader.
-			GLES20.glCompileShader(shaderHandle);
-
-			// Get the compilation status.
-			final int[] compileStatus = new int[1];
-			GLES20.glGetShaderiv(shaderHandle, GLES20.GL_COMPILE_STATUS,
-					compileStatus, 0);
-
-			// If the compilation failed, delete the shader.
-			if (compileStatus[0] == 0) {
-				Log.e(TAG,
-						"Error compiling shader: "
-								+ GLES20.glGetShaderInfoLog(shaderHandle));
-				GLES20.glDeleteShader(shaderHandle);
-				shaderHandle = 0;
-			}
-		}
-
-		if (shaderHandle == 0) {
-			Log.e(TAG, "Error creating shader");
-		}
-
-		return shaderHandle == 0 ? -1 : shaderHandle;
-	}
-
-	private int createAndLinkProgram(final int vertexShaderHandle,
-			final int fragmentShaderHandle, final String[] attributes) {
-		int programHandle = GLES20.glCreateProgram();
-
-		if (programHandle != 0) {
-			// Bind the vertex shader to the program.
-			GLES20.glAttachShader(programHandle, vertexShaderHandle);
-
-			// Bind the fragment shader to the program.
-			GLES20.glAttachShader(programHandle, fragmentShaderHandle);
-
-			// Bind attributes
-			if (attributes != null) {
-				final int size = attributes.length;
-				for (int i = 0; i < size; i++) {
-					GLES20.glBindAttribLocation(programHandle, i, attributes[i]);
-				}
-			}
-
-			// Link the two shaders together into a program.
-			GLES20.glLinkProgram(programHandle);
-
-			// Get the link status.
-			final int[] linkStatus = new int[1];
-			GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS,
-					linkStatus, 0);
-
-			// If the link failed, delete the program.
-			if (linkStatus[0] == 0) {
-				Log.e(TAG,
-						"Error compiling program: "
-								+ GLES20.glGetProgramInfoLog(programHandle));
-				GLES20.glDeleteProgram(programHandle);
-				programHandle = 0;
-			}
-		}
-
-		if (programHandle == 0) {
-			Log.e(TAG, "Error creating program");
-		}
-
-		return programHandle == 0 ? -1 : programHandle;
 	}
 
 	// own methods

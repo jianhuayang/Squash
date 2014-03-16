@@ -8,16 +8,15 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 import ch.squash.simulation.common.Settings;
-import ch.squash.simulation.main.SquashRenderer;
+import ch.squash.simulation.graphic.Shader;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.shapes.DummyShape;
 
 public abstract class AbstractShape {
 	// constant
 	private final static String TAG = AbstractShape.class.getSimpleName();
 	private static final int BYTES_PER_FLOAT = 4;
-	private static final int POSITION_DATA_SIZE = 3;
-	private static final int COLOR_DATA_SIZE = 4;
-
+	
 	// data - drawing
 	protected FloatBuffer mPositions;
 	protected FloatBuffer mColors;
@@ -34,12 +33,13 @@ public abstract class AbstractShape {
 	private Movable mMovable;
 	public float temperature = 20;
 
+	private final ShaderType mShaderType;
+	
 	// matrices
 	private float[] mModelMatrix = new float[16];
-	private float[] mMVPMatrix = new float[16];
 
 	public AbstractShape(final String tag, final float x, final float y, final float z, final float[] mVertexData, final float[] color) {
-		mVertexCount = mVertexData.length / POSITION_DATA_SIZE;
+		mVertexCount = mVertexData.length / Shader.POSITION_DATA_SIZE;
 		final float[] mColorData = getColorData(color);
 
 		this.tag = tag;
@@ -55,6 +55,8 @@ public abstract class AbstractShape {
 		mColors = ByteBuffer.allocateDirect(mColorData.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mColors.put(mColorData).position(0);
+
+		mShaderType = ShaderType.NO_LIGHT;
 	}
 	
 	@SuppressWarnings("unused")
@@ -62,6 +64,7 @@ public abstract class AbstractShape {
 		location = null;
 		origin = null;
 		tag = null;
+		mShaderType = null;
 	}
 
 	public void initialize(final int drawMode, final SolidType type, final Movable movable) {
@@ -101,7 +104,7 @@ public abstract class AbstractShape {
 	}
 	
 	public void setNewVertices(final float[] positionData) {
-		mVertexCount = positionData.length / POSITION_DATA_SIZE;
+		mVertexCount = positionData.length / Shader.POSITION_DATA_SIZE;
 		mPositions = ByteBuffer
 				.allocateDirect(positionData.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -117,9 +120,6 @@ public abstract class AbstractShape {
 		if (!mVisible || mVertexCount == 0 || this instanceof DummyShape)
 			return;
 
-		Matrix.setIdentityM(mModelMatrix, 0);
-		Matrix.translateM(mModelMatrix, 0, location.getX(), location.getY(), location.getZ());
-
 		if (isMovable()){
 			if (Settings.isDrawForces())
 				for (final PhysicalVector v : mMovable.vectorArrows)
@@ -128,40 +128,22 @@ public abstract class AbstractShape {
 			mMovable.trace.draw();
 		}
 
-		// Pass in the position information
-		mPositions.position(0);
-		GLES20.glVertexAttribPointer(
-				SquashRenderer.getInstance().mPositionHandle,
-				POSITION_DATA_SIZE, GLES20.GL_FLOAT, false, 0, mPositions);
-
-		GLES20.glEnableVertexAttribArray(SquashRenderer.getInstance().mPositionHandle);
-
-		// Pass in the color information
-		mColors.position(0);
-		GLES20.glVertexAttribPointer(SquashRenderer.getInstance().mColorHandle,
-				COLOR_DATA_SIZE, GLES20.GL_FLOAT, false, 0, mColors);
-
-		GLES20.glEnableVertexAttribArray(SquashRenderer.getInstance().mColorHandle);
-
-		// (which currently contains model * view).
-		Matrix.multiplyMM(mMVPMatrix, 0,
-				SquashRenderer.getInstance().mViewMatrix, 0, mModelMatrix, 0);
-
-		// Pass in the modelview matrix.
-		GLES20.glUniformMatrix4fv(SquashRenderer.getInstance().mMVMatrixHandle,
-				1, false, mMVPMatrix, 0);
-
-		// (which now contains model * view * projection).
-		Matrix.multiplyMM(mMVPMatrix, 0,
-				SquashRenderer.getInstance().mProjectionMatrix, 0, mMVPMatrix,
-				0);
-
-		// Pass in the combined matrix.
-		GLES20.glUniformMatrix4fv(
-				SquashRenderer.getInstance().mMVPMatrixHandle, 1, false,
-				mMVPMatrix, 0);
-
-		// Draw the cube.
+		Matrix.setIdentityM(mModelMatrix, 0);
+		Matrix.translateM(mModelMatrix, 0, location.getX(), location.getY(), location.getZ());
+		
+		switch (mShaderType){
+		case NO_LIGHT:
+			Shader.applyNoLight(mModelMatrix, mPositions, mColors);
+			break;
+//		case LIGHT:
+//			break;
+//		case POINT:
+//			break;
+		default:
+			Log.e(TAG, "Unknown shader type: " + mShaderType);
+			break;
+		}
+		
 		final int drawMode = Settings.getDrawMode();
 		GLES20.glDrawArrays(drawMode == -1 ? mDrawMode : drawMode, 0,
 				mVertexCount);

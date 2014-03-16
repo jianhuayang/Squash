@@ -2,8 +2,8 @@ package ch.squash.simulation.shapes.common;
 
 import android.util.Log;
 import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.graphic.SquashRenderer;
 import ch.squash.simulation.main.MovementEngine;
-import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.shapes.Ball;
 import ch.squash.simulation.shapes.shapes.Quadrilateral;
 

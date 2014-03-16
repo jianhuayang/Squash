@@ -10,8 +10,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import ch.squash.simulation.R;
+import ch.squash.simulation.graphic.SquashRenderer;
 import ch.squash.simulation.main.SquashActivity;
-import ch.squash.simulation.main.SquashRenderer;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.Vector;
 

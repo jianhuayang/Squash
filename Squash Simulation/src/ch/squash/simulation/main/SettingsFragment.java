@@ -15,6 +15,7 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.graphic.SquashRenderer;
 
 public class SettingsFragment extends PreferenceFragment implements
 		OnSharedPreferenceChangeListener {

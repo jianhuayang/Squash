@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
+import ch.squash.simulation.graphic.Shader;
+import ch.squash.simulation.graphic.SquashRenderer;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.shapes.Ball;
 
@@ -112,6 +114,7 @@ public class SquashActivity extends Activity {
 		mSquashView.onPause();
 		super.onPause();
 		mIsUpdateUi = false;
+		Shader.destroyShaders();	// destroy shaders so that new ones will be created
 	}
 
 	@Override

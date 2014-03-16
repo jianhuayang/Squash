@@ -1,5 +1,6 @@
 package ch.squash.simulation.main;
 
+import ch.squash.simulation.graphic.SquashRenderer;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
