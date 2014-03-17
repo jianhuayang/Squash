@@ -63,6 +63,13 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	private float mOldAngle;
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
+	// light
+	private final float[] mLightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+	private final float[] mLightPosInWorldSpace = new float[4];
+	public final float[] mLightPosInEyeSpace = new float[4];
+	private float[] mLightModelMatrix = new float[16];	
+
+	
 	// ctor
 	private SquashRenderer() {
 		final IVector ballStart = Settings.getBallStartPosition();
@@ -195,9 +202,20 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 			Matrix.rotateM(mViewMatrix, 0, 90 * (Settings.getCameraMode() - 1),
 					0.0f, 1.0f, 0.0f);	
 		}
-		
 		mOldAngle = mAngleInDegrees;
 
+	    
+        // Calculate position of the light. Rotate and then push into the distance.
+        Matrix.setIdentityM(mLightModelMatrix, 0);
+        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, -5.0f);      
+        Matrix.rotateM(mLightModelMatrix, 0, mAngleInDegrees, 0.0f, 1.0f, 0.0f);
+        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
+               
+        Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
+        Matrix.multiplyMV(mLightPosInEyeSpace, 0, mViewMatrix, 0, mLightPosInWorldSpace, 0);                        
+
+		
+		
 		for (final ShapeCollection oc : mObjects)
 			for (final AbstractShape object : oc.getOpaqueObjects())
 				object.draw();

@@ -12,6 +12,7 @@ public abstract class Shader {
 
 	public final static int POSITION_DATA_SIZE = 3;
 	public final static int COLOR_DATA_SIZE = 4;
+	public final static int NORMAL_DATA_SIZE = 3;
 
 	// instance variables - variables that each shader needs
 	protected final int mProgramHandle;
@@ -28,6 +29,11 @@ public abstract class Shader {
 	// public access
 	public static void applyNoLight(final float[] modelMatrix, final FloatBuffer positionBuffer, final FloatBuffer colorBuffer){
 		NoLightShader.getInstance().apply(modelMatrix, positionBuffer, colorBuffer);
+	}
+	
+	public static void applyLight(final float[] modelMatrix, final FloatBuffer positionBuffer,
+			final FloatBuffer colorBuffer, final FloatBuffer normalBuffer){
+		LightShader.getInstance().apply(modelMatrix, positionBuffer, colorBuffer, normalBuffer);
 	}
 	
 	public static void destroyShaders(){
