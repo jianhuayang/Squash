@@ -37,7 +37,7 @@ public abstract class AbstractShape {
 	private final ShaderType mShaderType;
 	
 	// matrices
-	private float[] mModelMatrix = new float[16];
+	public float[] mModelMatrix = new float[16];
 
 	public AbstractShape(final String tag, final float x, final float y, final float z, final ShaderType type) {
 		this.tag = tag;
@@ -45,7 +45,7 @@ public abstract class AbstractShape {
 		location = new Vector(x, y, z);
 		origin = new Vector(x, y, z);
 
-		mShaderType = ShaderType.LIGHT;
+		mShaderType = type; //ShaderType.NO_LIGHT;
 	}
 	
 	@SuppressWarnings("unused")
@@ -140,8 +140,9 @@ public abstract class AbstractShape {
 		case LIGHT:
 			Shader.applyLight(mModelMatrix, mPositions, mColors, mNormals);
 			break;
-//		case POINT:
-//			break;
+		case POINT:
+			Shader.applyPoint();
+			break;
 		default:
 			Log.e(TAG, "Unknown shader type: " + mShaderType);
 			break;
