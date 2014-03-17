@@ -17,7 +17,7 @@ public class Tetrahedron extends AbstractShape {
 		final float halfEdge = edge / 2;
 		final float radius = (float) (Math.sqrt(3) / 3 * edge);
 		final float bottomHalf = (float) (Math.sqrt(Math.pow(radius, 2) - Math.pow(halfEdge, 2)));
-		final float topHalf = 2 * bottomHalf;
+		final float topHalf = radius;
 		
 		// X, Y, Z
 		return new float[]{
@@ -69,7 +69,26 @@ public class Tetrahedron extends AbstractShape {
 	}
 	
 	private float[] getNormalData(){
-		// TODO: add normal
-		return new float[0];
+		return new float[] {
+			// Front face
+			0.000f, 0.316f, 0.949f,
+			0.000f, 0.316f, 0.949f,
+			0.000f, 0.316f, 0.949f,
+				
+			// Right face
+			0.739f, 0.213f, -0.640f,
+			0.739f, 0.213f, -0.640f,
+			0.739f, 0.213f, -0.640f,
+			
+			// Left face
+			-0.822f, 0.316f,- 0.474f,
+			-0.822f, 0.316f, -0.474f,
+			-0.822f, 0.316f, -0.474f,
+				
+			// Bottom face
+			0.0f, -1.0f, 0.0f,
+			0.0f, -1.0f, 0.0f,
+			0.0f, -1.0f, 0.0f,				
+		};
 	}
 }
