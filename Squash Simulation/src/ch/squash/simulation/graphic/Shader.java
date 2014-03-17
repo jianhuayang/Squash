@@ -36,6 +36,10 @@ public abstract class Shader {
 		LightShader.getInstance().apply(modelMatrix, positionBuffer, colorBuffer, normalBuffer);
 	}
 	
+	public static void applyPoint(){
+		PointShader.getInstance().apply();
+	}
+	
 	public static void destroyShaders(){
 		NoLightShader.destroy();
 	}
@@ -55,7 +59,7 @@ public abstract class Shader {
 	 * @param shaderSource The shader source code.
 	 * @return An OpenGL handle to the shader.
 	 */
-	protected static int compileShader(final int shaderType, final String shaderSource) 
+	private static int compileShader(final int shaderType, final String shaderSource) 
 	{
 		int shaderHandle = GLES20.glCreateShader(shaderType);
 
@@ -96,7 +100,7 @@ public abstract class Shader {
 	 * @param attributes Attributes that need to be bound to the program.
 	 * @return An OpenGL handle to the program.
 	 */
-	protected static int createAndLinkProgram(final int vertexShaderHandle, final int fragmentShaderHandle, final String[] attributes) 
+	private static int createAndLinkProgram(final int vertexShaderHandle, final int fragmentShaderHandle, final String[] attributes) 
 	{
 		int programHandle = GLES20.glCreateProgram();
 		
