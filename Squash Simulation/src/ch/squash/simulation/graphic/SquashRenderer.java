@@ -1,8 +1,10 @@
 package ch.squash.simulation.graphic;
 
 import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -20,6 +22,7 @@ import ch.squash.simulation.shapes.shapes.Ball;
 import ch.squash.simulation.shapes.shapes.Cube;
 import ch.squash.simulation.shapes.shapes.DottedLine;
 import ch.squash.simulation.shapes.shapes.DummyShape;
+import ch.squash.simulation.shapes.shapes.Point;
 import ch.squash.simulation.shapes.shapes.Tetrahedron;
 
 public class SquashRenderer implements GLSurfaceView.Renderer {
@@ -53,6 +56,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	private final ShapeCollection[] mObjects;
 	private AbstractShape[] mCourtSolids;
 	private final Ball mSquashBall;
+	private final Point mLight;
 	
 	// misc
 	private float mFps;
@@ -64,10 +68,10 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	public boolean setCameraRotation = true;		// set rotation on startup
 	
 	// light
-	private final float[] mLightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
+	public final float[] mLightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
 	private final float[] mLightPosInWorldSpace = new float[4];
 	public final float[] mLightPosInEyeSpace = new float[4];
-	private float[] mLightModelMatrix = new float[16];	
+	public float[] mLightModelMatrix = new float[16];	
 
 	
 	// ctor
@@ -75,6 +79,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		final IVector ballStart = Settings.getBallStartPosition();
 		mSquashBall = new Ball("SquashBall", ballStart.getX(), ballStart.getY(), ballStart.getZ(), 40 * ONE_MM, 36,
 				new float[] { 0, 0, 0, 1 });
+		mLight = new Point("Light", 0, 0, 0);
 				
 		// add objects
 		final ShapeCollection axis = new ShapeCollection();
@@ -86,7 +91,8 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 				0f, 1f, 1f }), false);
 
 		final ShapeCollection misc = new ShapeCollection();
-		misc.addObject(new Cube("DummyCube", 0, 2, 0, 2), false);
+		misc.addObject(mLight, false);
+		misc.addObject(new Cube("DummyCube", 0, 0, 0, 1), false);
 		misc.addObject(new Tetrahedron("DummyTetrahedron", 2, 0, 0, 2), false);
 		misc.addObject(new Arrow("DummyArrow", 0, -1, -5, 0, 1, -5,
 				new float[] { 1, 1, 0, 1 }), false);
@@ -195,7 +201,7 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 		mAngleInDegrees = (360.0f / CYCLE_DURATION) * ((int) time);
 
 		if (Settings.isCameraRotating())
-			Matrix.rotateM(mViewMatrix, 0, mAngleInDegrees - mOldAngle, 0.0f,
+			Matrix.rotateM(mViewMatrix, 0, (mAngleInDegrees - mOldAngle) * Settings.getSpeedFactor(), 0.0f,
 					1.0f, 0.0f);
 		else if (setCameraRotation){
 			setCameraRotation = false;
@@ -207,14 +213,14 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	    
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);
-        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, -5.0f);      
-        Matrix.rotateM(mLightModelMatrix, 0, mAngleInDegrees, 0.0f, 1.0f, 0.0f);
-        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
+//        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 1.5f, 0.0f);      
+        Matrix.rotateM(mLightModelMatrix, 0, mAngleInDegrees * Settings.getSpeedFactor(), 0.0f, 1.0f, 0.0f);
+        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 1.0f, 1.5f);
                
         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
         Matrix.multiplyMV(mLightPosInEyeSpace, 0, mViewMatrix, 0, mLightPosInWorldSpace, 0);                        
 
-		
+		System.arraycopy(mLightModelMatrix, 0, mLight.mModelMatrix, 0, mLightModelMatrix.length);
 		
 		for (final ShapeCollection oc : mObjects)
 			for (final AbstractShape object : oc.getOpaqueObjects())
