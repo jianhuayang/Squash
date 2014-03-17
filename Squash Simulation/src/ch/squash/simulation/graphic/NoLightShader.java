@@ -24,13 +24,7 @@ final class NoLightShader extends Shader {
 
 	// ctor
 	private NoLightShader(){
-		super();
-		
-        // Set program handles. These will later be used to pass in values to the program.
-		// maybe they will have to be moved to draw() which is called on every frame
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");        
-        mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
-        mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");        
+		super();  
 	}
 	
 	// access for superclass
@@ -38,6 +32,10 @@ final class NoLightShader extends Shader {
         // Tell OpenGL to use this program when rendering.
         GLES20.glUseProgram(mProgramHandle);   
 
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");        
+        mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
+        mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");      
+        
 		// Pass in the position information
         positionBuffer.position(0);
 		GLES20.glVertexAttribPointer(mPositionHandle,

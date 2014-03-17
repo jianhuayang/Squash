@@ -28,11 +28,12 @@ public class LightShader extends Shader {
 	// ctor
 	private LightShader(){
 		super();
-		
-        // Set program handles. These will later be used to pass in values to the program.
-		// maybe they will have to be moved to draw() which is called on every frame
+	}
+	
+	// access for superclass
+	protected void apply(final float[] modelMatrix, final FloatBuffer positionBuffer,
+			final FloatBuffer colorBuffer, final FloatBuffer normalBuffer) {
         GLES20.glUseProgram(mProgramHandle);
-        
         // Set program handles for cube drawing.
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");
         mMVMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVMatrix"); 
@@ -40,12 +41,8 @@ public class LightShader extends Shader {
         mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
         mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");
         mNormalHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Normal"); 
-	}
-	
-	// access for superclass
-	protected void apply(final float[] modelMatrix, final FloatBuffer positionBuffer,
-			final FloatBuffer colorBuffer, final FloatBuffer normalBuffer) {
-		// Pass in the position information
+        
+        // Pass in the position information
 		positionBuffer.position(0);		
         GLES20.glVertexAttribPointer(mPositionHandle, POSITION_DATA_SIZE, GLES20.GL_FLOAT, false,
         		0, positionBuffer);        
