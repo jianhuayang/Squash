@@ -2,6 +2,7 @@ package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
 import android.util.Log;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.SolidType;
 
@@ -10,18 +11,18 @@ public class Chair extends AbstractShape {
 	private final static int EDGE_COUNT = 288;
 
 	public Chair(final String tag, final float x, final float y, final float z, final float length, final float width, final float height, final float[] color) {
-		super(tag, x, y, z, getVertices(length, width, height, 0), color);
+		super(tag, x, y, z, ShaderType.LIGHT);
 
-		initialize(GLES20.GL_TRIANGLES, SolidType.OTHER, null);
+		initialize(getVertices(length, width, height, 0), getColorData(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.OTHER, null);
 	}
 
 	public Chair(final String tag, final float x, final float y, final float z, final float length, final float width, final float height, final float[] color, final int rotation) {
-		super(tag, x, y, z, getVertices(length, width, height, rotation), color);
+		super(tag, x, y, z, ShaderType.LIGHT);
 
-		initialize(GLES20.GL_TRIANGLES, SolidType.OTHER, null);
+		initialize(getVertices(length, width, height, rotation), getColorData(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.OTHER, null);
 	}
 
-	private static float[] getVertices(final float length, final float width, final float height, final int rotation) {
+	private float[] getVertices(final float length, final float width, final float height, final int rotation) {
 		final float[] edges = new float[3 * EDGE_COUNT];
 
 		final float thickness = (length + width + height) / 3 / 10;
@@ -68,7 +69,7 @@ public class Chair extends AbstractShape {
 		return edges;
 	}
 
-	private static float[] getBack(final float lengthStart, final float lengthEnd, final float widthStart, final float widthEnd,
+	private float[] getBack(final float lengthStart, final float lengthEnd, final float widthStart, final float widthEnd,
 			final float startHeight, final float endHeight, final float thick){
 		final float[] edges = new float[90];
 		
@@ -180,7 +181,7 @@ public class Chair extends AbstractShape {
 		return edges;
 	}
 	
-	private static float[] getSeat(final float length, final float width, final float height, final float thick){
+	private float[] getSeat(final float length, final float width, final float height, final float thick){
 		final float[] edges = new float[108];
 		
 		final float halfLength = length / 2;
@@ -315,7 +316,7 @@ public class Chair extends AbstractShape {
 		return edges;
 	}
 	
-	private static float[] getStick(final float width, final float height){
+	private float[] getStick(final float width, final float height){
 		final float[] edges = new float[90];
 		final float halfWidth = width / 2;
 
@@ -427,12 +428,16 @@ public class Chair extends AbstractShape {
 		return edges;
 	}
 
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColorData(final float[] color) {
 		final float[] result = new float[EDGE_COUNT * 3 * color.length];
 
 		for (int i = 0; i < result.length / color.length; i++)
 			System.arraycopy(color, 0, result, i * color.length, color.length);
 		return result;
+	}
+	
+	private float[] getNormalData(){
+		// TODO: add normal data
+		return new float[0];
 	}
 }

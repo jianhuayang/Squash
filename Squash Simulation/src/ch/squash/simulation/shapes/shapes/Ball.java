@@ -2,6 +2,7 @@ package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
 import android.util.Log;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.Movable;
 import ch.squash.simulation.shapes.common.SolidType;
@@ -10,10 +11,6 @@ public class Ball extends AbstractShape {
 	// static
 	private final static String TAG = Ball.class.getSimpleName();
 
-	// only to be used during initialization!!!
-	private static int mEdges;
-	private static int mLevels;
-
 	// constants
 	private final static float DRAG_COEFFICIENT = 0.47f;
 	private final float DRAG_FACTOR;		// 1/2 * rho * C_d * A
@@ -21,10 +18,13 @@ public class Ball extends AbstractShape {
 	
 	// misc
 	private final float mRadius;
+
+	private int mEdges;
+	private int mLevels;
 	
 	public Ball(final String tag, final float x, final float y, final float z,
 			final float radius, final int edges, final float[] color) {
-		super(tag, x, y, z, getVertices(radius, edges), color);
+		super(tag, x, y, z, ShaderType.NO_LIGHT);
 
 		mRadius = radius;
 		
@@ -32,11 +32,11 @@ public class Ball extends AbstractShape {
 		// constant: 1/2 * rho * C_d * A
 		DRAG_FACTOR = (float) (0.5 * 1.2 * DRAG_COEFFICIENT * Math.PI * radius * radius);
 
-		initialize(GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this, SPECIFIC_WARMTH_CAPCITY,
+		initialize(getVertices(radius, edges), getColor(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this, SPECIFIC_WARMTH_CAPCITY,
 				new float[] { x, y, z }));
 	}
 
-	private static void prepareEdgeCount() {
+	private void prepareEdgeCount() {
 		mLevels = mEdges / 4;
 		int vertexCount = 2 * (mLevels - 1) * mEdges * 6 + 6 * mEdges;
 
@@ -51,7 +51,7 @@ public class Ball extends AbstractShape {
 		Log.v(TAG, "Ball has " + mEdges + " edges and " + mLevels + ".");
 	}
 
-	private static float getRad(final float radius, final int i,
+	private float getRad(final float radius, final int i,
 			final float dz, final float zOffset, final boolean reversing) {
 		float result;
 		if (reversing)
@@ -64,7 +64,7 @@ public class Ball extends AbstractShape {
 		return result;
 	}
 
-	private static float[] getVertices(final float radius, final int edges) {
+	private float[] getVertices(final float radius, final int edges) {
 		mEdges = edges;
 		prepareEdgeCount();
 		// prepare variables
@@ -246,8 +246,7 @@ public class Ball extends AbstractShape {
 		return vertices;
 	}
 
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColor(final float[] color) {
 		final int vertices = 2 * (mEdges / 4 - 1) * mEdges * 6 + 6 * mEdges;
 		final float[] result = new float[vertices * color.length];
 
@@ -263,5 +262,10 @@ public class Ball extends AbstractShape {
 	
 	public float getRadius() {
 		return mRadius;
+	}
+	
+	private float[] getNormalData(){
+		// TODO: render ball with light and add normals
+		return new float[0];
 	}
 }

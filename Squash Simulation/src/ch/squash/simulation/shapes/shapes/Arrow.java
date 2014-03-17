@@ -1,6 +1,7 @@
 package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.SolidType;
@@ -9,14 +10,16 @@ import ch.squash.simulation.shapes.common.Vector;
 public class Arrow extends AbstractShape {
 	public Arrow(final String tag, final float startx, final float starty, final float startz, final float endx,
 			final float endy, final float endz, final float[] color) {
-		super(tag, startx, starty, startz, getVertices(0, 0, 0, endx - startx, endy
-				- starty, endz - startz), color);
-
-		initialize(GLES20.GL_LINES, SolidType.NONE, null);
+		super(tag, startx, starty, startz, ShaderType.NO_LIGHT);
+		
+		initialize(getVertices(0, 0, 0, endx - startx, endy - starty, endz - startz), getColorData(color), new float[0],
+				GLES20.GL_LINES, SolidType.NONE, null);
 	}
 	
 	public static float[] getVertices(final float startx, final float starty,
 			final float startz, final float endx, final float endy, final float endz) {
+		// must be public static for PhysicalVector!
+		
 		final float[] vertices = new float[10 * 3];
 
 		final IVector v = new Vector(endx - startx, endy - starty, endz - startz).multiply(0.05f);
@@ -97,8 +100,7 @@ public class Arrow extends AbstractShape {
 		return vertices;
 	}
 
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColorData(final float[] color) {
 		final float[] result = new float[10 * 3 * color.length];
 
 		for (int i = 0; i < result.length / color.length; i++)

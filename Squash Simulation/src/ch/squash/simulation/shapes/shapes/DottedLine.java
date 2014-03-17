@@ -1,12 +1,12 @@
 package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.SolidType;
 
 public class DottedLine extends AbstractShape {
-	// only to be used during initialization!!!
-	private static int mIterations;
+	private int mIterations;
 
 	// constants
 	private static final int COORDS_PER_ITERATION = 18;
@@ -14,13 +14,13 @@ public class DottedLine extends AbstractShape {
 	public DottedLine(final String tag, final float startx, final float starty,
 			final float startz, final float endx, final float endy,
 			final float endz, final float dotInterval, final float[] color) {
-		super(tag, 0, 0, 0, getVertices(startx, starty, startz, endx, endy,
-				endz, dotInterval), color);
+		super(tag, 0, 0, 0, ShaderType.NO_LIGHT);
 
-		initialize(GLES20.GL_LINES, SolidType.NONE, null);
+		initialize(getVertices(startx, starty, startz, endx, endy,
+				endz, dotInterval), getColorData(color), new float[0], GLES20.GL_LINES, SolidType.NONE, null);
 	}
 
-	private static float[] getVertices(final float startx, final float starty,
+	private float[] getVertices(final float startx, final float starty,
 			final float startz, final float endx, final float endy, final float endz, final float dotInterval) {
 		final float dx = endx - startx;
 		final float dy = endy - starty;
@@ -65,8 +65,7 @@ public class DottedLine extends AbstractShape {
 		return vertices;
 	}
 
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColorData(final float[] color) {
 		final float[] result = new float[(COORDS_PER_ITERATION
 				* (mIterations + 1) - 6)
 				* color.length];

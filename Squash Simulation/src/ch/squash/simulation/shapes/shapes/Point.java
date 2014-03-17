@@ -1,18 +1,14 @@
 package ch.squash.simulation.shapes.shapes;
 
 import android.opengl.GLES20;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.SolidType;
 
 public class Point extends AbstractShape {
-	@Override
-	protected float[] getColorData(final float[] color) {
-		return new float[] {1, 1, 1, 1};
-	}
-
 	public Point(final String tag, final float x, final float y, final float z) {
-		super(tag, x, y, z, new float[] { 0, 0, 0 }, null);
+		super(tag, x, y, z, ShaderType.POINT);
 
-		initialize(GLES20.GL_POINTS, SolidType.NONE, null);
+		initialize(new float[] { 0, 0, 0 }, new float[0], new float[0], GLES20.GL_POINTS, SolidType.NONE, null);
 	}
 }

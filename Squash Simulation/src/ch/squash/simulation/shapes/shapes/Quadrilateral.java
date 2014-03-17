@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.opengl.GLES20;
 import android.util.Log;
+import ch.squash.simulation.graphic.ShaderType;
 import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.common.SolidType;
@@ -14,8 +15,7 @@ public class Quadrilateral extends AbstractShape {
 	// static
 	private final static String TAG = Quadrilateral.class.getSimpleName();
 
-	// only to be used during initialization!!!
-	private static boolean mBothSides;
+	private boolean mBothSides;
 	
 	// misc
 	private final float[] mEdges;
@@ -32,11 +32,11 @@ public class Quadrilateral extends AbstractShape {
 	public Quadrilateral(final String tag, final float[] edges,
 			final float[] color, final boolean bothSides) {
 		super(tag, getMiddle(edges)[0], getMiddle(edges)[1],
-				getMiddle(edges)[2], getVertices(edges, bothSides), color);
+				getMiddle(edges)[2], ShaderType.LIGHT);
 
 		this.mEdges = edges.clone();
 
-		initialize(GLES20.GL_TRIANGLES, SolidType.AREA, null);
+		initialize(getVertices(edges, bothSides), getColorData(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.AREA, null);
 		
 		// Check that quad is ortoghonal
 		final IVector n = getNormalVector();
@@ -57,7 +57,7 @@ public class Quadrilateral extends AbstractShape {
 				edges[2] + (edges[8] - edges[2]) / 2 };
 	}
 
-	private static float[] getVertices(final float[] edges,
+	private float[] getVertices(final float[] edges,
 			final boolean bothSides) {
 		mBothSides = bothSides;
 
@@ -279,8 +279,7 @@ public class Quadrilateral extends AbstractShape {
 		return mNormalVectorNonzeroDimension;
 	}
 
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColorData(final float[] color) {
 		final float[] result = new float[6 * color.length
 				* (mBothSides ? 2 : 1)];
 
@@ -288,5 +287,10 @@ public class Quadrilateral extends AbstractShape {
 			System.arraycopy(color, 0, result, i * color.length, color.length);
 
 		return result;
+	}
+	
+	private float[] getNormalData(){
+		// TODO: add normal data
+		return new float[0];
 	}
 }

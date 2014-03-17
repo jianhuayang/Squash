@@ -20,6 +20,7 @@ public abstract class AbstractShape {
 	// data - drawing
 	protected FloatBuffer mPositions;
 	protected FloatBuffer mColors;
+	protected FloatBuffer mNormals;
 	private int mDrawMode;
 	private int mVertexCount;
 	private boolean mVisible = true;
@@ -38,25 +39,13 @@ public abstract class AbstractShape {
 	// matrices
 	private float[] mModelMatrix = new float[16];
 
-	public AbstractShape(final String tag, final float x, final float y, final float z, final float[] mVertexData, final float[] color) {
-		mVertexCount = mVertexData.length / Shader.POSITION_DATA_SIZE;
-		final float[] mColorData = getColorData(color);
-
+	public AbstractShape(final String tag, final float x, final float y, final float z, final ShaderType type) {
 		this.tag = tag;
+
 		location = new Vector(x, y, z);
 		origin = new Vector(x, y, z);
-		
-		// Initialize the buffers.
-		mPositions = ByteBuffer
-				.allocateDirect(mVertexData.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder()).asFloatBuffer();
-		mPositions.put(mVertexData).position(0);
 
-		mColors = ByteBuffer.allocateDirect(mColorData.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder()).asFloatBuffer();
-		mColors.put(mColorData).position(0);
-
-		mShaderType = ShaderType.NO_LIGHT;
+		mShaderType = ShaderType.LIGHT;
 	}
 	
 	@SuppressWarnings("unused")
@@ -67,21 +56,34 @@ public abstract class AbstractShape {
 		mShaderType = null;
 	}
 
-	public void initialize(final int drawMode, final SolidType type, final Movable movable) {
+	protected void initialize(final float[] vertices, final float[] color, final float[] normal,
+			final int drawMode, final SolidType type, final Movable movable){
+		// required info for drawing
+		mVertexCount = vertices.length / Shader.POSITION_DATA_SIZE;
+		
+		// Initialize the buffers.
+		mPositions = ByteBuffer.allocateDirect(vertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mPositions.put(vertices).position(0);
+
+		mColors = ByteBuffer.allocateDirect(color.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mColors.put(color).position(0);
+
+		mNormals = ByteBuffer.allocateDirect(normal.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mNormals.put(normal).position(0);
+
 		mDrawMode = drawMode;
 		mSolidType = type;
 		mMovable = movable;
 
-		if (movable != null){
-			for (final PhysicalVector v : mMovable.vectorArrows) {
+		if (movable != null)
+			for (final PhysicalVector v : mMovable.vectorArrows)
 				v.moveTo(location);
-			}
-		}
 		
 		isInitialized = true;
 	}
-
-	protected abstract float[] getColorData(final float[] color);
 
 	public void setVisible(final boolean visible) {
 		mVisible = visible;
@@ -135,8 +137,9 @@ public abstract class AbstractShape {
 		case NO_LIGHT:
 			Shader.applyNoLight(mModelMatrix, mPositions, mColors);
 			break;
-//		case LIGHT:
-//			break;
+		case LIGHT:
+			Shader.applyLight(mModelMatrix, mPositions, mColors, mNormals);
+			break;
 //		case POINT:
 //			break;
 		default:

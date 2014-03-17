@@ -1,5 +1,6 @@
 package ch.squash.simulation.shapes.common;
 
+import ch.squash.simulation.graphic.ShaderType;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -21,11 +22,11 @@ public class Trace extends AbstractShape {
 	private Trace mNextTrace;
 
 	public Trace(final String tag, final float[] color) {
-		super(tag, 0, 0, 0, new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2], color);
+		super(tag, 0, 0, 0, ShaderType.NO_LIGHT);
 		
 		mColor = color.clone();
 		
-		initialize(GLES20.GL_LINES, SolidType.NONE, null);
+		initialize(new float[MAX_TRACE_SEGMENTS * 2 * 3 * 2], getColorData(color), new float[0], GLES20.GL_LINES, SolidType.NONE, null);
 	}
 
 	public void addPoint(final IVector point){		
@@ -79,8 +80,7 @@ public class Trace extends AbstractShape {
 		isReset = true;
 	}
 	
-	@Override
-	protected float[] getColorData(final float[] color) {
+	private float[] getColorData(final float[] color) {
 		final float[] result = new float[(MAX_TRACE_SEGMENTS + 2) * 2 * color.length];
 
 		for (int i = 0; i < result.length / color.length; i++)
