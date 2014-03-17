@@ -42,6 +42,8 @@ public abstract class Shader {
 	
 	public static void destroyShaders(){
 		NoLightShader.destroy();
+		LightShader.destroy();
+		PointShader.destroy();
 	}
 	
 	// abstract methods

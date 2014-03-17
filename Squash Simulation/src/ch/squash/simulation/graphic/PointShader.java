@@ -41,6 +41,10 @@ public class PointShader extends Shader {
 		Matrix.multiplyMM(mMVPMatrix, 0, mRenderer.mProjectionMatrix, 0, mMVPMatrix, 0);
 		GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 	}
+	
+	protected static void destroy(){
+		mInstance = null;
+	}
 
 	@Override
 	protected String getVertexShader() {
