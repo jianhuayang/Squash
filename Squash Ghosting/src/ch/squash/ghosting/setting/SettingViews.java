@@ -34,6 +34,7 @@ final public class SettingViews {
 			"back", "right leg", "left leg", "defensive", "middle" };
 	private final String[] LONG_TIMES;
 	private final String[] SHORT_TIMES;
+	private final String[] MULTIPLES_OF_FIVE = new String[100 / 5];
 
 	private static SettingViews mInstance;
 
@@ -50,8 +51,8 @@ final public class SettingViews {
 					Log.e(TAG, "couldnt save new value for series, " + newVal);
 				break;
 			case R.id.numBreak:
-				if (!Settings.setKeyValue("break", newVal))
-					Log.e(TAG, "couldnt save new value for break, " + newVal);
+				if (!Settings.setKeyValue("break", newVal * 5 + 5))
+					Log.e(TAG, "couldnt save new value for break, " + newVal * 5 + 5);
 				break;
 			case R.id.numCornerTime:
 				if (radCorners.isChecked()) {
@@ -99,10 +100,6 @@ final public class SettingViews {
 	private final OnCheckedChangeListener checkedChangeListener = new OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(final RadioGroup group, final int checkedId) {
-			String[] nums;
-			// Log.i(TAG, "change of checked detected. new checked id: "
-			// + checkedId);
-
 			if (!Settings.setKeyValue("cornersortime",
 					checkedId == R.id.radCorners, boolean.class))
 				Log.e(TAG, "couldnt save new value for cornersortime, "
@@ -110,13 +107,9 @@ final public class SettingViews {
 
 			switch (checkedId) {
 			case R.id.radCorners:
-				nums = new String[100 / 5];
-				for (int i = 1; i <= 100 / 5; i++)
-					nums[i - 1] = Integer.toString(i * 5);
-
-				numCornerTime.setMaxValue(nums.length - 1);
+				numCornerTime.setMaxValue(MULTIPLES_OF_FIVE.length - 1);
 				numCornerTime.setMinValue(0);
-				numCornerTime.setDisplayedValues(nums);
+				numCornerTime.setDisplayedValues(MULTIPLES_OF_FIVE);
 				numCornerTime.setValue(Settings.getCornerCount() / 5 - 1);
 
 				if (!Settings.setKeyValue("cornersortime", true, boolean.class))
@@ -124,13 +117,9 @@ final public class SettingViews {
 							"couldnt save new value for cornersortime, " + true);
 				break;
 			case R.id.radTime:
-				nums = new String[100 / 5];
-				for (int i = 1; i <= 100 / 5; i++)
-					nums[i - 1] = Integer.toString(i * 5);
-
-				numCornerTime.setMaxValue(nums.length - 1);
+				numCornerTime.setMaxValue(MULTIPLES_OF_FIVE.length - 1);
 				numCornerTime.setMinValue(0);
-				numCornerTime.setDisplayedValues(nums);
+				numCornerTime.setDisplayedValues(MULTIPLES_OF_FIVE);
 				numCornerTime.setValue(Settings.getCornerTime() / 5 - 1);
 
 				if (!Settings
@@ -187,6 +176,9 @@ final public class SettingViews {
 		SHORT_TIMES = new String[4 * 5 + 1];
 		for (int i = 0; i < SHORT_TIMES.length; i++)
 			SHORT_TIMES[i] = Float.toString(0.25f * i);
+		
+		for (int i = 1; i <= 100 / 5; i++)
+			MULTIPLES_OF_FIVE[i - 1] = Integer.toString(i * 5);
 
 		// set range, value, etc
 		initializeViews();
@@ -204,10 +196,11 @@ final public class SettingViews {
 
 		// break: values from 10 to 100
 		numBreak.setOnValueChangedListener(valueChangeListener);
-		numBreak.setMinValue(10);
-		numBreak.setMaxValue(100);
-		numBreak.setValue(Settings.getBreak());
+		numBreak.setMinValue(0);
+		numBreak.setMaxValue(MULTIPLES_OF_FIVE.length - 1);
+		numBreak.setValue(Settings.getBreak() / 5 - 1);
 		numBreak.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		numBreak.setDisplayedValues(MULTIPLES_OF_FIVE);
 
 		// cornertime: handled in checkedChangedListener
 		numCornerTime.setOnValueChangedListener(valueChangeListener);
