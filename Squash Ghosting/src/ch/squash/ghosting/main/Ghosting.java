@@ -168,6 +168,9 @@ public final class Ghosting {
 		int lastCorner = -1;
 		boolean lastCornerWhite = false;
 		
+		final int preparationTime = 10000;	// 10s to prepare
+		final int notificationTime = 3000;	// beep 3s before start
+		
 		// countdown
 		try {
 			Thread.sleep(1000);
@@ -176,20 +179,26 @@ public final class Ghosting {
 		}
 		MainActivity.getActivity().runOnUiThread(new Runnable() {
 			public void run() {
-				mInstance.progress.setMax(5000);
+				mInstance.progress.setMax(preparationTime);
 			}
 		});
-		for (int i = 0; i < 5000 / UPDATE_INTERVAL; i++) {
+		boolean notificationBeep = false;
+		for (int i = 0; i < preparationTime / UPDATE_INTERVAL; i++) {
 			if (!running)
 				return;
+			
+			if (!notificationBeep && i >= (preparationTime - notificationTime) / UPDATE_INTERVAL){
+				mInstance.mSoundPool.play(mInstance.mSoundBeep, 1, 1, 1, 0, 0.5f);
+				notificationBeep = true;
+			}
 			
 			final int finalI = i;
 			MainActivity.getActivity().runOnUiThread(new Runnable() {
 				public void run() {
-					mInstance.progress.setProgress(5000 - UPDATE_INTERVAL
+					mInstance.progress.setProgress(preparationTime - UPDATE_INTERVAL
 							* finalI);
-					mInstance.txtShotDuration.setText(Integer.toString(5
-							- UPDATE_INTERVAL * finalI / 1000)
+					mInstance.txtShotDuration.setText(Integer.toString((preparationTime
+							- UPDATE_INTERVAL * finalI) / 1000)
 							+ "s");
 				}
 			});
@@ -291,6 +300,8 @@ public final class Ghosting {
 							.getTimeInMillis() - start;
 				}
 			}
+			// series is done, make a low beep
+			mInstance.mSoundPool.play(mInstance.mSoundBeep, 1, 1, 1, 0, 0.5f);
 
 			MainActivity.getActivity().runOnUiThread(new Runnable() {
 				public void run() {
@@ -310,8 +321,15 @@ public final class Ghosting {
 								+ Settings.getSeries());
 					}
 				});
+				notificationBeep = false;
 				for (int i = 0; i < breakDuration * 1000 / UPDATE_INTERVAL
 						&& running; i++) {
+
+					if (!notificationBeep && i >= (breakDuration * 1000 - notificationTime + 1000) / UPDATE_INTERVAL){
+						mInstance.mSoundPool.play(mInstance.mSoundBeep, 1, 1, 1, 0, 0.5f);
+						notificationBeep = true;
+					}
+					
 					final int finalI = i;
 					MainActivity.getActivity().runOnUiThread(new Runnable() {
 						public void run() {
