@@ -22,10 +22,10 @@ public class ShapeCollection {
 	private final static float[] COLOR_STAND_OUTSIDE = new float[]{ 0.2f, 0.2f, 0.2f, 1 };
 	private final static float[] COLOR_CHAIR = new float[]{ 0.3f, 0, 1, 1 };
 	private final static float STAND_STEP_WIDTH = 1f;
-	private final static float STAND_STEP_HEIGHT = 0.4f;
+	private final static float STAND_STEP_HEIGHT = 0.5f;
 	private final static float STAND_CHAIR_SIZE = 0.5f;
-	private final static int STAND_COUNT_FRONT_SIDE = 7;
-	private final static int STAND_COUNT_BACK = 10;
+	private final static int STAND_COUNT_FRONT_SIDE = 4;
+	private final static int STAND_COUNT_BACK = 7;
 	private final static float MAX_CHAIR_SPACE = 0.2f;
 
 	
@@ -264,7 +264,7 @@ public class ShapeCollection {
 			mOpaqueObjects.add(new Quadrilateral("floor_right", new float[]{
 					3.2f, 0, -5.49f, 3.2f, 0, 4.26f, 4.2f, 0, 4.26f, 4.2f, 0, -5.49f },
 					COLOR_FLOOR, false));
-			// floor "down"
+			// floor "down"startPosition
 			mOpaqueObjects.add(new Quadrilateral("floor_bottom", new float[]{
 					4.26f + STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
 					-4.26f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, 0, 5.26f + STAND_COUNT_BACK * STAND_STEP_WIDTH,
@@ -273,7 +273,7 @@ public class ShapeCollection {
 					}, COLOR_STAND_OUTSIDE, false));
 			
 			// stands - backwall
-			for (int i = 0; i < STAND_COUNT_BACK; i++){
+			for (int i = 0; i < STAND_COUNT_BACK - 1; i++){
 				// inside
 				mOpaqueObjects.add(new Quadrilateral("stand_back", new float[]{
 						-4.2f - STAND_COUNT_FRONT_SIDE * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
@@ -310,7 +310,7 @@ public class ShapeCollection {
 					}, COLOR_STAND_OUTSIDE, false));
 
 			// stands - left sidewall
-			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE - 1; i++){
 				mOpaqueObjects.add(new Quadrilateral("stand_left", new float[]{
 						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
 						-4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 4.26f,
@@ -340,7 +340,7 @@ public class ShapeCollection {
 					}, COLOR_STAND_OUTSIDE, false));
 
 			// stands - frontwall
-			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE - 1; i++){
 				mOpaqueObjects.add(new Quadrilateral("stand_front", new float[]{
 						-4.2f - i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
 						-4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
@@ -362,7 +362,7 @@ public class ShapeCollection {
 					}, COLOR_STAND_OUTSIDE, false));
 
 			// stands - right sidewall
-			for (int i = 0; i < STAND_COUNT_FRONT_SIDE; i++){
+			for (int i = 0; i < STAND_COUNT_FRONT_SIDE - 1; i++){
 				mOpaqueObjects.add(new Quadrilateral("stand_right", new float[]{
 						4.2f + i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT, 4.26f,
 						4.2f + i * STAND_STEP_WIDTH, (i+1) * STAND_STEP_HEIGHT, 4.26f,
@@ -406,8 +406,8 @@ public class ShapeCollection {
 			
 			for (int j = 0; j < STAND_COUNT_BACK; j++){
 				for (int i = 0; i < chairs; i++)
-					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
-							5.26f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
+					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, j * STAND_STEP_HEIGHT,
+							5.26f + j * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR));
 			}
 			
 			// front
@@ -422,8 +422,8 @@ public class ShapeCollection {
 				}
 				
 				for (int i = 0; i < chairs; i++)
-					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, (j+1) * STAND_STEP_HEIGHT,
-							-6.49f - (j+1) * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 2));
+					mOpaqueObjects.add(new Chair("chair", startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, j * STAND_STEP_HEIGHT,
+							-6.49f - j * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 2));
 			}	
 
 			// right
@@ -438,7 +438,7 @@ public class ShapeCollection {
 				}
 
 				for (int i = 0; i < chairs; i++)
-					mOpaqueObjects.add(new Chair("chair", 4.2f + (j+1) * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, (j+1) * STAND_STEP_HEIGHT,
+					mOpaqueObjects.add(new Chair("chair", 4.2f + j * STAND_STEP_WIDTH - STAND_CHAIR_SIZE / 2 - SquashRenderer.ONE_CM, j * STAND_STEP_HEIGHT,
 							startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 3));
 			}
 
@@ -459,7 +459,7 @@ public class ShapeCollection {
 				}
 				
 				for (int i = 0; i < chairs; i++)
-					mOpaqueObjects.add(new Chair("chair", -4.2f - (j+1) * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, (j+1) * STAND_STEP_HEIGHT,
+					mOpaqueObjects.add(new Chair("chair", -4.2f - j * STAND_STEP_WIDTH + STAND_CHAIR_SIZE / 2 + SquashRenderer.ONE_CM, j * STAND_STEP_HEIGHT,
 							startPosition + i * (STAND_CHAIR_SIZE + space) + STAND_CHAIR_SIZE / 2, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, STAND_CHAIR_SIZE, COLOR_CHAIR, 1));
 			}
 		} else {
