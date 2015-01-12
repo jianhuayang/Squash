@@ -32,7 +32,6 @@ public abstract class AbstractShape {
 	protected final IVector location;
 	private SolidType mSolidType;
 	private Movable mMovable;
-	public float temperature = 20;
 
 	private final ShaderType mShaderType;
 	
@@ -45,7 +44,7 @@ public abstract class AbstractShape {
 		location = new Vector(x, y, z);
 		origin = new Vector(x, y, z);
 
-		mShaderType = type; //ShaderType.NO_LIGHT;
+		mShaderType = ShaderType.NO_LIGHT; // type
 	}
 	
 	@SuppressWarnings("unused")

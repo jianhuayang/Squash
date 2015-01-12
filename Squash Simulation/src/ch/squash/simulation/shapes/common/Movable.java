@@ -10,7 +10,6 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 public class Movable {
 	// static
 	private final static String TAG = Movable.class.getSimpleName();
-	private final float SPECIFIC_WARMTH_CAPACITY;
 	
 	// shapes
 	private final AbstractShape mShape;
@@ -25,7 +24,7 @@ public class Movable {
 	private long mNextMovement = System.currentTimeMillis(); // ms
 	private int mMoveSkipCount;
 
-	public Movable(final AbstractShape shape, final float specificWarmthCapacity, final float[] origin) {
+	public Movable(final AbstractShape shape, final float[] origin) {
 		mShape = shape;
 		gravitation = new PhysicalVector("force_gravitation", origin.clone(),
 				getGravitation().getDirection(), new float[] { 0, 0.5f, 0, 1 });
@@ -38,8 +37,6 @@ public class Movable {
 
 		trace = new Trace(shape.tag + "\'s trace", new float[] { 0.35f, 0.35f,
 				0.35f, 1 });
-		
-		SPECIFIC_WARMTH_CAPACITY = specificWarmthCapacity;
 	}
 
 	public static IVector getGravitation() {
@@ -136,11 +133,6 @@ public class Movable {
 				// complete movement "as planned
 				// move shape
 				mShape.move(actualDistance);
-				
-				// increase temperature based on air friction
-				final float airFrictionLength = airFriction.getLength();
-				mShape.temperature += (speed.getLength() * airFrictionLength * dt +
-						0.5f * airFrictionLength * airFrictionLength * dt * dt) / SPECIFIC_WARMTH_CAPACITY;
 			}else{
 				final float curDt = dt * mLastMovementCollision.travelPercentage;
 				final float newDt = dt - curDt;
@@ -152,12 +144,6 @@ public class Movable {
 				// move shape
 				mShape.moveTo(mLastMovementCollision.collisionPoint);
 				
-				// increase temperature based on air friction
-				final float airFrictionLength = airFriction.getLength();
-				mShape.temperature += (speed.getLength() * airFrictionLength * curDt +
-						0.5f * airFrictionLength * airFrictionLength * curDt * curDt) / SPECIFIC_WARMTH_CAPACITY;
-				
-				
 				// do collision stuff
 				MovementEngine.playSound(mLastMovementCollision.collidedSolid.tag);
 				
@@ -165,9 +151,6 @@ public class Movable {
 				final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
 				
 				final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
-				
-				// increase temperature based on collision
-				mShape.temperature += (float) (0.5f * (Math.pow(speed.getLength(), 2) - Math.pow(newSpeed.getLength(), 2)) / SPECIFIC_WARMTH_CAPACITY);
 				
 				speed.setDirection(newSpeed);
 				
@@ -183,7 +166,6 @@ public class Movable {
 		mShape.moveTo(Settings.getBallStartPosition());
 		speed.setDirection(Settings.getBallStartSpeed()); // watch out with new
 															// movables...
-		mShape.temperature = 20;
 	}
 
 	private boolean isRolling() {
@@ -200,17 +182,5 @@ public class Movable {
 	
 	public float getKineticLinearEnergy(){
 		return speed.getLength() * speed.getLength() * 0.5f;
-	}
-
-	public float getKineticRotationalEnergy(){
-		return 0;
-	}
-	
-	public float getThermicEnergy(){
-		return SPECIFIC_WARMTH_CAPACITY * mShape.temperature;
-	}
-	
-	public float getTotalEnergy(){
-		return getPotentialEnergy() + getKineticLinearEnergy() + getKineticRotationalEnergy() + getThermicEnergy();
 	}
 }

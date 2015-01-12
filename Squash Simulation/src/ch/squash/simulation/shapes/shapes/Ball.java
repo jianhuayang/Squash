@@ -14,7 +14,7 @@ public class Ball extends AbstractShape {
 	// constants
 	private final static float DRAG_COEFFICIENT = 0.47f;
 	private final float DRAG_FACTOR;		// 1/2 * rho * C_d * A
-	private final static float SPECIFIC_WARMTH_CAPCITY = 1.67f;
+//	private final static float SPECIFIC_WARMTH_CAPCITY = 1.67f;
 	
 	// misc
 	private final float mRadius;
@@ -32,7 +32,7 @@ public class Ball extends AbstractShape {
 		// constant: 1/2 * rho * C_d * A
 		DRAG_FACTOR = (float) (0.5 * 1.2 * DRAG_COEFFICIENT * Math.PI * radius * radius);
 
-		initialize(getVertices(radius, edges), getColor(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this, SPECIFIC_WARMTH_CAPCITY,
+		initialize(getVertices(radius, edges), getColor(color), getNormalData(), GLES20.GL_TRIANGLES, SolidType.SPHERE, new Movable(this,
 				new float[] { x, y, z }));
 	}
 
