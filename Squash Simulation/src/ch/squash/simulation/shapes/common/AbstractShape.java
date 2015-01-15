@@ -209,4 +209,11 @@ public abstract class AbstractShape {
 	public IVector getLocation(){
 		return location;
 	}
+	
+	protected abstract String getShapeTag();
+	
+	@Override
+	public String toString() {
+		return getShapeTag() + " \'" + tag + "\'";
+	}
 }

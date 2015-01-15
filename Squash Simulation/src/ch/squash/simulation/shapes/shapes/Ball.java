@@ -268,4 +268,9 @@ public class Ball extends AbstractShape {
 		// TODO: render ball with light and add normals
 		return new float[0];
 	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
+	}
 }

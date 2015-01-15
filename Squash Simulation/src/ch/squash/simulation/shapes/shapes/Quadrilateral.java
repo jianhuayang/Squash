@@ -293,4 +293,9 @@ public class Quadrilateral extends AbstractShape {
 		// TODO: add normal data
 		return new float[0];
 	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
+	}
 }

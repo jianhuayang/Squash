@@ -6,6 +6,8 @@ import ch.squash.simulation.shapes.common.AbstractShape;
 import ch.squash.simulation.shapes.common.SolidType;
 
 public class Tetrahedron extends AbstractShape {
+
+	private final static String TAG = Tetrahedron.class.getSimpleName();
 	
 	public Tetrahedron(final String tag, final float x, final float y, final float z, final float edge){
 		super(tag, x, y, z, ShaderType.LIGHT);
@@ -90,5 +92,10 @@ public class Tetrahedron extends AbstractShape {
 			0.0f, -1.0f, 0.0f,
 			0.0f, -1.0f, 0.0f,				
 		};
+	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
 	}
 }

@@ -440,4 +440,9 @@ public class Chair extends AbstractShape {
 		// TODO: add normal data
 		return new float[0];
 	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
+	}
 }

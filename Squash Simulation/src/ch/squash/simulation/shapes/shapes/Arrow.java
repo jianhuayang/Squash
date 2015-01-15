@@ -8,6 +8,8 @@ import ch.squash.simulation.shapes.common.SolidType;
 import ch.squash.simulation.shapes.common.Vector;
 
 public class Arrow extends AbstractShape {
+	private final static String TAG = Arrow.class.getSimpleName();
+	
 	public Arrow(final String tag, final float startx, final float starty, final float startz, final float endx,
 			final float endy, final float endz, final float[] color) {
 		super(tag, startx, starty, startz, ShaderType.NO_LIGHT);
@@ -106,5 +108,10 @@ public class Arrow extends AbstractShape {
 		for (int i = 0; i < result.length / color.length; i++)
 			System.arraycopy(color, 0, result, i * color.length, color.length);
 		return result;
+	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
 	}
 }

@@ -10,6 +10,7 @@ public class DottedLine extends AbstractShape {
 
 	// constants
 	private static final int COORDS_PER_ITERATION = 18;
+	private final static String TAG = DottedLine.class.getSimpleName();
 
 	public DottedLine(final String tag, final float startx, final float starty,
 			final float startz, final float endx, final float endy,
@@ -74,5 +75,10 @@ public class DottedLine extends AbstractShape {
 			System.arraycopy(color, 0, result, i * color.length, color.length);
 
 		return result;
+	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
 	}
 }

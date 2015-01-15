@@ -95,4 +95,9 @@ public class Trace extends AbstractShape {
 		if (mNextTrace != null && !mNextTrace.isReset)
 			mNextTrace.draw();
 	}
+
+	@Override
+	protected String getShapeTag() {
+		return TAG;
+	}
 }
