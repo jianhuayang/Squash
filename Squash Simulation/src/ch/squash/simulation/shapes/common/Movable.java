@@ -297,16 +297,15 @@ public class Movable {
 		mLastMovementCollision = null;
 		mIsRolling = false;
 		mShape.moveTo(Settings.getBallStartPosition());
-		speed.setDirection(Settings.getBallStartSpeed()); // watch out with new
-															// movables...
+		speed.setDirection(Settings.getBallStartSpeed()); // watch out with new													// movables...
 	}
 	
 	public void setRandomDirection() {
 		final Random rnd = new Random();
-		// create random speed vector with x in [-10..10], y in [-5..5], z in [-10..10]
-		final float x =  Math.round((rnd.nextFloat() - 0.5f) * 200) / 10f;
-		final float y =  Math.round((rnd.nextFloat() - 0.5f) * 100) / 10f;
-		final float z =  Math.round((rnd.nextFloat() - 0.5f) * 200) / 10f;
+		// create random speed vector with x in [-20..20], y in [-10..10], z in [-20..20]
+		final float x =  Math.round((rnd.nextFloat() - 0.5f) * 400) / 10f;
+		final float y =  Math.round((rnd.nextFloat() - 0.5f) * 200) / 10f;
+		final float z =  Math.round((rnd.nextFloat() - 0.5f) * 400) / 10f;
 		final IVector speed = new Vector(x, y, z);
 		
 		Settings.setBallStartSpeed(speed);
@@ -320,13 +319,5 @@ public class Movable {
 		return mLastMovementCollision != null
 				&& ((Quadrilateral) mLastMovementCollision.collidedSolid)
 						.getNonZeroDimension() == 1 && speed.getY() < ROLLING_THRESHOLD;
-	}
-
-	public float getPotentialEnergy(){
-		return mShape.location.getY() * gravitation.getLength();
-	}
-	
-	public float getKineticLinearEnergy(){
-		return speed.getLength() * speed.getLength() * 0.5f;
 	}
 }
