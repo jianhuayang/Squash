@@ -25,7 +25,9 @@ public class Movable {
 	private Collision mLastMovementCollision;
 	private long mNextMovement = System.currentTimeMillis(); // ms
 	private int mMoveSkipCount;
-
+	private boolean mIsRolling;
+	private AbstractShape mRollingShape;
+	
 	public Movable(final AbstractShape shape, final float[] origin) {
 		mShape = shape;
 		gravitation = new PhysicalVector("force_gravitation", origin.clone(),
@@ -74,97 +76,220 @@ public class Movable {
 			Log.e(TAG, "Skipping move");
 			mMoveSkipCount++;
 		} else {
-			move((mMoveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS
-					/ 1000f * Settings.getSpeedFactor());
+			final float dt = (mMoveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS
+					/ 1000f * Settings.getSpeedFactor();
+			if (mIsRolling || isRolling()) {
+				moveRolling(dt);
+			} else {
+				moveFlying(dt);
+			}
+				
+			move();
 			mMoveSkipCount = 0;
 		}
 	}
 
 	// move in seconds to use Si-units
-	private void move(final float dt) {
+	private void moveRolling(final float dt) {
 		final IVector oldSpeed = speed.multiply(1);
 		
-		if (isRolling()){
-//			mLastMovementCollision = null;
-			// TODO
-			Log.w(TAG, "Ball is ROLLING which is NOT IMPLEMENTED");
-		}else{
-			//////////////////////////////////////
-			// calculating distance travelled
-			//////////////////////////////////////
-			// calculate distance with old speed
-			final IVector oldDistance = speed.multiply(dt);
-
-			// set forces
-			airFriction.setDirection(speed.getNormalizedVector().multiply(
-					-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
+		if (!mIsRolling) {
+			Log.d(TAG, "First frame where the ball is rolling");
 			
-			// calculate acceleration
-			final IVector acceleration = airFriction.add(gravitation);
-
-			// update speed: v = v0 + a*t
-			speed.setDirection(speed.add(acceleration.multiply(dt)));
-
-			// calculate actual distance travelled by taking the average of old and new distance
-			final IVector actualDistance = (speed.multiply(dt).add(oldDistance)).multiply(0.5f);
-
-			//////////////////////////////////////
-			// detecting collisions 
-			//////////////////////////////////////
-			Collision possibleCollision = null;
-			for (final AbstractShape solid : SquashRenderer.getCourtSolids()) {
-				final Collision collision = Collision.getCollision(mShape,
-						actualDistance, solid, mLastMovementCollision);
-
-				if (collision != null){
-					if (collision.travelPercentage < 0)
-						Log.e(TAG, "travelperc of " + solid.tag + " and ball is " + collision.travelPercentage);
+			mRollingShape = mLastMovementCollision.collidedSolid;
 			
-					if (possibleCollision == null)
-						possibleCollision = collision;
-					else if (collision.travelPercentage < possibleCollision.travelPercentage)
-						possibleCollision = collision;
-				}
+			// cheat and move movable straight onto rolling surface
+			final IVector newLocation = mShape.location;
+			newLocation.setY(mRollingShape.location.getY());
+			mShape.moveTo(newLocation);
+			
+			// correct speed to be zero in y direction
+			speed.setY(0);
+
+			// set flag so this is only executed once
+			mIsRolling = true;
+			
+			mLastMovementCollision = null;
+		}
+		
+//		mLastMovementCollision = null;
+		Log.i(TAG, "Ball is ROLLING. Last collision was with " + mRollingShape);
+
+		//////////////////////////////////////
+		// calculating distance travelled
+		//////////////////////////////////////
+		// calculate distance with old speed
+		final IVector oldDistance = speed.multiply(dt);
+
+		// set forces
+		airFriction.setDirection(speed.getNormalizedVector().multiply(
+				-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
+		
+		// calculate acceleration
+		final IVector acceleration = airFriction; // don't add gravitation since that is being offset by the normalkraft
+		
+		// update speed: v = v0 + a*t
+		speed.setDirection(speed.add(acceleration.multiply(dt)));
+		
+		// calculate actual distance travelled by taking the average of old and new distance --> WHY??
+		final IVector actualDistance = (speed.multiply(dt).add(oldDistance)).multiply(0.5f);
+		
+		Log.d(TAG, "Acceleration " + acceleration + ", Speed " + speed + ", distance " + actualDistance);
+		
+//			if (mShape.location.add(actualDistance).getY()
+//			actualDistance.setY(mShape.location.getY());
+//			final IVector actualDistance = speed.multiply(dt);
+
+
+		//////////////////////////////////////
+		// detecting collisions 
+		//////////////////////////////////////
+		Collision possibleCollision = null;
+		for (final AbstractShape solid : SquashRenderer.getCourtSolids()) {
+			if (solid == mRollingShape) {
+				// no need to check collision with floor when the movable is rolling
+				Log.e(TAG, "Ignoring collision with " + solid.tag);
+				continue;
 			}
-			mLastMovementCollision = possibleCollision;
 			
-			//////////////////////////////////////
-			// reacting to collision
-			//////////////////////////////////////
-			if (mLastMovementCollision == null){
-				// complete movement "as planned
-				// move shape
-				mShape.move(actualDistance);
-			}else{
-				final float curDt = dt * mLastMovementCollision.travelPercentage;
-				final float newDt = dt - curDt;
-				
-				// MUST NO LONGER USE ACTUALDISTANCE!!
-				
-				// adjust speed update
-				speed.setDirection(oldSpeed.add(acceleration.multiply(curDt)));
-				// move shape
-				mShape.moveTo(mLastMovementCollision.collisionPoint);
-				
-				// do collision stuff
-				MovementEngine.playSound(mLastMovementCollision.collidedSolid.tag);
-				
-				// calculate ausfallswinkel (= einfallswinkel, must change that)
-				final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
-				
-				final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
-				
-				speed.setDirection(newSpeed);
-				
-				move(newDt);
-				return;
+			final Collision collision = Collision.getCollision(mShape,
+					actualDistance, solid, mLastMovementCollision);
+
+			if (collision != null){
+				if (collision.travelPercentage < 0)
+					Log.e(TAG, "travelperc of " + solid.tag + " and ball is " + collision.travelPercentage);
+		
+				if (possibleCollision == null)
+					possibleCollision = collision;
+				else if (collision.travelPercentage < possibleCollision.travelPercentage)
+					possibleCollision = collision;
 			}
 		}
+		
+		mLastMovementCollision = possibleCollision;
+			
+		//////////////////////////////////////
+		// reacting to collision
+		//////////////////////////////////////
+		if (mLastMovementCollision == null){
+			// complete movement "as planned
+			// move shape
+			mShape.move(actualDistance);
+		}else{
+			final float curDt = dt * mLastMovementCollision.travelPercentage;
+			final float newDt = dt - curDt;
+			
+			// MUST NO LONGER USE ACTUALDISTANCE!!
+			
+			// adjust speed update
+			speed.setDirection(oldSpeed.add(acceleration.multiply(curDt)));
+			// move shape
+			mShape.moveTo(mLastMovementCollision.collisionPoint);
+			
+			// do collision stuff
+			MovementEngine.playSound(mLastMovementCollision.collidedSolid.tag);
+			
+			// calculate ausfallswinkel (= einfallswinkel, must change that)
+			final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
+			
+			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
+			
+			speed.setDirection(newSpeed);
+			
+			moveRolling(newDt);
+			return;
+		}
 	}
+	
+	// move in seconds to use Si-units
+	private void moveFlying(final float dt) {
+		final IVector oldSpeed = speed.multiply(1);
+		
+		//////////////////////////////////////
+		// calculating distance travelled
+		//////////////////////////////////////
+		// calculate distance with old speed
+		final IVector oldDistance = speed.multiply(dt);
 
+		// set forces
+		airFriction.setDirection(speed.getNormalizedVector().multiply(
+				-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
+		
+		// calculate acceleration
+		final IVector acceleration = airFriction.add(gravitation);
+
+		// update speed: v = v0 + a*t
+		speed.setDirection(speed.add(acceleration.multiply(dt)));
+
+		// calculate actual distance travelled by taking the average of old and new distance --> WHY??
+		final IVector actualDistance = (speed.multiply(dt).add(oldDistance)).multiply(0.5f);
+
+		//////////////////////////////////////
+		// detecting collisions 
+		//////////////////////////////////////
+		Collision possibleCollision = null;
+		for (final AbstractShape solid : SquashRenderer.getCourtSolids()) {
+			final Collision collision = Collision.getCollision(mShape,
+					actualDistance, solid, mLastMovementCollision);
+
+			if (collision != null){
+				if (collision.travelPercentage < 0)
+					Log.e(TAG, "travelperc of " + solid.tag + " and ball is " + collision.travelPercentage);
+		
+				if (possibleCollision == null)
+					possibleCollision = collision;
+				else if (collision.travelPercentage < possibleCollision.travelPercentage)
+					possibleCollision = collision;
+			}
+		}
+			
+		mLastMovementCollision = possibleCollision;
+			
+		//////////////////////////////////////
+		// reacting to collision
+		//////////////////////////////////////
+		if (mLastMovementCollision == null){
+			// complete movement "as planned
+			// move shape
+			mShape.move(actualDistance);
+		}else{
+			final float curDt = dt * mLastMovementCollision.travelPercentage;
+			final float newDt = dt - curDt;
+			
+			// MUST NO LONGER USE ACTUALDISTANCE!!
+			
+			// adjust speed update
+			speed.setDirection(oldSpeed.add(acceleration.multiply(curDt)));
+			// move shape
+			mShape.moveTo(mLastMovementCollision.collisionPoint);
+			
+			// do collision stuff
+			MovementEngine.playSound(mLastMovementCollision.collidedSolid.tag);
+			
+			// calculate ausfallswinkel (= einfallswinkel, must change that)
+			final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
+			
+			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
+			
+			speed.setDirection(newSpeed);
+			
+			// it is possible that we're rolling now
+			if (mIsRolling || isRolling()) {
+				moveRolling(newDt);
+			} else {
+				moveFlying(newDt);
+			}
+			
+			return;
+		}
+	}
+	
 	public void reset() {
 		airFriction.setDirection(0, 0, 0);
 		trace.reset();
+		mRollingShape = null;
+		mLastMovementCollision = null;
+		mIsRolling = false;
 		mShape.moveTo(Settings.getBallStartPosition());
 		speed.setDirection(Settings.getBallStartSpeed()); // watch out with new
 															// movables...
@@ -188,7 +313,7 @@ public class Movable {
 		// the speed away from the floor is small
 		return mLastMovementCollision != null
 				&& ((Quadrilateral) mLastMovementCollision.collidedSolid)
-						.getNonZeroDimension() == 1 && speed.getY() < 0.1f;
+						.getNonZeroDimension() == 1 && speed.getY() < 0.5f;
 	}
 
 	public float getPotentialEnergy(){
