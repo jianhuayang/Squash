@@ -139,6 +139,20 @@ public final class MovementEngine {
 		}
 		Log.i(TAG, "Reset movables");
 	}
+	
+	public static void setRandomDirection() {
+		if (mInstance.mIsRunning) {
+			Log.e(TAG, "Assigning random directions while engine is running is not allowed");
+			return;
+		}
+		
+		for (final Movable im : mInstance.mMovables) {
+			im.setRandomDirection();
+			im.reset();
+		}
+		
+		Log.i(TAG, "Assigned random direction to movables");
+	}
 
 	public static void toggleRunning() {
 		if (mInstance.mIsRunning)

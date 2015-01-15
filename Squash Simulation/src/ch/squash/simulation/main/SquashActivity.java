@@ -228,7 +228,14 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-        Log.d(TAG, "onDoubleTap: " + event.toString());
+//        Log.d(TAG, "onDoubleTap: " + event.toString());
+    	
+    	if (MovementEngine.isRunning()) {
+    		MovementEngine.pause();
+    	}
+    	
+    	MovementEngine.setRandomDirection();
+    	
         return true;
     }
 

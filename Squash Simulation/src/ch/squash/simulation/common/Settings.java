@@ -272,6 +272,14 @@ public final class Settings {
 		}
 		return result;
 	}
+	
+	public static void setBallStartSpeed(final IVector speed) {
+		final Editor editor = getInstance().mSharedPrefs.edit();
+		editor.putString(getInstance().KEY_BALL_SPEED_X, Float.toString(speed.getX()));
+		editor.putString(getInstance().KEY_BALL_SPEED_Y, Float.toString(speed.getY()));
+		editor.putString(getInstance().KEY_BALL_SPEED_Z, Float.toString(speed.getZ()));
+		editor.commit();
+	}
 
 	public static float getSpeedFactor(){
 		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_SPEED_FACTOR, "1"));

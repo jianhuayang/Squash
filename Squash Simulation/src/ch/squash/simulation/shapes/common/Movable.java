@@ -1,5 +1,7 @@
 package ch.squash.simulation.shapes.common;
 
+import java.util.Random;
+
 import android.util.Log;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.graphic.SquashRenderer;
@@ -166,6 +168,19 @@ public class Movable {
 		mShape.moveTo(Settings.getBallStartPosition());
 		speed.setDirection(Settings.getBallStartSpeed()); // watch out with new
 															// movables...
+	}
+	
+	public void setRandomDirection() {
+		final Random rnd = new Random();
+		// create random speed vector with x in [-10..10], y in [-5..5], z in [-10..10]
+		final float x =  Math.round((rnd.nextFloat() - 0.5f) * 200) / 10f;
+		final float y =  Math.round((rnd.nextFloat() - 0.5f) * 100) / 10f;
+		final float z =  Math.round((rnd.nextFloat() - 0.5f) * 200) / 10f;
+		final IVector speed = new Vector(x, y, z);
+		
+		Settings.setBallStartSpeed(speed);
+		
+		Log.i(TAG, "Assigned new random speed " + speed + " to movable " + mShape.tag);
 	}
 
 	private boolean isRolling() {
