@@ -69,4 +69,9 @@
 	<string name="summary_coefficient_of_restitution">Set Coefficient of Restitution</string>
 	<string name="default_coefficient_of_restitution">0.75</string>
 	
+	<string name="key_coefficient_of_roll_friction">coefficient_of_roll_friction</string>
+	<string name="title_coefficient_of_roll_friction">Roll friction</string>
+	<string name="summary_coefficient_of_roll_friction">Set roll friction</string>
+	<string name="default_coefficient_of_roll_friction">0.25</string>
+	
 </resources>

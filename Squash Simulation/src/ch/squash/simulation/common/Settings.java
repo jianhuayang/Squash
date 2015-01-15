@@ -42,6 +42,7 @@ public final class Settings {
 	
 	private final String KEY_SPEED_FACTOR;
 	private final String KEY_COEFFICIENT_OF_RESTITUTION;
+	private final String KEY_COEFFICIENT_OF_ROLL_FRICTION;
 	
 	public static String getKeyDrawMode(){
 		return getInstance().KEY_DRAW_MODE;
@@ -90,6 +91,9 @@ public final class Settings {
 	public static String getKeyCoefficientOfRestitution(){
 		return getInstance().KEY_COEFFICIENT_OF_RESTITUTION;
 	}
+	public static String getKeyCoefficientOfRollFriction(){
+		return getInstance().KEY_COEFFICIENT_OF_ROLL_FRICTION;
+	}
 	
 	private Settings() {
 		mSharedPrefs = PreferenceManager
@@ -129,6 +133,8 @@ public final class Settings {
 				.getString(R.string.key_speed_factor);
 		KEY_COEFFICIENT_OF_RESTITUTION = SquashActivity.getInstance().getResources()
 				.getString(R.string.key_coefficient_of_restitution);
+		KEY_COEFFICIENT_OF_ROLL_FRICTION = SquashActivity.getInstance().getResources()
+				.getString(R.string.key_coefficient_of_roll_friction);
 		
 		Log.i(TAG, "Settings initialized");
 	}
@@ -284,8 +290,12 @@ public final class Settings {
 	public static float getSpeedFactor(){
 		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_SPEED_FACTOR, "1"));
 	}
-	
+
 	public static float getCoefficientOfRestitution(){
 		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_COEFFICIENT_OF_RESTITUTION, "0.75"));
+	}
+
+	public static float getCoefficientOfRollFriction(){
+		return Float.parseFloat(getInstance().mSharedPrefs.getString(getInstance().KEY_COEFFICIENT_OF_ROLL_FRICTION, "0.25"));
 	}
 }

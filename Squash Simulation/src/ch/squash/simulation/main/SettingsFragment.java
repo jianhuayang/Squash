@@ -84,6 +84,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
 		findPreference(Settings.getKeySpeedFactor()).setSummary(getSummary(Settings.getKeySpeedFactor()));
 		findPreference(Settings.getKeyCoefficientOfRestitution()).setSummary(getSummary(Settings.getKeyCoefficientOfRestitution()));
+		findPreference(Settings.getKeyCoefficientOfRollFriction()).setSummary(getSummary(Settings.getKeyCoefficientOfRollFriction()));
 
 		Log.i(TAG, "SettingsFragment created");
 	}
@@ -147,7 +148,7 @@ public class SettingsFragment extends PreferenceFragment implements
 			result = "front/back: " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
 			result = "z = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()))
+		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()) || key.equals(Settings.getKeyCoefficientOfRollFriction()))
 			result = Settings.getValue(key).toString();
 		else
 			Log.e(TAG, "Unknown key: " + key);
