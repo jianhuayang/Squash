@@ -18,7 +18,7 @@ public final class MovementEngine {
 
 	// constants
 	public final static int DELAY_BETWEEN_MOVEMENTS = 50; // ms
-	private final static int ENGINE_DURATION = 5000;		// ms
+	private final static int ENGINE_DURATION = 10000;		// ms
 	
 	// objects
 	private final Movable[] mMovables;

@@ -12,6 +12,9 @@ import ch.squash.simulation.shapes.shapes.Quadrilateral;
 public class Movable {
 	// static
 	private final static String TAG = Movable.class.getSimpleName();
+
+	private final static float STATIONARY_THRESHOLD = 0.2f;	// the higher the threshold, the sooner the ball stops completely
+	private final static float ROLLING_THRESHOLD = 0.5f;	// the higher the threshold, the sooner the ball starts rolling
 	
 	// shapes
 	private final AbstractShape mShape;
@@ -19,6 +22,7 @@ public class Movable {
 	public final PhysicalVector gravitation;
 	public final PhysicalVector speed;
 	public final PhysicalVector airFriction;
+	public final PhysicalVector rollFriction;
 	public final Trace trace;
 
 	// data for between movements
@@ -36,6 +40,8 @@ public class Movable {
 				new float[] { 0.5f, 0f, 0.5f, 1 });
 		airFriction = new PhysicalVector("air_friction", origin.clone(),
 				new float[3], new float[] { 0.7f, 0.5f, 0, 1 });
+		rollFriction = new PhysicalVector("roll_friction", origin.clone(),
+				new float[3], new float[] { 0.5f, 0.7f, 0, 1 });
 
 		vectorArrows = new PhysicalVector[] { gravitation, speed, airFriction };
 
@@ -53,39 +59,39 @@ public class Movable {
 	}
 
 	public void move() {
-		final long now = System.currentTimeMillis();
-		final long sleep = mNextMovement - now;
-		mNextMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
-
-		if (sleep > 0)
-			try {
-				Thread.sleep(sleep);
-			} catch (InterruptedException e) {
-				Log.e(TAG, "Error while sleeping", e);
-			}
-		else
-			Log.w(TAG, "Calculating last round of movements took too long: "
-					+ (MovementEngine.DELAY_BETWEEN_MOVEMENTS - sleep)
-					+ "ms, should be under "
-					+ MovementEngine.DELAY_BETWEEN_MOVEMENTS + "ms");
-
-		if (!MovementEngine.isRunning())
-			return;
-
-		if (sleep < -MovementEngine.DELAY_BETWEEN_MOVEMENTS) {
-			Log.e(TAG, "Skipping move");
-			mMoveSkipCount++;
-		} else {
-			final float dt = (mMoveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS
-					/ 1000f * Settings.getSpeedFactor();
-			if (mIsRolling || isRolling()) {
-				moveRolling(dt);
+		while (MovementEngine.isRunning()) {
+			final long now = System.currentTimeMillis();
+			final long sleep = mNextMovement - now;
+			mNextMovement += MovementEngine.DELAY_BETWEEN_MOVEMENTS;
+	
+			if (sleep > 0)
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					Log.e(TAG, "Error while sleeping", e);
+				}
+			else
+				Log.w(TAG, "Calculating last round of movements took too long: "
+						+ (MovementEngine.DELAY_BETWEEN_MOVEMENTS - sleep)
+						+ "ms, should be under "
+						+ MovementEngine.DELAY_BETWEEN_MOVEMENTS + "ms");
+	
+			if (!MovementEngine.isRunning())
+				return;
+	
+			if (sleep < -MovementEngine.DELAY_BETWEEN_MOVEMENTS) {
+				Log.e(TAG, "Skipping move");
+				mMoveSkipCount++;
 			} else {
-				moveFlying(dt);
+				final float dt = (mMoveSkipCount + 1) * MovementEngine.DELAY_BETWEEN_MOVEMENTS
+						/ 1000f * Settings.getSpeedFactor();
+				if (mIsRolling || isRolling()) {
+					moveRolling(dt);
+				} else {
+					moveFlying(dt);
+				}
+				mMoveSkipCount = 0;
 			}
-				
-			move();
-			mMoveSkipCount = 0;
 		}
 	}
 
@@ -108,25 +114,23 @@ public class Movable {
 
 			// set flag so this is only executed once
 			mIsRolling = true;
-			
-			mLastMovementCollision = null;
 		}
 		
-//		mLastMovementCollision = null;
-		Log.i(TAG, "Ball is ROLLING. Last collision was with " + mRollingShape);
+		Log.i(TAG, "Ball is ROLLING on " + mRollingShape);
 
 		//////////////////////////////////////
 		// calculating distance travelled
 		//////////////////////////////////////
+		
 		// calculate distance with old speed
 		final IVector oldDistance = speed.multiply(dt);
 
 		// set forces
 		airFriction.setDirection(speed.getNormalizedVector().multiply(
 				-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
-		
+		rollFriction.setDirection(airFriction.multiply(Settings.getCoefficientOfRollFriction()));
 		// calculate acceleration
-		final IVector acceleration = airFriction; // don't add gravitation since that is being offset by the normalkraft
+		final IVector acceleration = airFriction.add(rollFriction); // don't add gravitation since that is being offset by the normalkraft
 		
 		// update speed: v = v0 + a*t
 		speed.setDirection(speed.add(acceleration.multiply(dt)));
@@ -134,12 +138,7 @@ public class Movable {
 		// calculate actual distance travelled by taking the average of old and new distance --> WHY??
 		final IVector actualDistance = (speed.multiply(dt).add(oldDistance)).multiply(0.5f);
 		
-		Log.d(TAG, "Acceleration " + acceleration + ", Speed " + speed + ", distance " + actualDistance);
-		
-//			if (mShape.location.add(actualDistance).getY()
-//			actualDistance.setY(mShape.location.getY());
-//			final IVector actualDistance = speed.multiply(dt);
-
+		Log.d(TAG, "acc " + acceleration + ", " + speed + ", " + speed);
 
 		//////////////////////////////////////
 		// detecting collisions 
@@ -148,7 +147,6 @@ public class Movable {
 		for (final AbstractShape solid : SquashRenderer.getCourtSolids()) {
 			if (solid == mRollingShape) {
 				// no need to check collision with floor when the movable is rolling
-				Log.e(TAG, "Ignoring collision with " + solid.tag);
 				continue;
 			}
 			
@@ -175,7 +173,15 @@ public class Movable {
 			// complete movement "as planned
 			// move shape
 			mShape.move(actualDistance);
+			
+			if (Math.abs(speed.getX()) + Math.abs(speed.getZ()) < STATIONARY_THRESHOLD) {
+				Log.w(TAG, "Ball is not moving properly anymore, stopping...");
+				speed.setDirection(0, 0, 0);
+				MovementEngine.pause();
+			}
 		}else{
+			Log.e(TAG, "COLLISION WHILE ROLLING!!!!");
+			
 			final float curDt = dt * mLastMovementCollision.travelPercentage;
 			final float newDt = dt - curDt;
 			
@@ -313,7 +319,7 @@ public class Movable {
 		// the speed away from the floor is small
 		return mLastMovementCollision != null
 				&& ((Quadrilateral) mLastMovementCollision.collidedSolid)
-						.getNonZeroDimension() == 1 && speed.getY() < 0.5f;
+						.getNonZeroDimension() == 1 && speed.getY() < ROLLING_THRESHOLD;
 	}
 
 	public float getPotentialEnergy(){
