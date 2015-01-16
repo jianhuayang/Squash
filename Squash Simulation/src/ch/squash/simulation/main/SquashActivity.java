@@ -6,22 +6,18 @@ import java.util.Set;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
-import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.graphic.Shader;
 import ch.squash.simulation.graphic.SquashRenderer;
 
 
-public class SquashActivity extends Activity implements OnGestureListener, OnDoubleTapListener {
+public class SquashActivity extends Activity {
 	// static
 	private final static String TAG = SquashActivity.class.getSimpleName();
 	private static SquashActivity mInstance;
@@ -29,18 +25,12 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 	// constants
 	private final static int RESULT_SETTINGS = 1;
 	
-    private GestureDetectorCompat mDetector; 
-
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mInstance = this;
 		
-		// gesture stuff
-        mDetector = new GestureDetectorCompat(this,this);
-        mDetector.setOnDoubleTapListener(this);
-
 		// ensure that if nothing would be drawn, ball court and forces are
 		// drawn instead
 		if (Settings.getVisibleObjectCollections().size() == 0) {
@@ -110,79 +100,20 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 	
     @Override 
     public boolean onTouchEvent(MotionEvent event){ 
-        this.mDetector.onTouchEvent(event);
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent event) { 
-//        Log.d(TAG,"onDown: " + event.toString()); 
-        return true;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, 
-            float velocityX, float velocityY) {
-//        Log.d(TAG, "onFling: " + event1.toString()+event2.toString());
-        return true;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-//        Log.d(TAG, "onLongPress: " + event.toString()); 
-
-    	MovementEngine.pause();
-    	MovementEngine.resetMovables();
+    	final float x = event.getX();
+    	final float y = event.getY();
+    	final float left = SquashView.getInstance().getLeft();
+    	final float right = SquashView.getInstance().getRight();
+    	final float top = SquashView.getInstance().getTop();
+    	final float bottom = SquashView.getInstance().getBottom();
     	
-    	Toast.makeText(this, "Movables reset", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-//        Log.d(TAG, "onScroll: " + e1.toString()+e2.toString());
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent event) {
-//        Log.d(TAG, "onShowPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapUp: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTap: " + event.toString());
-    	
-    	if (MovementEngine.isRunning()) {
-    		MovementEngine.pause();
+    	// if the event was on the squashview, inform it
+    	if (x >= left && x <= right &&
+    			y >= top && y <= bottom) {
+            SquashView.getInstance().onTouchEvent(event);
     	}
     	
-    	MovementEngine.setRandomDirection();
-    	
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTapEvent: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
-
-    	Toast.makeText(this,
-    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
-		MovementEngine.toggleRunning();
-    	
-        return true;
-    }
+        // Be sure to call the superclass implementation
+        return super.onTouchEvent(event);
+    }	
 }
