@@ -62,6 +62,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void onResume(){
 		super.onResume();
+		
 		mInstance.updateUi();
 	}
 

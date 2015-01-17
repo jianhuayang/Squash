@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -19,30 +20,36 @@ import ch.squash.simulation.graphic.SquashRenderer;
 
 public class SettingsFragment extends PreferenceFragment implements
 		OnSharedPreferenceChangeListener {
+	// static variables
 	private final static String TAG = SettingsFragment.class.getSimpleName();
 
+	// maps a number to its string representation
 	private static final Dictionary<Integer, String> DRAW_MODE_SUMMARIES = new Hashtable<Integer, String>();
 	private static final Dictionary<Integer, String> CAMERA_MODE_SUMMARIES = new Hashtable<Integer, String>();
 	
+	// static constructor
 	static {
-		DRAW_MODE_SUMMARIES.put(-1, "Use default draw mode");
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, "Draw lines");
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINE_LOOP, "Draw looping lines");
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_TRIANGLES, "Draw triangles");
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_POINTS, "Draw points");
+		final Resources res = SquashActivity.getInstance().getResources();
 		
-		CAMERA_MODE_SUMMARIES.put(0, "Rotating camera");
-		CAMERA_MODE_SUMMARIES.put(1, "Backwall camera");
-		CAMERA_MODE_SUMMARIES.put(2, "Sidewall camera left");
-		CAMERA_MODE_SUMMARIES.put(3, "Frontwall camera");
-		CAMERA_MODE_SUMMARIES.put(4, "Siedwall camera right");
+		// fill dictionaries
+		DRAW_MODE_SUMMARIES.put(-1, res.getString(R.string.draw_mode_default));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, res.getString(R.string.draw_mode_lines));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINE_LOOP, res.getString(R.string.draw_mode_line_loop));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_TRIANGLES, res.getString(R.string.draw_mode_triangles));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_POINTS, res.getString(R.string.draw_mode_points));
+		
+		CAMERA_MODE_SUMMARIES.put(0, res.getString(R.string.camera_mode_rotating));
+		CAMERA_MODE_SUMMARIES.put(1, res.getString(R.string.camera_mode_backwall));
+		CAMERA_MODE_SUMMARIES.put(2, res.getString(R.string.camera_mode_sidewall_left));
+		CAMERA_MODE_SUMMARIES.put(3, res.getString(R.string.camera_mode_frontwall));
+		CAMERA_MODE_SUMMARIES.put(4, res.getString(R.string.camera_mode_sidewall_right));
 	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Load the preferences from an XML resource
+		// load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.preferences);
 
 		// fill entry values etc

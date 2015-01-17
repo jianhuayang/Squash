@@ -32,14 +32,18 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	private final static int RESULT_SETTINGS = 1;
 
 	// misc
-	private RelativeLayout mLayout;
+	private RelativeLayout mLayout; // reference to the layout in order to loop
+									// over children
 
-	private GestureDetectorCompat mDetector;
+	private GestureDetectorCompat mDetector; // handles complex gestures
 
-	private boolean mShowingUi = true;
+	private boolean mIgnoringEvent;	// true if the current event is being ignored
 
+	private boolean mShowingUi = true; // true if the UI (buttons and title bar)
+										// are currently visible
+
+	// sub-menu indices
 	private final static int ARENA_SETTINGS_INDEX = 5;
-
 	private final static int WORLD_SETTINGS_INDEX = 5;
 
 	@Override
@@ -58,14 +62,18 @@ public class SquashActivity extends Activity implements OnGestureListener,
 			Settings.setVisibleObjectCollections(ss);
 		}
 
+		// inflate layout
 		setContentView(R.layout.layout_main);
+
+		// register views
 		SquashView.getInstance().registerViews(
 				(TextView) findViewById(R.id.txtHudFps),
 				(TextView) findViewById(R.id.txtHudBall));
 
+		// retrieve reference to layout
 		mLayout = (RelativeLayout) findViewById(R.id.layout);
 
-		// gesture stuff
+		// initialize gesture detection
 		mDetector = new GestureDetectorCompat(this, this);
 		mDetector.setOnDoubleTapListener(this);
 
@@ -74,8 +82,11 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
+		// inflate settings menu
 		getMenuInflater().inflate(R.menu.settings, menu);
+
 		Log.d(TAG, "Menu inflated");
+
 		return true;
 	}
 
@@ -83,57 +94,54 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		int openMenuIndex = -1;
 
+		// detect which menu entry has been touched
 		if (item.getItemId() == R.id.menu_settings_world) {
 			openMenuIndex = WORLD_SETTINGS_INDEX;
 		} else if (item.getItemId() == R.id.menu_settings_arena) {
 			openMenuIndex = ARENA_SETTINGS_INDEX;
 		} else if (item.getItemId() != R.id.menu_settings_main) {
-			return true;
+			// no valid entry has been touched!
+			Log.e(TAG, "Unknown menu entry: " + item.getItemId());
+			return false;
 		}
 
-		SquashView.getInstance().onPause();
-
+		// create new intent which opens settings
 		final Intent intent = new Intent(this, SettingsActivity.class);
+
+		// if the user didn't touch the main menu entry, tell the settings
+		// activity to open a submenu
 		if (openMenuIndex != -1) {
 			intent.putExtra("openMenuIndex", openMenuIndex);
 		}
-		
+
+		// launch activity
 		startActivityForResult(intent, RESULT_SETTINGS);
+		
 		Log.d(TAG, "SettingsActivity started");
 
 		return true;
 	}
 
 	@Override
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (requestCode == RESULT_SETTINGS) {
-			SquashView.getInstance().onResume();
-			Log.d(TAG, "SettingsActivity finished");
-		}
-	}
-
-	@Override
 	protected void onPause() {
-		SquashView.getInstance().onPause();
 		super.onPause();
-		Shader.destroyShaders(); // destroy shaders so that new ones will be
-									// created
+		
+		SquashView.getInstance().onPause();
+		
+		//destroy shaders so that new ones will be created
+		Shader.destroyShaders();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
 		SquashView.getInstance().onResume();
 	}
 
 	public static SquashActivity getInstance() {
 		return mInstance;
 	}
-
-	private boolean mIgnoringEvent;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {

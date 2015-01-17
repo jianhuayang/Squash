@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- GENERAL -->
     <string name="app_name">Squash Simulation</string>
     
+    <!-- SETTINGS MENU -->
 	<string name="settings_main">Main settings</string>
 	<string name="settings_world">World settings</string>
 	<string name="settings_arena">Arena settings</string>
 	
+	<!-- BUTTONS -->
 	<string name="button_controls">Controls</string>
 	<string name="button_randomize">Randomize!</string>
 	<string name="button_reset">Reset</string>
 	<string name="button_start">Start</string>
 	<string name="button_stop">Stop</string>
+	
+	<!-- PREFERENCE ENTRIES -->
+	<string name="draw_mode_default">Use default draw mode</string>
+	<string name="draw_mode_lines">Draw lines</string>
+	<string name="draw_mode_line_loop">Draw looping lines</string>
+	<string name="draw_mode_triangles">Draw triangles</string>
+	<string name="draw_mode_points">Draw points</string>
+	
+	<string name="camera_mode_rotating">Rotating camera</string>
+	<string name="camera_mode_backwall">Backwall camera</string>
+	<string name="camera_mode_sidewall_left">Sidewall camera left</string>
+	<string name="camera_mode_frontwall">Frontwall camera</string>
+	<string name="camera_mode_sidewall_right">Sidewall camera right</string>
 	
 	<string name="key_draw_mode">draw_mode</string>
 	<string name="title_draw_mode">Draw Mode</string>
