@@ -3,21 +3,16 @@ package ch.squash.simulation.main;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.GestureDetector.OnGestureListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import ch.squash.simulation.graphic.SquashRenderer;
 import ch.squash.simulation.shapes.common.IVector;
 import ch.squash.simulation.shapes.shapes.Ball;
 
 @SuppressLint("ClickableViewAccessibility")
-public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback, OnGestureListener, OnDoubleTapListener {
+public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback {
 	private final static String TAG = SquashView.class.getSimpleName();
 
 	private static SquashView mInstance;
@@ -31,8 +26,6 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback,
 	// misc
 	private boolean mIsUpdateUi = true;
 
-    private GestureDetectorCompat mDetector; 
-	
 	public static SquashView getInstance(){
 		return mInstance;
 	}
@@ -47,10 +40,6 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback,
 		setEGLContextClientVersion(2);
 		setRenderer(SquashRenderer.getInstance());
 		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-
-		// gesture stuff
-        mDetector = new GestureDetectorCompat(context, this);
-        mDetector.setOnDoubleTapListener(this);
 
 		Log.i(TAG, "SquashView created");
 	}
@@ -108,99 +97,5 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback,
 			}
 		}.start();
 	}
-	
 
-    @Override 
-    public boolean onTouchEvent(MotionEvent event){ 
-    	final float x = event.getX();
-    	final float y = event.getY();
-    	final float left = SquashView.getInstance().getLeft();
-    	final float right = SquashView.getInstance().getRight();
-    	final float top = SquashView.getInstance().getTop();
-    	final float bottom = SquashView.getInstance().getBottom();
-    	
-    	// only do further handling if 
-    	if (x >= left && x <= right &&
-    			y >= top && y <= bottom) {
-            this.mDetector.onTouchEvent(event);
-    	}
-    	
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent event) { 
-//        Log.d(TAG,"onDown: " + event.toString()); 
-        return true;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, 
-            float velocityX, float velocityY) {
-    	final float dx = event2.getX() - event1.getX();
-    	final float dy = event2.getY() - event1.getY();
-
-    	// y: negative means up
-        Log.d(TAG, "onFling: dx=" + dx + ", dy=" + dy); // + event1.toString()+event2.toString());
-        return true;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-//        Log.d(TAG, "onLongPress: " + event.toString()); 
-
-    	MovementEngine.pause();
-    	MovementEngine.resetMovables();
-    	
-    	Toast.makeText(SquashActivity.getInstance(), "Movables reset", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-//        Log.d(TAG, "onScroll: " + e1.toString()+e2.toString() + distanceX + distanceY);
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent event) {
-//        Log.d(TAG, "onShowPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapUp: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTap: " + event.toString());
-    	
-    	if (MovementEngine.isRunning()) {
-    		MovementEngine.pause();
-    	}
-    	
-    	MovementEngine.setRandomDirection();
-    	
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTapEvent: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
-
-    	Toast.makeText(SquashActivity.getInstance(),
-    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
-		MovementEngine.toggleRunning();
-    	
-        return true;
-    }
 }

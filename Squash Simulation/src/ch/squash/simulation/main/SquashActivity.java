@@ -6,18 +6,24 @@ import java.util.Set;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
+import android.view.GestureDetector.OnDoubleTapListener;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.graphic.Shader;
 import ch.squash.simulation.graphic.SquashRenderer;
 
 
-public class SquashActivity extends Activity {
+public class SquashActivity extends Activity implements OnGestureListener, OnDoubleTapListener {
 	// static
 	private final static String TAG = SquashActivity.class.getSimpleName();
 	private static SquashActivity mInstance;
@@ -25,6 +31,13 @@ public class SquashActivity extends Activity {
 	// constants
 	private final static int RESULT_SETTINGS = 1;
 	
+	// misc
+	private RelativeLayout mLayout;
+
+    private GestureDetectorCompat mDetector;
+    
+    private boolean mShowingUi = true;
+    
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,11 +53,15 @@ public class SquashActivity extends Activity {
 			ss.add(Integer.toString(SquashRenderer.OBJECT_FORCE));
 			Settings.setVisibleObjectCollections(ss);
 		}
-
-//		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.layout_main);
 		SquashView.getInstance().registerViews((TextView)findViewById(R.id.txtHudFps), (TextView)findViewById(R.id.txtHudBall));
+
+		mLayout = (RelativeLayout) findViewById(R.id.layout);
+
+		// gesture stuff
+        mDetector = new GestureDetectorCompat(this, this);
+        mDetector.setOnDoubleTapListener(this);
 
 		Log.i(TAG, "SquashActivity created");
 	}
@@ -97,9 +114,11 @@ public class SquashActivity extends Activity {
 		return mInstance;
 	}
 	
+	private boolean mIgnoringEvent;
 	
     @Override 
     public boolean onTouchEvent(MotionEvent event){ 
+
     	final float x = event.getX();
     	final float y = event.getY();
     	final float left = SquashView.getInstance().getLeft();
@@ -107,13 +126,116 @@ public class SquashActivity extends Activity {
     	final float top = SquashView.getInstance().getTop();
     	final float bottom = SquashView.getInstance().getBottom();
     	
-    	// if the event was on the squashview, inform it
-    	if (x >= left && x <= right &&
-    			y >= top && y <= bottom) {
-            SquashView.getInstance().onTouchEvent(event);
+    	// if the squashview is full screen, dont ignore anything
+    	if (!mShowingUi) {
+    		mIgnoringEvent = false;
+    	} else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+    		mIgnoringEvent = x >= left && x <= right && y >= top && y <= bottom ? false : true;
+    	}
+    	
+    	if (!mIgnoringEvent) {
+    		this.mDetector.onTouchEvent(event);
+    	} else {
+    		Log.w(TAG, "ignoring event " + event.getAction());
     	}
     	
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
     }	
+    
+    public void toggleUi() {
+    	for (int i = 0; i < mLayout.getChildCount(); i++) {
+    		if (mLayout.getChildAt(i).getTag() != null && mLayout.getChildAt(i).getTag().equals("dontHide")) {
+    			continue;
+    		}
+    		mLayout.getChildAt(i).setVisibility(mShowingUi ? View.GONE : View.VISIBLE);
+    	}
+    	
+    	if (mShowingUi) {
+    		getActionBar().hide();
+    	} else {
+    		getActionBar().show();
+    	}
+    	
+    	mShowingUi = !mShowingUi;
+    }
+    
+    @Override
+    public boolean onDown(MotionEvent event) { 
+//        Log.d(TAG,"onDown: " + event.toString()); 
+        return true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2, 
+            float velocityX, float velocityY) {
+    	final float dx = event2.getX() - event1.getX();
+    	final float dy = event2.getY() - event1.getY();
+
+		if (Math.abs(dy) > 0.2f * SquashView.getInstance().getHeight()){
+			Log.d(TAG, "SwipeUp/Down");
+			SquashActivity.getInstance().toggleUi();
+		}
+    	
+        Log.d(TAG, "onFling: dx=" + dx + ", dy=" + dy); // + event1.toString()+event2.toString());
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent event) {
+//        Log.d(TAG, "onLongPress: " + event.toString()); 
+
+    	MovementEngine.pause();
+    	MovementEngine.resetMovables();
+    	
+    	Toast.makeText(SquashActivity.getInstance(), "Movables reset", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+            float distanceY) {
+//        Log.d(TAG, "onScroll: " + e1.toString()+e2.toString() + distanceX + distanceY);
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent event) {
+//        Log.d(TAG, "onShowPress: " + event.toString());
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent event) {
+//        Log.d(TAG, "onSingleTapUp: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent event) {
+//        Log.d(TAG, "onDoubleTap: " + event.toString());
+    	
+    	if (MovementEngine.isRunning()) {
+    		MovementEngine.pause();
+    	}
+    	
+    	MovementEngine.setRandomDirection();
+    	
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent event) {
+//        Log.d(TAG, "onDoubleTapEvent: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent event) {
+//        Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
+
+    	Toast.makeText(SquashActivity.getInstance(),
+    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
+		MovementEngine.toggleRunning();
+    	
+        return true;
+    }
 }
