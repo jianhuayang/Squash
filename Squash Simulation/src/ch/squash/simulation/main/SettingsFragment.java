@@ -89,6 +89,10 @@ public class SettingsFragment extends PreferenceFragment implements
 		Log.i(TAG, "SettingsFragment created");
 	}
 
+	public void openPreferenceScreen(final int index){
+		getPreferenceScreen().onItemClick( null, null, index, 0 ); 
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();

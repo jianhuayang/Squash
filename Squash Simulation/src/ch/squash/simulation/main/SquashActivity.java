@@ -22,28 +22,32 @@ import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.graphic.Shader;
 import ch.squash.simulation.graphic.SquashRenderer;
 
-
-public class SquashActivity extends Activity implements OnGestureListener, OnDoubleTapListener {
+public class SquashActivity extends Activity implements OnGestureListener,
+		OnDoubleTapListener {
 	// static
 	private final static String TAG = SquashActivity.class.getSimpleName();
 	private static SquashActivity mInstance;
 
 	// constants
 	private final static int RESULT_SETTINGS = 1;
-	
+
 	// misc
 	private RelativeLayout mLayout;
 
-    private GestureDetectorCompat mDetector;
-    
-    private boolean mShowingUi = true;
-    
+	private GestureDetectorCompat mDetector;
+
+	private boolean mShowingUi = true;
+
+	private final static int ARENA_SETTINGS_INDEX = 5;
+
+	private final static int WORLD_SETTINGS_INDEX = 5;
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mInstance = this;
-		
+
 		// ensure that if nothing would be drawn, ball court and forces are
 		// drawn instead
 		if (Settings.getVisibleObjectCollections().size() == 0) {
@@ -53,15 +57,17 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 			ss.add(Integer.toString(SquashRenderer.OBJECT_FORCE));
 			Settings.setVisibleObjectCollections(ss);
 		}
-		
+
 		setContentView(R.layout.layout_main);
-		SquashView.getInstance().registerViews((TextView)findViewById(R.id.txtHudFps), (TextView)findViewById(R.id.txtHudBall));
+		SquashView.getInstance().registerViews(
+				(TextView) findViewById(R.id.txtHudFps),
+				(TextView) findViewById(R.id.txtHudBall));
 
 		mLayout = (RelativeLayout) findViewById(R.id.layout);
 
 		// gesture stuff
-        mDetector = new GestureDetectorCompat(this, this);
-        mDetector.setOnDoubleTapListener(this);
+		mDetector = new GestureDetectorCompat(this, this);
+		mDetector.setOnDoubleTapListener(this);
 
 		Log.i(TAG, "SquashActivity created");
 	}
@@ -75,13 +81,25 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (item.getItemId() == R.id.menu_settings) {
-			SquashView.getInstance().onPause();
+		int openMenuIndex = -1;
 
-			final Intent i = new Intent(this, SettingsActivity.class);
-			startActivityForResult(i, RESULT_SETTINGS);
-			Log.d(TAG, "SettingsActivity started");
+		if (item.getItemId() == R.id.menu_settings_world) {
+			openMenuIndex = WORLD_SETTINGS_INDEX;
+		} else if (item.getItemId() == R.id.menu_settings_arena) {
+			openMenuIndex = ARENA_SETTINGS_INDEX;
+		} else if (item.getItemId() != R.id.menu_settings_main) {
+			return true;
 		}
+
+		SquashView.getInstance().onPause();
+
+		final Intent intent = new Intent(this, SettingsActivity.class);
+		if (openMenuIndex != -1) {
+			intent.putExtra("openMenuIndex", openMenuIndex);
+		}
+		
+		startActivityForResult(intent, RESULT_SETTINGS);
+		Log.d(TAG, "SettingsActivity started");
 
 		return true;
 	}
@@ -101,7 +119,8 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 	protected void onPause() {
 		SquashView.getInstance().onPause();
 		super.onPause();
-		Shader.destroyShaders();	// destroy shaders so that new ones will be created
+		Shader.destroyShaders(); // destroy shaders so that new ones will be
+									// created
 	}
 
 	@Override
@@ -113,129 +132,138 @@ public class SquashActivity extends Activity implements OnGestureListener, OnDou
 	public static SquashActivity getInstance() {
 		return mInstance;
 	}
-	
+
 	private boolean mIgnoringEvent;
-	
-    @Override 
-    public boolean onTouchEvent(MotionEvent event){ 
 
-    	final float x = event.getX();
-    	final float y = event.getY();
-    	final float left = SquashView.getInstance().getLeft();
-    	final float right = SquashView.getInstance().getRight();
-    	final float top = SquashView.getInstance().getTop();
-    	final float bottom = SquashView.getInstance().getBottom();
-    	
-    	// if the squashview is full screen, dont ignore anything
-    	if (!mShowingUi) {
-    		mIgnoringEvent = false;
-    	} else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-    		mIgnoringEvent = x >= left && x <= right && y >= top && y <= bottom ? false : true;
-    	}
-    	
-    	if (!mIgnoringEvent) {
-    		this.mDetector.onTouchEvent(event);
-    	} else {
-    		Log.w(TAG, "ignoring event " + event.getAction());
-    	}
-    	
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }	
-    
-    public void toggleUi() {
-    	for (int i = 0; i < mLayout.getChildCount(); i++) {
-    		if (mLayout.getChildAt(i).getTag() != null && mLayout.getChildAt(i).getTag().equals("dontHide")) {
-    			continue;
-    		}
-    		mLayout.getChildAt(i).setVisibility(mShowingUi ? View.GONE : View.VISIBLE);
-    	}
-    	
-    	if (mShowingUi) {
-    		getActionBar().hide();
-    	} else {
-    		getActionBar().show();
-    	}
-    	
-    	mShowingUi = !mShowingUi;
-    }
-    
-    @Override
-    public boolean onDown(MotionEvent event) { 
-//        Log.d(TAG,"onDown: " + event.toString()); 
-        return true;
-    }
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, 
-            float velocityX, float velocityY) {
-    	final float dx = event2.getX() - event1.getX();
-    	final float dy = event2.getY() - event1.getY();
+		final float x = event.getX();
+		final float y = event.getY();
+		final float left = SquashView.getInstance().getLeft();
+		final float right = SquashView.getInstance().getRight();
+		final float top = SquashView.getInstance().getTop();
+		final float bottom = SquashView.getInstance().getBottom();
 
-		if (Math.abs(dy) > 0.2f * SquashView.getInstance().getHeight()){
+		// if the squashview is full screen, dont ignore anything
+		if (!mShowingUi) {
+			mIgnoringEvent = false;
+		} else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			mIgnoringEvent = x >= left && x <= right && y >= top && y <= bottom ? false
+					: true;
+		}
+
+		if (!mIgnoringEvent) {
+			this.mDetector.onTouchEvent(event);
+		} else {
+			Log.w(TAG, "ignoring event " + event.getAction());
+		}
+
+		// Be sure to call the superclass implementation
+		return super.onTouchEvent(event);
+	}
+
+	public void toggleUi() {
+		for (int i = 0; i < mLayout.getChildCount(); i++) {
+			if (mLayout.getChildAt(i).getTag() != null
+					&& mLayout.getChildAt(i).getTag().equals("dontHide")) {
+				continue;
+			}
+			mLayout.getChildAt(i).setVisibility(
+					mShowingUi ? View.GONE : View.VISIBLE);
+		}
+
+		if (mShowingUi) {
+			getActionBar().hide();
+		} else {
+			getActionBar().show();
+		}
+
+		mShowingUi = !mShowingUi;
+	}
+
+	@Override
+	public boolean onDown(MotionEvent event) {
+		// Log.d(TAG,"onDown: " + event.toString());
+		return true;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent event1, MotionEvent event2,
+			float velocityX, float velocityY) {
+		final float dx = event2.getX() - event1.getX();
+		final float dy = event2.getY() - event1.getY();
+
+		if (Math.abs(dy) > 0.2f * SquashView.getInstance().getHeight()) {
 			Log.d(TAG, "SwipeUp/Down");
 			SquashActivity.getInstance().toggleUi();
 		}
-    	
-        Log.d(TAG, "onFling: dx=" + dx + ", dy=" + dy); // + event1.toString()+event2.toString());
-        return true;
-    }
 
-    @Override
-    public void onLongPress(MotionEvent event) {
-//        Log.d(TAG, "onLongPress: " + event.toString()); 
+		Log.d(TAG, "onFling: dx=" + dx + ", dy=" + dy); // +
+														// event1.toString()+event2.toString());
+		return true;
+	}
 
-    	MovementEngine.pause();
-    	MovementEngine.resetMovables();
-    	
-    	Toast.makeText(SquashActivity.getInstance(), "Movables reset", Toast.LENGTH_SHORT).show();
-    }
+	@Override
+	public void onLongPress(MotionEvent event) {
+		// Log.d(TAG, "onLongPress: " + event.toString());
 
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-//        Log.d(TAG, "onScroll: " + e1.toString()+e2.toString() + distanceX + distanceY);
-        return true;
-    }
+		MovementEngine.pause();
+		MovementEngine.resetMovables();
 
-    @Override
-    public void onShowPress(MotionEvent event) {
-//        Log.d(TAG, "onShowPress: " + event.toString());
-    }
+		Toast.makeText(SquashActivity.getInstance(), "Movables reset",
+				Toast.LENGTH_SHORT).show();
+	}
 
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapUp: " + event.toString());
-        return true;
-    }
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// Log.d(TAG, "onScroll: " + e1.toString()+e2.toString() + distanceX +
+		// distanceY);
+		return true;
+	}
 
-    @Override
-    public boolean onDoubleTap(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTap: " + event.toString());
-    	
-    	if (MovementEngine.isRunning()) {
-    		MovementEngine.pause();
-    	}
-    	
-    	MovementEngine.setRandomDirection();
-    	
-        return true;
-    }
+	@Override
+	public void onShowPress(MotionEvent event) {
+		// Log.d(TAG, "onShowPress: " + event.toString());
+	}
 
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent event) {
-//        Log.d(TAG, "onDoubleTapEvent: " + event.toString());
-        return true;
-    }
+	@Override
+	public boolean onSingleTapUp(MotionEvent event) {
+		// Log.d(TAG, "onSingleTapUp: " + event.toString());
+		return true;
+	}
 
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-//        Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
+	@Override
+	public boolean onDoubleTap(MotionEvent event) {
+		// Log.d(TAG, "onDoubleTap: " + event.toString());
 
-    	Toast.makeText(SquashActivity.getInstance(),
-    			"MovementEngine " + (MovementEngine.isRunning() ? "stopped" : "started"), Toast.LENGTH_SHORT).show();
+		if (MovementEngine.isRunning()) {
+			MovementEngine.pause();
+		}
+
+		MovementEngine.setRandomDirection();
+
+		return true;
+	}
+
+	@Override
+	public boolean onDoubleTapEvent(MotionEvent event) {
+		// Log.d(TAG, "onDoubleTapEvent: " + event.toString());
+		return true;
+	}
+
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent event) {
+		// Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
+
+		Toast.makeText(
+				SquashActivity.getInstance(),
+				"MovementEngine "
+						+ (MovementEngine.isRunning() ? "stopped" : "started"),
+				Toast.LENGTH_SHORT).show();
 		MovementEngine.toggleRunning();
-    	
-        return true;
-    }
+
+		return true;
+	}
 }
