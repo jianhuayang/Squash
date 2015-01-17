@@ -1,58 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/layout" >
+    android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="Button" />
+        android:divider="?android:dividerHorizontal"
+        android:dividerPadding="8dp"
+        android:showDividers="middle" >
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Button" />
+        <Button
+            android:id="@+id/butControls"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_controls" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Button" />
+        <Button
+            android:id="@+id/butRandomize"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_randomize" />
+
+        <Button
+            android:id="@+id/butReset"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_reset" />
+
+        <Button
+            android:id="@+id/butStartStop"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_start" />
+    </LinearLayout>
 
     <ch.squash.simulation.main.SquashView
-        android:tag="dontHide"
         android:id="@+id/squashView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/button1" />
+        android:layout_above="@+id/buttonLayout"
+        android:tag="dontHide" />
 
     <TextView
-        android:tag="dontHide"
         android:id="@+id/txtHudFps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:tag="dontHide"
+        android:textColor="#ff0000" />
 
     <TextView
-        android:tag="dontHide"
         android:id="@+id/txtHudBall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#0000ff"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true" />
-    
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:tag="dontHide"
+        android:textColor="#0000ff" />
+
 </RelativeLayout>

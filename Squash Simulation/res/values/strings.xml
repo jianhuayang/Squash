@@ -3,6 +3,12 @@
     <string name="app_name">Squash Simulation</string>
 	<string name="settings">Settings</string>
 	
+	<string name="button_controls">Controls</string>
+	<string name="button_randomize">Randomize!</string>
+	<string name="button_reset">Reset</string>
+	<string name="button_start">Start</string>
+	<string name="button_stop">Stop</string>
+	
 	<string name="key_draw_mode">draw_mode</string>
 	<string name="title_draw_mode">Draw Mode</string>
 	<string name="summary_draw_mode">Select draw mode for 3D objects</string>
