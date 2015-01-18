@@ -23,27 +23,38 @@ public class SettingsFragment extends PreferenceFragment implements
 	private final static String TAG = SettingsFragment.class.getSimpleName();
 
 	// maps a number to its string representation
-	private static final Dictionary<Integer, String> DRAW_MODE_SUMMARIES = new Hashtable<Integer, String>();
-	private static final Dictionary<Integer, String> CAMERA_MODE_SUMMARIES = new Hashtable<Integer, String>();
-	
+	private final static Dictionary<Integer, String> DRAW_MODE_SUMMARIES = new Hashtable<Integer, String>();
+	private final static Dictionary<Integer, String> CAMERA_MODE_SUMMARIES = new Hashtable<Integer, String>();
+
+	private final static Resources mResources = SquashActivity.getInstance()
+			.getResources();
+
 	// static constructor
 	static {
-		final Resources res = SquashActivity.getInstance().getResources();
-		
 		// fill dictionaries
 		// -1 is defined as default in preferences_main.xml
 		// because that is less likely to interfere with GLES20 constant values
-		DRAW_MODE_SUMMARIES.put(-1, res.getString(R.string.draw_mode_default));
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, res.getString(R.string.draw_mode_lines));
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINE_LOOP, res.getString(R.string.draw_mode_line_loop));
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_TRIANGLES, res.getString(R.string.draw_mode_triangles));
-		DRAW_MODE_SUMMARIES.put(GLES20.GL_POINTS, res.getString(R.string.draw_mode_points));
-		
-		CAMERA_MODE_SUMMARIES.put(0, res.getString(R.string.camera_mode_rotating));
-		CAMERA_MODE_SUMMARIES.put(1, res.getString(R.string.camera_mode_backwall));
-		CAMERA_MODE_SUMMARIES.put(2, res.getString(R.string.camera_mode_sidewall_left));
-		CAMERA_MODE_SUMMARIES.put(3, res.getString(R.string.camera_mode_frontwall));
-		CAMERA_MODE_SUMMARIES.put(4, res.getString(R.string.camera_mode_sidewall_right));
+		DRAW_MODE_SUMMARIES.put(-1,
+				mResources.getString(R.string.draw_mode_default));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES,
+				mResources.getString(R.string.draw_mode_lines));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINE_LOOP,
+				mResources.getString(R.string.draw_mode_line_loop));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_TRIANGLES,
+				mResources.getString(R.string.draw_mode_triangles));
+		DRAW_MODE_SUMMARIES.put(GLES20.GL_POINTS,
+				mResources.getString(R.string.draw_mode_points));
+
+		CAMERA_MODE_SUMMARIES.put(0,
+				mResources.getString(R.string.camera_mode_rotating));
+		CAMERA_MODE_SUMMARIES.put(1,
+				mResources.getString(R.string.camera_mode_backwall));
+		CAMERA_MODE_SUMMARIES.put(2,
+				mResources.getString(R.string.camera_mode_sidewall_left));
+		CAMERA_MODE_SUMMARIES.put(3,
+				mResources.getString(R.string.camera_mode_frontwall));
+		CAMERA_MODE_SUMMARIES.put(4,
+				mResources.getString(R.string.camera_mode_sidewall_right));
 	}
 
 	@Override
@@ -54,9 +65,10 @@ public class SettingsFragment extends PreferenceFragment implements
 		addPreferencesFromResource(R.xml.preferences_main);
 		addPreferencesFromResource(R.xml.preferences_world);
 		addPreferencesFromResource(R.xml.preferences_arena);
-		
+
 		// fill entry values etc
-		ListPreference listPref = (ListPreference) findPreference(Settings.getKeyDrawMode());
+		ListPreference listPref = (ListPreference) findPreference(Settings
+				.getKeyDrawMode());
 		listPref.setEntryValues(new String[] { "-1",
 				Integer.toString(GLES20.GL_LINES),
 				Integer.toString(GLES20.GL_LINE_LOOP),
@@ -79,7 +91,8 @@ public class SettingsFragment extends PreferenceFragment implements
 				Integer.toString(SquashRenderer.OBJECT_CHAIRS) });
 
 		listPref = (ListPreference) findPreference(Settings.getKeyCameraMode());
-		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5", "6" });
+		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5",
+				"6" });
 		setSummary(Settings.getKeyCameraMode());
 
 		setSummary(Settings.getKeyMute());
@@ -102,10 +115,10 @@ public class SettingsFragment extends PreferenceFragment implements
 		Log.i(TAG, "SettingsFragment created");
 	}
 
-	public void openPreferenceScreen(final int index){
-		getPreferenceScreen().onItemClick( null, null, index, 0 ); 
+	public void openPreferenceScreen(final int index) {
+		getPreferenceScreen().onItemClick(null, null, index, 0);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -114,25 +127,30 @@ public class SettingsFragment extends PreferenceFragment implements
 			Settings.setBoolean(Settings.getKeyReset(), false);
 	}
 
-	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+	public void onSharedPreferenceChanged(
+			final SharedPreferences sharedPreferences, final String key) {
 		if (key.equals(Settings.getKeySelectObjects())) {
+			// update selected objects
 			for (final int i : SquashRenderer.OBJECTS)
 				SquashRenderer.getInstance().setObjectVisibility(i,
 						Settings.isObjectCollectionVisible(i));
-		} else if (key.equals(Settings.getKeyReset()) && Settings.isReset())
+		} else if (key.equals(Settings.getKeyReset()) && Settings.isReset()) {
+			// reset moveables
 			MovementEngine.resetMovables();
-		else if (key.equals(Settings.getKeyCameraMode()))
-			SquashRenderer.getInstance().setCameraRotation = true;
-		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyCameraPositionZ()))
-			SquashRenderer.getInstance().resetCamera();
-		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallPositionZ())){
-			SquashRenderer.getInstance().setBallPosition(Settings.getBallStartPosition());
-			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
-		}
-		else if (key.equals(Settings.getKeyBallSpeedX()) || key.equals(Settings.getKeyBallSpeedY()) || key.equals(Settings.getKeyBallSpeedZ())){
-			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
-			MovementEngine.resetMovables();
-		} else if (key.equals(Settings.getKeyHud())){
+		} else if (key.equals(Settings.getKeyBallPositionX())
+				|| key.equals(Settings.getKeyBallPositionY())
+				|| key.equals(Settings.getKeyBallPositionZ())) {
+			// ball location has changed, reset movables
+			((CheckBoxPreference) findPreference(Settings.getKeyReset()))
+					.setChecked(true);
+		} else if (key.equals(Settings.getKeyBallSpeedX())
+				|| key.equals(Settings.getKeyBallSpeedY())
+				|| key.equals(Settings.getKeyBallSpeedZ())) {
+			// ball speed has changed, reset movables
+			((CheckBoxPreference) findPreference(Settings.getKeyReset()))
+					.setChecked(true);
+		} else if (key.equals(Settings.getKeyHud())) {
+			// hud visibility has changed, update ui
 			if (Settings.isHudVisible()) {
 				SquashView.getInstance().showHud();
 			} else {
@@ -141,10 +159,10 @@ public class SettingsFragment extends PreferenceFragment implements
 		}
 
 		setSummary(key);
-		
+
 		Log.i(TAG, "Setting " + key + " changed its value");
 	}
-	
+
 	private void setSummary(final String key) {
 		findPreference(key).setSummary(getSummary(key));
 	}
@@ -152,34 +170,40 @@ public class SettingsFragment extends PreferenceFragment implements
 	private String getSummary(final String key) {
 		String result = null;
 		if (key.equals(Settings.getKeyMute()))
-			result = Settings.isMute() ?
-					SquashActivity.getInstance().getResources().getString(R.string.summary_mute) : 
-						SquashActivity.getInstance().getResources().getString(R.string.summary_unmute);
+			result = Settings.isMute() ? mResources
+					.getString(R.string.summary_mute) : mResources
+					.getString(R.string.summary_unmute);
 		else if (key.equals(Settings.getKeyHud()))
-			result = Settings.isHudVisible() ?
-					SquashActivity.getInstance().getResources().getString(R.string.summary_hud) : 
-						SquashActivity.getInstance().getResources().getString(R.string.summary_no_hud);
+			result = Settings.isHudVisible() ? mResources
+					.getString(R.string.summary_hud) : mResources
+					.getString(R.string.summary_no_hud);
 		else if (key.equals(Settings.getKeyDrawMode()))
 			result = DRAW_MODE_SUMMARIES.get(Settings.getDrawMode());
 		else if (key.equals(Settings.getKeySelectObjects()))
-			result = SquashActivity.getInstance().getResources()
-					.getString(R.string.summary_select_objects);
+			result = mResources.getString(R.string.summary_select_objects);
 		else if (key.equals(Settings.getKeyCameraMode()))
 			result = CAMERA_MODE_SUMMARIES.get(Settings.getCameraMode());
 		else if (key.equals(Settings.getKeyReset()))
-			result = SquashActivity.getInstance().getResources()
-					.getString(R.string.summary_reset);
-		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
+			result = mResources.getString(R.string.summary_reset);
+		else if (key.equals(Settings.getKeyCameraPositionX())
+				|| key.equals(Settings.getKeyBallPositionX())
+				|| key.equals(Settings.getKeyBallSpeedX()))
 			result = "x = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
+		else if (key.equals(Settings.getKeyCameraPositionY())
+				|| key.equals(Settings.getKeyBallPositionY())
+				|| key.equals(Settings.getKeyBallSpeedY()))
 			result = "y = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
+		else if (key.equals(Settings.getKeyCameraPositionZ())
+				|| key.equals(Settings.getKeyBallPositionZ())
+				|| key.equals(Settings.getKeyBallSpeedZ()))
 			result = "z = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()) || key.equals(Settings.getKeyCoefficientOfRollFriction()))
+		else if (key.equals(Settings.getKeySpeedFactor())
+				|| key.equals(Settings.getKeyCoefficientOfRestitution())
+				|| key.equals(Settings.getKeyCoefficientOfRollFriction()))
 			result = Settings.getValue(key).toString();
 		else
 			Log.e(TAG, "Unknown key: " + key);
-		
+
 		return result;
 	}
 }
