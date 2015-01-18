@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-<PreferenceCategory android:title="@string/title_arena">
-    <PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:summary="@string/summary_arena"
-        android:title="@string/title_arena" >
-    </PreferenceScreen>
-</PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/title_arena" >
+        <PreferenceScreen
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:summary="@string/summary_arena"
+            android:title="@string/title_arena" >
+            <PreferenceCategory android:title="@string/title_arena_rows" >
+                <EditTextPreference
+                    android:defaultValue="@string/default_seat_rows_back"
+                    android:inputType="number"
+                    android:key="@string/key_seat_rows_back"
+                    android:title="@string/title_seat_rows_back" >
+                </EditTextPreference>
+                <EditTextPreference
+                    android:defaultValue="@string/default_seat_rows_front_side"
+                    android:inputType="number"
+                    android:key="@string/key_seat_rows_front_side"
+                    android:title="@string/title_seat_rows_front_side" >
+                </EditTextPreference>
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
 </PreferenceScreen>

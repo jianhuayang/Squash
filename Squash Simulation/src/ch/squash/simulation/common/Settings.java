@@ -99,6 +99,14 @@ public final class Settings {
 		return mResources.getString(R.string.key_coefficient_of_roll_friction);
 	}
 
+	public static String getKeySeatRowsBack() {
+		return mResources.getString(R.string.key_seat_rows_back);
+	}
+
+	public static String getKeySeatRowsFrontSide() {
+		return mResources.getString(R.string.key_seat_rows_front_side);
+	}
+
 	/**********
 	 * SETTER *
 	 **********/
@@ -281,5 +289,15 @@ public final class Settings {
 	public static float getCoefficientOfRollFriction() {
 		return Float.parseFloat(mSharedPrefs.getString(
 				getKeyCoefficientOfRollFriction(), "0.25f"));
+	}
+
+	public static int getSeatRowsBack() {
+		return Integer.parseInt(mSharedPrefs.getString(getKeySeatRowsBack(),
+				"7"));
+	}
+
+	public static int getSeatRowsFrontSide() {
+		return Integer.parseInt(mSharedPrefs.getString(
+				getKeySeatRowsFrontSide(), "4"));
 	}
 }

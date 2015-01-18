@@ -112,6 +112,9 @@ public class SettingsFragment extends PreferenceFragment implements
 		setSummary(Settings.getKeyCoefficientOfRestitution());
 		setSummary(Settings.getKeyCoefficientOfRollFriction());
 
+		setSummary(Settings.getKeySeatRowsBack());
+		setSummary(Settings.getKeySeatRowsFrontSide());
+
 		Log.i(TAG, "SettingsFragment created");
 	}
 
@@ -156,6 +159,10 @@ public class SettingsFragment extends PreferenceFragment implements
 			} else {
 				SquashView.getInstance().hideHud();
 			}
+		} else if (key.equals(Settings.getKeySeatRowsBack())
+				|| key.equals(Settings.getKeySeatRowsFrontSide())) {
+			// re-create arena
+			SquashRenderer.getInstance().reCreateArena();
 		}
 
 		setSummary(key);
@@ -201,6 +208,9 @@ public class SettingsFragment extends PreferenceFragment implements
 				|| key.equals(Settings.getKeyCoefficientOfRestitution())
 				|| key.equals(Settings.getKeyCoefficientOfRollFriction()))
 			result = Settings.getValue(key).toString();
+		else if (key.equals(Settings.getKeySeatRowsBack())
+				|| key.equals(Settings.getKeySeatRowsFrontSide()))
+			result = Settings.getValue(key).toString() + " rows";
 		else
 			Log.e(TAG, "Unknown key: " + key);
 

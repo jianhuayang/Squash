@@ -60,6 +60,7 @@
 	<string name="title_camera_settings">Camera settings</string>
 	<string name="title_ball_settings">Ball settings</string>
 	<string name="title_world_constants">World constants</string>
+	<string name="title_arena_rows">Number of seat rows in the arena</string>
 	
 	<string name="title_world">World settings</string>
 	<string name="summary_world">Change settings related to the virtual world.</string>
@@ -119,5 +120,13 @@
 	<string name="title_coefficient_of_roll_friction">Roll friction</string>
 	<string name="summary_coefficient_of_roll_friction">Set roll friction</string>
 	<string name="default_coefficient_of_roll_friction">0.25</string>
+	
+	<string name="key_seat_rows_back">seat_rows_back</string>
+	<string name="title_seat_rows_back">Seat rows behind at the back</string>
+	<string name="default_seat_rows_back">7</string>
+	
+	<string name="key_seat_rows_front_side">seat_rows_front_side</string>
+	<string name="title_seat_rows_front_side">Seat rows at the front and the sides</string>
+	<string name="default_seat_rows_front_side">4</string>
 	
 </resources>
