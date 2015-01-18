@@ -251,12 +251,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	public boolean onDoubleTap(MotionEvent event) {
 		// Log.d(TAG, "onDoubleTap: " + event.toString());
 
-		if (MovementEngine.isRunning()) {
-			MovementEngine.pause();
-		}
-
-		MovementEngine.setRandomDirection();
-
+		randomizeMovables(null);
+		
 		return true;
 	}
 
@@ -270,13 +266,29 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	public boolean onSingleTapConfirmed(MotionEvent event) {
 		// Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
 
+		startStopMovementEngine(null);
+		
+		return true;
+	}
+	
+	public void showControls(final View view) {
+		Toast.makeText(this, "CONTROLS NOT IMPLEMENTED", Toast.LENGTH_SHORT).show();
+	}
+	
+	public void randomizeMovables(final View view) {
+		if (MovementEngine.isRunning()) {
+			MovementEngine.pause();
+		}
+
+		MovementEngine.setRandomDirection();
+	}
+	
+	public void startStopMovementEngine(final View view) {
 		Toast.makeText(
 				SquashActivity.getInstance(),
 				"MovementEngine "
 						+ (MovementEngine.isRunning() ? "stopped" : "started"),
 				Toast.LENGTH_SHORT).show();
 		MovementEngine.toggleRunning();
-
-		return true;
 	}
 }

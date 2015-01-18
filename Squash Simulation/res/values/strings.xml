@@ -11,9 +11,8 @@
 	<!-- BUTTONS -->
 	<string name="button_controls">Controls</string>
 	<string name="button_randomize">Randomize!</string>
-	<string name="button_reset">Reset</string>
-	<string name="button_start">Start</string>
-	<string name="button_stop">Stop</string>
+	<string name="button_reset">Reset movables</string>
+	<string name="button_toggle">Toggle engine</string>
 	
 	<!-- PREFERENCE ENTRIES -->
 	<string name="draw_mode_default">Use default draw mode</string>

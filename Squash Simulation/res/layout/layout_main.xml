@@ -19,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="showControls"
             android:text="@string/button_controls" />
 
         <Button
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="randomizeMovables"
             android:text="@string/button_randomize" />
 
         <Button
@@ -35,6 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="resetMovables"
             android:text="@string/button_reset" />
 
         <Button
@@ -43,7 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/button_start" />
+            android:onClick="startStopMovementEngine"
+            android:text="@string/button_toggle" />
     </LinearLayout>
 
     <ch.squash.simulation.main.SquashView
