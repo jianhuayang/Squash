@@ -125,6 +125,11 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 
 		Log.i(TAG, "SquashRenderer created");
 	}
+	
+	public void reCreateArena(){
+		mObjects[OBJECT_ARENA].reCreate();
+		mObjects[OBJECT_CHAIRS].reCreate();
+	}
 
 	// public access
 	public static SquashRenderer getInstance() {
