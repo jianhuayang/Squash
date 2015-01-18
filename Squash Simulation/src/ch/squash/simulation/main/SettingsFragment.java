@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 import ch.squash.simulation.R;
@@ -55,7 +54,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		addPreferencesFromResource(R.xml.preferences_main);
 		addPreferencesFromResource(R.xml.preferences_world);
 		addPreferencesFromResource(R.xml.preferences_arena);
-
+		
 		// fill entry values etc
 		ListPreference listPref = (ListPreference) findPreference(Settings.getKeyDrawMode());
 		listPref.setEntryValues(new String[] { "-1",
@@ -63,7 +62,7 @@ public class SettingsFragment extends PreferenceFragment implements
 				Integer.toString(GLES20.GL_LINE_LOOP),
 				Integer.toString(GLES20.GL_TRIANGLES),
 				Integer.toString(GLES20.GL_POINTS) });
-		listPref.setSummary(getSummary(Settings.getKeyDrawMode()));
+		setSummary(Settings.getKeyDrawMode());
 
 		final MultiSelectListPreference mslp = (MultiSelectListPreference) findPreference(Settings
 				.getKeySelectObjects());
@@ -81,21 +80,23 @@ public class SettingsFragment extends PreferenceFragment implements
 
 		listPref = (ListPreference) findPreference(Settings.getKeyCameraMode());
 		listPref.setEntryValues(new String[] { "0", "1", "2", "3", "4", "5", "6" });
-		listPref.setSummary(getSummary(Settings.getKeyCameraMode()));
+		setSummary(Settings.getKeyCameraMode());
 
-		findPreference(Settings.getKeyCameraPositionX()).setSummary(getSummary(Settings.getKeyCameraPositionX()));
-		findPreference(Settings.getKeyCameraPositionY()).setSummary(getSummary(Settings.getKeyCameraPositionY()));
-		findPreference(Settings.getKeyCameraPositionZ()).setSummary(getSummary(Settings.getKeyCameraPositionZ()));
-		findPreference(Settings.getKeyBallPositionX()).setSummary(getSummary(Settings.getKeyBallPositionX()));
-		findPreference(Settings.getKeyBallPositionY()).setSummary(getSummary(Settings.getKeyBallPositionY()));
-		findPreference(Settings.getKeyBallPositionZ()).setSummary(getSummary(Settings.getKeyBallPositionZ()));
-		findPreference(Settings.getKeyBallSpeedX()).setSummary(getSummary(Settings.getKeyBallSpeedX()));
-		findPreference(Settings.getKeyBallSpeedY()).setSummary(getSummary(Settings.getKeyBallSpeedY()));
-		findPreference(Settings.getKeyBallSpeedZ()).setSummary(getSummary(Settings.getKeyBallSpeedZ()));
+		setSummary(Settings.getKeyMute());
 
-		findPreference(Settings.getKeySpeedFactor()).setSummary(getSummary(Settings.getKeySpeedFactor()));
-		findPreference(Settings.getKeyCoefficientOfRestitution()).setSummary(getSummary(Settings.getKeyCoefficientOfRestitution()));
-		findPreference(Settings.getKeyCoefficientOfRollFriction()).setSummary(getSummary(Settings.getKeyCoefficientOfRollFriction()));
+		setSummary(Settings.getKeyCameraPositionX());
+		setSummary(Settings.getKeyCameraPositionY());
+		setSummary(Settings.getKeyCameraPositionZ());
+		setSummary(Settings.getKeyBallPositionX());
+		setSummary(Settings.getKeyBallPositionY());
+		setSummary(Settings.getKeyBallPositionZ());
+		setSummary(Settings.getKeyBallSpeedX());
+		setSummary(Settings.getKeyBallSpeedY());
+		setSummary(Settings.getKeyBallSpeedZ());
+
+		setSummary(Settings.getKeySpeedFactor());
+		setSummary(Settings.getKeyCoefficientOfRestitution());
+		setSummary(Settings.getKeyCoefficientOfRollFriction());
 
 		Log.i(TAG, "SettingsFragment created");
 	}
@@ -113,8 +114,6 @@ public class SettingsFragment extends PreferenceFragment implements
 	}
 
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-		final Preference pref = findPreference(key);
-
 		if (key.equals(Settings.getKeySelectObjects())) {
 			for (final int i : SquashRenderer.OBJECTS)
 				SquashRenderer.getInstance().setObjectVisibility(i,
@@ -133,14 +132,22 @@ public class SettingsFragment extends PreferenceFragment implements
 			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
 			MovementEngine.resetMovables();
 		}
-		
-		pref.setSummary(getSummary(key));
 
+		setSummary(key);
+		
 		Log.i(TAG, "Setting " + key + " changed its value");
+	}
+	
+	private void setSummary(final String key) {
+		findPreference(key).setSummary(getSummary(key));
 	}
 
 	private String getSummary(final String key) {
 		String result = null;
+		if (key.equals(Settings.getKeyMute()))
+			result = Settings.isMute() ?
+					SquashActivity.getInstance().getResources().getString(R.string.summary_mute) : 
+						SquashActivity.getInstance().getResources().getString(R.string.summary_unmute);
 		if (key.equals(Settings.getKeyDrawMode()))
 			result = DRAW_MODE_SUMMARIES.get(Settings.getDrawMode());
 		else if (key.equals(Settings.getKeySelectObjects()))

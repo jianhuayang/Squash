@@ -8,7 +8,7 @@
             android:title="@string/title_world" >
             <PreferenceCategory android:title="@string/title_camera_settings" >
                 <ListPreference
-                    android:defaultValue="-1"
+                    android:defaultValue="0"
                     android:entries="@array/entries_camera_mode"
                     android:key="@string/key_camera_mode"
                     android:summary="@string/summary_camera_mode"
