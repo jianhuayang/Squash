@@ -83,6 +83,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		setSummary(Settings.getKeyCameraMode());
 
 		setSummary(Settings.getKeyMute());
+		setSummary(Settings.getKeyHud());
 
 		setSummary(Settings.getKeyCameraPositionX());
 		setSummary(Settings.getKeyCameraPositionY());
@@ -131,6 +132,12 @@ public class SettingsFragment extends PreferenceFragment implements
 		else if (key.equals(Settings.getKeyBallSpeedX()) || key.equals(Settings.getKeyBallSpeedY()) || key.equals(Settings.getKeyBallSpeedZ())){
 			((CheckBoxPreference)findPreference(Settings.getKeyReset())).setChecked(true);
 			MovementEngine.resetMovables();
+		} else if (key.equals(Settings.getKeyHud())){
+			if (Settings.isHudVisible()) {
+				SquashView.getInstance().showHud();
+			} else {
+				SquashView.getInstance().hideHud();
+			}
 		}
 
 		setSummary(key);
@@ -148,7 +155,11 @@ public class SettingsFragment extends PreferenceFragment implements
 			result = Settings.isMute() ?
 					SquashActivity.getInstance().getResources().getString(R.string.summary_mute) : 
 						SquashActivity.getInstance().getResources().getString(R.string.summary_unmute);
-		if (key.equals(Settings.getKeyDrawMode()))
+		else if (key.equals(Settings.getKeyHud()))
+			result = Settings.isHudVisible() ?
+					SquashActivity.getInstance().getResources().getString(R.string.summary_hud) : 
+						SquashActivity.getInstance().getResources().getString(R.string.summary_no_hud);
+		else if (key.equals(Settings.getKeyDrawMode()))
 			result = DRAW_MODE_SUMMARIES.get(Settings.getDrawMode());
 		else if (key.equals(Settings.getKeySelectObjects()))
 			result = SquashActivity.getInstance().getResources()

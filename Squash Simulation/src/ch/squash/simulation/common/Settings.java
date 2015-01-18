@@ -39,12 +39,16 @@ public final class Settings {
 		return mResources.getString(R.string.key_camera_mode);
 	}
 
-	public static String getKeyReset() {
-		return mResources.getString(R.string.key_reset);
-	}
-
 	public static String getKeyMute() {
 		return mResources.getString(R.string.key_mute);
+	}
+
+	public static String getKeyHud() {
+		return mResources.getString(R.string.key_hud);
+	}
+
+	public static String getKeyReset() {
+		return mResources.getString(R.string.key_reset);
 	}
 
 	public static String getKeyCameraPositionX() {
@@ -144,6 +148,10 @@ public final class Settings {
 
 	public static boolean isMute() {
 		return mSharedPrefs.getBoolean(getKeyMute(), false);
+	}
+
+	public static boolean isHudVisible() {
+		return mSharedPrefs.getBoolean(getKeyHud(), true);
 	}
 
 	public static int getDrawMode() {

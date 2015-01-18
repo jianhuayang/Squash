@@ -43,8 +43,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 										// are currently visible
 
 	// sub-menu indices
-	private final static int WORLD_SETTINGS_INDEX = 7;
-	private final static int ARENA_SETTINGS_INDEX = 9;
+	private final static int WORLD_SETTINGS_INDEX = 8;
+	private final static int ARENA_SETTINGS_INDEX = 10;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -69,6 +69,11 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		SquashView.getInstance().registerViews(
 				(TextView) findViewById(R.id.txtHudFps),
 				(TextView) findViewById(R.id.txtHudBall));
+		if (Settings.isHudVisible()) {
+			SquashView.getInstance().showHud();
+		} else {
+			SquashView.getInstance().hideHud();
+		}
 
 		// retrieve reference to layout
 		mLayout = (RelativeLayout) findViewById(R.id.layout);

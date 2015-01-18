@@ -6,7 +6,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_mute"
-            android:summary="@string/summary_mute"
+            android:summary="@string/summary_unmute"
             android:title="@string/title_mute" >
         </CheckBoxPreference>
         <CheckBoxPreference
@@ -14,6 +14,12 @@
             android:key="@string/key_reset"
             android:summary="@string/summary_reset"
             android:title="@string/title_reset" >
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_hud"
+            android:summary="@string/summary_hud"
+            android:title="@string/title_hud" >
         </CheckBoxPreference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_drawing_settings" >

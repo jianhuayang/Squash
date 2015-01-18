@@ -44,6 +44,11 @@
 	<string name="title_reset">Reset world</string>
 	<string name="summary_reset">Return moving objects to their initial place</string>
 	
+	<string name="key_hud">hud</string>
+	<string name="title_hud">HUD</string>
+	<string name="summary_hud">Show heads-up display</string>
+	<string name="summary_no_hud">Hide heads-up display</string>
+	
 	<string name="key_mute">mute</string>
 	<string name="title_mute">Mute</string>
 	<string name="summary_mute">Suppress sounds</string>
