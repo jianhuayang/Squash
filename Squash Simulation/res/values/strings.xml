@@ -48,27 +48,42 @@
 	<string name="title_mute">Mute</string>
 	<string name="summary_mute">Suppress sounds</string>
 	
+	
+	<string name="title_general_settings">General settings</string>
+	<string name="title_drawing_settings">Drawing settings</string>
+	<string name="title_camera_settings">Camera settings</string>
+	<string name="title_ball_settings">Ball settings</string>
+	<string name="title_world_constants">World constants</string>
+	
+	<string name="title_world">World settings</string>
+	<string name="summary_world">Change settings related to the virtual world.</string>
 		
-	<string name="title_vectors">Set Vectors of the world</string>
-	<string name="summary_vectors">Define starting location and movement of objects of the world</string>
+	<string name="title_arena">Arena settings</string>
+	<string name="summary_arena">Change settings related to the virtual arena.</string>
 	
-	<string name="title_x">x-Component of the vector</string>
-	<string name="title_y">y-Component of the vector</string>
-	<string name="title_z">z-Component of the vector</string>
+	<string name="title_x">x-component of the vector</string>
+	<string name="title_y">y-component of the vector</string>
+	<string name="title_z">z-component of the vector</string>
 	
-	<string name="title_camera_position">Select Position of the Camera</string>
+	<string name="title_camera_position_x">Camera position: X</string>
 	<string name="key_camera_position_x">camera_position_x</string>
+	<string name="title_camera_position_y">Camera position: Y</string>
 	<string name="key_camera_position_y">camera_position_y</string>
+	<string name="title_camera_position_z">Camera position: Z</string>
 	<string name="key_camera_position_z">camera_position_z</string>
 	
-	<string name="title_ball_position">Select Position of the Ball</string>
+	<string name="title_ball_position_x">Ball position: X</string>
 	<string name="key_ball_position_x">ball_position_x</string>
+	<string name="title_ball_position_y">Ball position: Y</string>
 	<string name="key_ball_position_y">ball_position_y</string>
+	<string name="title_ball_position_z">Ball position: Z</string>
 	<string name="key_ball_position_z">ball_position_z</string>
 	
-	<string name="title_ball_speed">Select speed of the Ball</string>
+	<string name="title_ball_speed_x">Ball speed: X</string>
 	<string name="key_ball_speed_x">ball_speed_x</string>
+	<string name="title_ball_speed_y">Ball speed: Y</string>
 	<string name="key_ball_speed_y">ball_speed_y</string>
+	<string name="title_ball_speed_z">Ball speed: Z</string>
 	<string name="key_ball_speed_z">ball_speed_z</string>
 	
 	<string name="default_camera_position_x">0</string>

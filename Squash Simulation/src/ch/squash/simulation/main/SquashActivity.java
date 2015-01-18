@@ -43,8 +43,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 										// are currently visible
 
 	// sub-menu indices
-	private final static int ARENA_SETTINGS_INDEX = 5;
-	private final static int WORLD_SETTINGS_INDEX = 5;
+	private final static int WORLD_SETTINGS_INDEX = 7;
+	private final static int ARENA_SETTINGS_INDEX = 9;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceCategory android:title="@string/title_arena">
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:summary="@string/summary_arena"
+        android:title="@string/title_arena" >
+    </PreferenceScreen>
+</PreferenceCategory>
+</PreferenceScreen>

@@ -32,6 +32,8 @@ public class SettingsFragment extends PreferenceFragment implements
 		final Resources res = SquashActivity.getInstance().getResources();
 		
 		// fill dictionaries
+		// -1 is defined as default in preferences_main.xml
+		// because that is less likely to interfere with GLES20 constant values
 		DRAW_MODE_SUMMARIES.put(-1, res.getString(R.string.draw_mode_default));
 		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINES, res.getString(R.string.draw_mode_lines));
 		DRAW_MODE_SUMMARIES.put(GLES20.GL_LINE_LOOP, res.getString(R.string.draw_mode_line_loop));
@@ -50,7 +52,9 @@ public class SettingsFragment extends PreferenceFragment implements
 		super.onCreate(savedInstanceState);
 
 		// load the preferences from an XML resource
-		addPreferencesFromResource(R.xml.preferences);
+		addPreferencesFromResource(R.xml.preferences_main);
+		addPreferencesFromResource(R.xml.preferences_world);
+		addPreferencesFromResource(R.xml.preferences_arena);
 
 		// fill entry values etc
 		ListPreference listPref = (ListPreference) findPreference(Settings.getKeyDrawMode());
@@ -147,17 +151,11 @@ public class SettingsFragment extends PreferenceFragment implements
 		else if (key.equals(Settings.getKeyReset()))
 			result = SquashActivity.getInstance().getResources()
 					.getString(R.string.summary_reset);
-		else if (key.equals(Settings.getKeyCameraPositionX()))
-			result = "left/right: " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
+		else if (key.equals(Settings.getKeyCameraPositionX()) || key.equals(Settings.getKeyBallPositionX()) || key.equals(Settings.getKeyBallSpeedX()))
 			result = "x = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionY()))
-			result = "down/up: " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
+		else if (key.equals(Settings.getKeyCameraPositionY()) || key.equals(Settings.getKeyBallPositionY()) || key.equals(Settings.getKeyBallSpeedY()))
 			result = "y = " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyCameraPositionZ()))
-			result = "front/back: " + Settings.getValue(key);
-		else if (key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
+		else if (key.equals(Settings.getKeyCameraPositionZ()) || key.equals(Settings.getKeyBallPositionZ()) || key.equals(Settings.getKeyBallSpeedZ()))
 			result = "z = " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeySpeedFactor()) || key.equals(Settings.getKeyCoefficientOfRestitution()) || key.equals(Settings.getKeyCoefficientOfRollFriction()))
 			result = Settings.getValue(key).toString();
