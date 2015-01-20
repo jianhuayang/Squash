@@ -6,18 +6,24 @@
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/settings_main"/>
+        android:title="@string/title_main"/>
     <item
         android:id="@+id/menu_settings_world"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/settings_world"/>
+        android:title="@string/title_world"/>
     <item
         android:id="@+id/menu_settings_arena"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/settings_arena"/>
+        android:title="@string/title_arena"/>
+    <item
+        android:id="@+id/menu_settings_shots"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/title_shots"/>
 
 </menu>

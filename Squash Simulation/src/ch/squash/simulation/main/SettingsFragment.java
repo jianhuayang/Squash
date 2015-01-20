@@ -11,11 +11,15 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
+import android.widget.Toast;
 import ch.squash.simulation.R;
 import ch.squash.simulation.common.Settings;
 import ch.squash.simulation.graphic.SquashRenderer;
+import ch.squash.simulation.shapes.common.Vector;
 
 public class SettingsFragment extends PreferenceFragment implements
 		OnSharedPreferenceChangeListener {
@@ -65,6 +69,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		addPreferencesFromResource(R.xml.preferences_main);
 		addPreferencesFromResource(R.xml.preferences_world);
 		addPreferencesFromResource(R.xml.preferences_arena);
+		addPreferencesFromResource(R.xml.preferences_shots);
 
 		// fill entry values etc
 		ListPreference listPref = (ListPreference) findPreference(Settings
@@ -115,7 +120,38 @@ public class SettingsFragment extends PreferenceFragment implements
 		setSummary(Settings.getKeySeatRowsBack());
 		setSummary(Settings.getKeySeatRowsFrontSide());
 
+		// add clicklisteners for shots
+		setShotOnClickListener(new Preference[] {
+				findPreference(mResources.getString(R.string.key_fh_drive)),
+				findPreference(mResources.getString(R.string.key_fh_short_drop)),
+				findPreference(mResources.getString(R.string.key_fh_long_drop)) });
+
 		Log.i(TAG, "SettingsFragment created");
+	}
+
+	private void setShotOnClickListener(final Preference[] shotPreferences) {
+		for (final Preference p : shotPreferences) {
+			p.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				public boolean onPreferenceClick(final Preference pref) {
+					if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
+						Settings.setBallStartPosition(new Vector(3, 1, 4));
+						Settings.setBallStartSpeed(new Vector(0, 1.5f, -20));
+						Toast.makeText(SquashActivity.getInstance(), "Set up FH drive",	Toast.LENGTH_SHORT).show();
+//					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
+//						
+//					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
+//						
+					} else {
+						Toast.makeText(SquashActivity.getInstance(), "Unknown shot '" + pref.getTitle() + "'",	Toast.LENGTH_SHORT).show();
+						Log.e(TAG, "Unkown shot preference key: " + pref.getKey());
+						return false;
+					}
+
+					Settings.setBoolean(Settings.getKeyReset(), false);
+					return true;
+				}
+			});
+		}
 	}
 
 	public void openPreferenceScreen(final int index) {

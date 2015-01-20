@@ -44,7 +44,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 	// sub-menu indices
 	private final static int WORLD_SETTINGS_INDEX = 8;
-	private final static int ARENA_SETTINGS_INDEX = 10;
+	private final static int ARENA_SETTINGS_INDEX = 9;
+	private final static int SHOTS_SETTINGS_INDEX = 10;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -74,13 +75,16 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		} else {
 			SquashView.getInstance().hideHud();
 		}
-
+		
 		// retrieve reference to layout
 		mLayout = (RelativeLayout) findViewById(R.id.layout);
 
 		// initialize gesture detection
 		mDetector = new GestureDetectorCompat(this, this);
 		mDetector.setOnDoubleTapListener(this);
+
+		// hide the ui initially
+//		toggleUi();
 
 		Log.i(TAG, "SquashActivity created");
 	}
@@ -104,6 +108,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 			openMenuIndex = WORLD_SETTINGS_INDEX;
 		} else if (item.getItemId() == R.id.menu_settings_arena) {
 			openMenuIndex = ARENA_SETTINGS_INDEX;
+		} else if (item.getItemId() == R.id.menu_settings_shots) {
+			openMenuIndex = SHOTS_SETTINGS_INDEX;
 		} else if (item.getItemId() != R.id.menu_settings_main) {
 			// no valid entry has been touched!
 			Log.e(TAG, "Unknown menu entry: " + item.getItemId());
@@ -221,11 +227,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	public void onLongPress(MotionEvent event) {
 		// Log.d(TAG, "onLongPress: " + event.toString());
 
-		MovementEngine.pause();
-		MovementEngine.resetMovables();
-
-		Toast.makeText(SquashActivity.getInstance(), "Movables reset",
-				Toast.LENGTH_SHORT).show();
+		resetMovables(null);
 	}
 
 	@Override
@@ -290,5 +292,10 @@ public class SquashActivity extends Activity implements OnGestureListener,
 						+ (MovementEngine.isRunning() ? "stopped" : "started"),
 				Toast.LENGTH_SHORT).show();
 		MovementEngine.toggleRunning();
+	}
+	
+	public void resetMovables(final View view) {
+		MovementEngine.pause();
+		MovementEngine.resetMovables();
 	}
 }

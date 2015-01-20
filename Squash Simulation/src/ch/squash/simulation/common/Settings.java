@@ -142,6 +142,14 @@ public final class Settings {
 		editor.commit();
 	}
 
+	public static void setBallStartPosition(final IVector position) {
+		final Editor editor = mSharedPrefs.edit();
+		editor.putString(getKeyBallPositionX(), Float.toString(position.getX()));
+		editor.putString(getKeyBallPositionY(), Float.toString(position.getY()));
+		editor.putString(getKeyBallPositionZ(), Float.toString(position.getZ()));
+		editor.commit();
+	}
+
 	/**********
 	 * GETTER *
 	 **********/

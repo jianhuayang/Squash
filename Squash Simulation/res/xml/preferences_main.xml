@@ -2,12 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/title_general_settings" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="@string/key_mute"
             android:summary="@string/summary_unmute"
             android:title="@string/title_mute" >
-        </CheckBoxPreference>
+        </SwitchPreference>
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_reset"
@@ -36,6 +37,8 @@
             android:key="@string/key_select_objects"
             android:summary="@string/summary_select_objects"
             android:title="@string/title_select_objects" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_other_settings" >
     </PreferenceCategory>
 
 </PreferenceScreen>

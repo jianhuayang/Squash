@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:summary="@string/summary_shots"
+        android:title="@string/title_shots" >
+        <PreferenceCategory android:title="@string/title_forehand" >
+            <Preference
+                android:key="@string/key_fh_drive"
+                android:title="@string/title_fh_drive" />
+            <Preference
+                android:key="@string/key_fh_short_drop"
+                android:title="@string/title_fh_short_drop" />
+            <Preference
+                android:key="@string/key_fh_long_drop"
+                android:title="@string/title_fh_long_drop" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+</PreferenceScreen>

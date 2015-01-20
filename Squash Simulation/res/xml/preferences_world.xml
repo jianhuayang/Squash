@@ -1,100 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/title_world" >
-        <PreferenceScreen
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:summary="@string/summary_world"
-            android:title="@string/title_world" >
-            <PreferenceCategory android:title="@string/title_camera_settings" >
-                <ListPreference
-                    android:defaultValue="0"
-                    android:entries="@array/entries_camera_mode"
-                    android:key="@string/key_camera_mode"
-                    android:summary="@string/summary_camera_mode"
-                    android:title="@string/title_camera_mode" />
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:summary="@string/summary_world"
+        android:title="@string/title_world" >
+        <PreferenceCategory android:title="@string/title_camera_settings" >
+            <ListPreference
+                android:defaultValue="0"
+                android:entries="@array/entries_camera_mode"
+                android:key="@string/key_camera_mode"
+                android:summary="@string/summary_camera_mode"
+                android:title="@string/title_camera_mode" />
 
-                <EditTextPreference
-                    android:defaultValue="@string/default_camera_position_x"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_camera_position_x"
-                    android:key="@string/key_camera_position_x" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_camera_position_y"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_camera_position_y"
-                    android:key="@string/key_camera_position_y" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_camera_position_z"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_camera_position_z"
-                    android:key="@string/key_camera_position_z" >
-                </EditTextPreference>
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/title_ball_settings" >
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_position_x"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_position_x"
-                    android:key="@string/key_ball_position_x" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_position_y"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_position_y"
-                    android:key="@string/key_ball_position_y" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_position_z"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_position_z"
-                    android:key="@string/key_ball_position_z" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_speed_x"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_speed_x"
-                    android:key="@string/key_ball_speed_x" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_speed_y"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_speed_y"
-                    android:key="@string/key_ball_speed_y" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_ball_speed_z"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:title="@string/title_ball_speed_z"
-                    android:key="@string/key_ball_speed_z" >
-                </EditTextPreference>
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/title_world_constants" >
-                <EditTextPreference
-                    android:defaultValue="@string/default_speed_factor"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:key="@string/key_speed_factor"
-                    android:summary="@string/summary_speed_factor"
-                    android:title="@string/title_speed_factor" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_coefficient_of_restitution"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:key="@string/key_coefficient_of_restitution"
-                    android:summary="@string/summary_coefficient_of_restitution"
-                    android:title="@string/title_coefficient_of_restitution" >
-                </EditTextPreference>
-                <EditTextPreference
-                    android:defaultValue="@string/default_coefficient_of_roll_friction"
-                    android:inputType="numberDecimal|numberSigned"
-                    android:key="@string/key_coefficient_of_roll_friction"
-                    android:summary="@string/summary_coefficient_of_roll_friction"
-                    android:title="@string/title_coefficient_of_roll_friction" >
-                </EditTextPreference>
-            </PreferenceCategory>
-        </PreferenceScreen>
-    </PreferenceCategory>
+            <EditTextPreference
+                android:defaultValue="@string/default_camera_position_x"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_camera_position_x"
+                android:title="@string/title_camera_position_x" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_camera_position_y"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_camera_position_y"
+                android:title="@string/title_camera_position_y" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_camera_position_z"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_camera_position_z"
+                android:title="@string/title_camera_position_z" >
+            </EditTextPreference>
+        </PreferenceCategory>
+        <PreferenceCategory android:title="@string/title_ball_settings" >
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_position_x"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_position_x"
+                android:title="@string/title_ball_position_x" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_position_y"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_position_y"
+                android:title="@string/title_ball_position_y" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_position_z"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_position_z"
+                android:title="@string/title_ball_position_z" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_speed_x"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_speed_x"
+                android:title="@string/title_ball_speed_x" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_speed_y"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_speed_y"
+                android:title="@string/title_ball_speed_y" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_ball_speed_z"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_ball_speed_z"
+                android:title="@string/title_ball_speed_z" >
+            </EditTextPreference>
+        </PreferenceCategory>
+        <PreferenceCategory android:title="@string/title_world_constants" >
+            <EditTextPreference
+                android:defaultValue="@string/default_speed_factor"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_speed_factor"
+                android:summary="@string/summary_speed_factor"
+                android:title="@string/title_speed_factor" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_coefficient_of_restitution"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_coefficient_of_restitution"
+                android:summary="@string/summary_coefficient_of_restitution"
+                android:title="@string/title_coefficient_of_restitution" >
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_coefficient_of_roll_friction"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_coefficient_of_roll_friction"
+                android:summary="@string/summary_coefficient_of_roll_friction"
+                android:title="@string/title_coefficient_of_roll_friction" >
+            </EditTextPreference>
+        </PreferenceCategory>
+    </PreferenceScreen>
 
 </PreferenceScreen>

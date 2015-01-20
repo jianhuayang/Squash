@@ -2,11 +2,6 @@
 <resources>
     <!-- GENERAL -->
     <string name="app_name">Squash Simulation</string>
-    
-    <!-- SETTINGS MENU -->
-	<string name="settings_main">Main settings</string>
-	<string name="settings_world">World settings</string>
-	<string name="settings_arena">Arena settings</string>
 	
 	<!-- BUTTONS -->
 	<string name="button_controls">Controls</string>
@@ -15,6 +10,8 @@
 	<string name="button_toggle">Toggle engine</string>
 	
 	<!-- PREFERENCE ENTRIES -->
+	<string name="title_main">Main settings</string>
+	
 	<string name="draw_mode_default">Use default draw mode</string>
 	<string name="draw_mode_lines">Draw lines</string>
 	<string name="draw_mode_line_loop">Draw looping lines</string>
@@ -60,12 +57,13 @@
 	<string name="title_ball_settings">Ball settings</string>
 	<string name="title_world_constants">World constants</string>
 	<string name="title_arena_rows">Number of seat rows in the arena</string>
+	<string name="title_other_settings">Other settings</string>
 	
 	<string name="title_world">World settings</string>
-	<string name="summary_world">Change settings related to the virtual world.</string>
+	<string name="summary_world">Change settings related to the virtual world</string>
 		
 	<string name="title_arena">Arena settings</string>
-	<string name="summary_arena">Change settings related to the virtual arena.</string>
+	<string name="summary_arena">Change settings related to the virtual arena</string>
 	
 	<string name="title_x">x-component of the vector</string>
 	<string name="title_y">y-component of the vector</string>
@@ -127,5 +125,17 @@
 	<string name="key_seat_rows_front_side">seat_rows_front_side</string>
 	<string name="title_seat_rows_front_side">Seat rows at the front and the sides</string>
 	<string name="default_seat_rows_front_side">4</string>
+	
+	<string name="title_shots">Pre-definied shots</string>
+	<string name="summary_shots">Set ball location and speed to pre-defined values</string>
+	
+	<string name="title_forehand">Forehand shots</string>
+	
+	<string name="title_fh_drive">Drive</string>
+	<string name="key_fh_drive">fh_drive</string>
+	<string name="title_fh_short_drop">Short drop shot</string>
+	<string name="key_fh_short_drop">fh_short_drop</string>
+	<string name="title_fh_long_drop">Long drop shot</string>
+	<string name="key_fh_long_drop">fh_long_drop</string>
 	
 </resources>
