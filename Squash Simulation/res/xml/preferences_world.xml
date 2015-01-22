@@ -86,6 +86,13 @@
                 android:title="@string/title_coefficient_of_restitution" >
             </EditTextPreference>
             <EditTextPreference
+                android:defaultValue="@string/default_impact_exponent"
+                android:inputType="numberDecimal|numberSigned"
+                android:key="@string/key_impact_exponent"
+                android:summary="@string/summary_impact_exponent"
+                android:title="@string/title_impact_exponent" >
+            </EditTextPreference>
+            <EditTextPreference
                 android:defaultValue="@string/default_coefficient_of_roll_friction"
                 android:inputType="numberDecimal|numberSigned"
                 android:key="@string/key_coefficient_of_roll_friction"

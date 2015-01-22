@@ -113,10 +113,15 @@
 	<string name="summary_coefficient_of_restitution">Set Coefficient of Restitution</string>
 	<string name="default_coefficient_of_restitution">0.75</string>
 	
+	<string name="key_impact_exponent">impact_exponent</string>
+	<string name="title_impact_exponent">Exponent on speed on impact</string>
+	<string name="summary_impact_exponent">Set exponent on impact</string>
+	<string name="default_impact_exponent">0.15</string>
+	
 	<string name="key_coefficient_of_roll_friction">coefficient_of_roll_friction</string>
 	<string name="title_coefficient_of_roll_friction">Roll friction</string>
 	<string name="summary_coefficient_of_roll_friction">Set roll friction</string>
-	<string name="default_coefficient_of_roll_friction">0.25</string>
+	<string name="default_coefficient_of_roll_friction">0.3</string>
 	
 	<string name="key_seat_rows_back">seat_rows_back</string>
 	<string name="title_seat_rows_back">Seat rows behind at the back</string>

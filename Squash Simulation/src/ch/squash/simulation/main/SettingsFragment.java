@@ -115,6 +115,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
 		setSummary(Settings.getKeySpeedFactor());
 		setSummary(Settings.getKeyCoefficientOfRestitution());
+		setSummary(Settings.getKeyImpactExponent());
 		setSummary(Settings.getKeyCoefficientOfRollFriction());
 
 		setSummary(Settings.getKeySeatRowsBack());
@@ -134,8 +135,8 @@ public class SettingsFragment extends PreferenceFragment implements
 			p.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				public boolean onPreferenceClick(final Preference pref) {
 					if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
-						Settings.setBallStartPosition(new Vector(3, 1, 4));
-						Settings.setBallStartSpeed(new Vector(0, 1.5f, -20));
+						Settings.setBallStartPosition(new Vector(3, 0.75f, 4));
+						Settings.setBallStartSpeed(new Vector(0, 5, -30));
 						Toast.makeText(SquashActivity.getInstance(), "Set up FH drive",	Toast.LENGTH_SHORT).show();
 //					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
 //						
@@ -242,6 +243,7 @@ public class SettingsFragment extends PreferenceFragment implements
 			result = "z = " + Settings.getValue(key);
 		else if (key.equals(Settings.getKeySpeedFactor())
 				|| key.equals(Settings.getKeyCoefficientOfRestitution())
+				|| key.equals(Settings.getKeyImpactExponent())
 				|| key.equals(Settings.getKeyCoefficientOfRollFriction()))
 			result = Settings.getValue(key).toString();
 		else if (key.equals(Settings.getKeySeatRowsBack())

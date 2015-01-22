@@ -128,7 +128,7 @@ public class Movable {
 		// set forces
 		airFriction.setDirection(speed.getNormalizedVector().multiply(
 				-((Ball)mShape).getDragFactor() * speed.getLength() * speed.getLength()));
-		rollFriction.setDirection(airFriction.multiply(Settings.getCoefficientOfRollFriction()));
+		rollFriction.setDirection(airFriction.getNormalizedVector().multiply(Settings.getCoefficientOfRollFriction()));
 		// calculate acceleration
 		final IVector acceleration = airFriction.add(rollFriction); // don't add gravitation since that is being offset by the normalkraft
 		
@@ -198,8 +198,10 @@ public class Movable {
 			// calculate ausfallswinkel (= einfallswinkel, must change that)
 			final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
 			
-			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
-			
+			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))); // formula for ausfallswinkel
+			final float speedFactor = 1 / (float)Math.pow((double)newSpeed.getLength(), Settings.getImpactExponent()) * Settings.getCoefficientOfRestitution();
+//			Log.e(TAG, "Speed: " + newSpeed.getLength() + ", Speedfactor: " + speedFactor);
+			newSpeed.setDirection(newSpeed.multiply(speedFactor)); // * Settings.getCoefficientOfRestitution()));
 			speed.setDirection(newSpeed);
 			
 			moveRolling(newDt);
@@ -275,8 +277,10 @@ public class Movable {
 			// calculate ausfallswinkel (= einfallswinkel, must change that)
 			final IVector n = mLastMovementCollision.solidNormalVector.getNormalizedVector();
 			
-			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))).multiply(Settings.getCoefficientOfRestitution()); // formula for ausfallswinkel
-			
+			final IVector newSpeed = speed.add(n.multiply(-2 * speed.multiply(n))); // formula for ausfallswinkel
+			final float speedFactor = 1 / (float)Math.pow((double)newSpeed.getLength(), Settings.getImpactExponent()) * Settings.getCoefficientOfRestitution();
+//			Log.e(TAG, "Speed: " + newSpeed.getLength() + ", Speedfactor: " + speedFactor);
+			newSpeed.setDirection(newSpeed.multiply(speedFactor)); // * Settings.getCoefficientOfRestitution()));
 			speed.setDirection(newSpeed);
 			
 			// it is possible that we're rolling now

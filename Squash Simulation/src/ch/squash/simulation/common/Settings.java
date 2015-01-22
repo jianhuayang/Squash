@@ -95,6 +95,10 @@ public final class Settings {
 		return mResources.getString(R.string.key_coefficient_of_restitution);
 	}
 
+	public static String getKeyImpactExponent() {
+		return mResources.getString(R.string.key_impact_exponent);
+	}
+
 	public static String getKeyCoefficientOfRollFriction() {
 		return mResources.getString(R.string.key_coefficient_of_roll_friction);
 	}
@@ -292,6 +296,11 @@ public final class Settings {
 	public static float getCoefficientOfRestitution() {
 		return Float.parseFloat(mSharedPrefs.getString(
 				getKeyCoefficientOfRestitution(), "0.75f"));
+	}
+
+	public static float getImpactExponent() {
+		return Float.parseFloat(mSharedPrefs.getString(
+				getKeyImpactExponent(), "0.25f"));
 	}
 
 	public static float getCoefficientOfRollFriction() {
