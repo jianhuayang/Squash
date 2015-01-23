@@ -125,7 +125,15 @@ public class SettingsFragment extends PreferenceFragment implements
 		setShotOnClickListener(new Preference[] {
 				findPreference(mResources.getString(R.string.key_fh_drive)),
 				findPreference(mResources.getString(R.string.key_fh_short_drop)),
-				findPreference(mResources.getString(R.string.key_fh_long_drop)) });
+				findPreference(mResources.getString(R.string.key_fh_long_drop)),
+				findPreference(mResources.getString(R.string.key_fh_boast)),
+				findPreference(mResources.getString(R.string.key_fh_serve)),
+				
+				findPreference(mResources.getString(R.string.key_bh_drive)),
+				findPreference(mResources.getString(R.string.key_bh_short_drop)),
+				findPreference(mResources.getString(R.string.key_bh_long_drop)),
+				findPreference(mResources.getString(R.string.key_bh_boast)),
+				findPreference(mResources.getString(R.string.key_bh_serve)) });
 
 		Log.i(TAG, "SettingsFragment created");
 	}
@@ -136,19 +144,20 @@ public class SettingsFragment extends PreferenceFragment implements
 				public boolean onPreferenceClick(final Preference pref) {
 					if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
 						Settings.setBallStartPosition(new Vector(3, 0.75f, 4));
-						Settings.setBallStartSpeed(new Vector(0, 5, -30));
+						Settings.setBallStartSpeed(new Vector(0.65f, 5, -45));
 						Toast.makeText(SquashActivity.getInstance(), "Set up FH drive",	Toast.LENGTH_SHORT).show();
-//					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
-//						
-//					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
-//						
+					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_long_drop))) {
+						Settings.setBallStartPosition(new Vector(2, 0.5f, 3));
+						Settings.setBallStartSpeed(new Vector(1.7f, 3, -13.75f));
+						Toast.makeText(SquashActivity.getInstance(), "Set up FH short drop", Toast.LENGTH_SHORT).show();
 					} else {
 						Toast.makeText(SquashActivity.getInstance(), "Unknown shot '" + pref.getTitle() + "'",	Toast.LENGTH_SHORT).show();
 						Log.e(TAG, "Unkown shot preference key: " + pref.getKey());
 						return false;
 					}
 
-					Settings.setBoolean(Settings.getKeyReset(), false);
+					((CheckBoxPreference) findPreference(Settings.getKeyReset()))
+							.setChecked(true);
 					return true;
 				}
 			});

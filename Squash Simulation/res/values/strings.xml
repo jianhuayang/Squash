@@ -135,6 +135,7 @@
 	<string name="summary_shots">Set ball location and speed to pre-defined values</string>
 	
 	<string name="title_forehand">Forehand shots</string>
+	<string name="title_backhand">Backhand shots</string>
 	
 	<string name="title_fh_drive">Drive</string>
 	<string name="key_fh_drive">fh_drive</string>
@@ -142,5 +143,20 @@
 	<string name="key_fh_short_drop">fh_short_drop</string>
 	<string name="title_fh_long_drop">Long drop shot</string>
 	<string name="key_fh_long_drop">fh_long_drop</string>
+	<string name="title_fh_boast">Boast</string>
+	<string name="key_fh_boast">fh_boast</string>
+	<string name="title_fh_serve">Serve</string>
+	<string name="key_fh_serve">fh_serve</string>
+	
+	<string name="title_bh_drive">Drive</string>
+	<string name="key_bh_drive">bh_drive</string>
+	<string name="title_bh_short_drop">Short drop shot</string>
+	<string name="key_bh_short_drop">bh_short_drop</string>
+	<string name="title_bh_long_drop">Long drop shot</string>
+	<string name="key_bh_long_drop">bh_long_drop</string>
+	<string name="title_bh_boast">Boast</string>
+	<string name="key_bh_boast">bh_boast</string>
+	<string name="title_bh_serve">Serve</string>
+	<string name="key_bh_serve">bh_serve</string>
 	
 </resources>

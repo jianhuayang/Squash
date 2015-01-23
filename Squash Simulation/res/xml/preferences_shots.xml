@@ -15,6 +15,29 @@
             <Preference
                 android:key="@string/key_fh_long_drop"
                 android:title="@string/title_fh_long_drop" />
+            <Preference
+                android:key="@string/key_fh_boast"
+                android:title="@string/title_fh_boast" />
+            <Preference
+                android:key="@string/key_fh_serve"
+                android:title="@string/title_fh_serve" />
+        </PreferenceCategory>
+        <PreferenceCategory android:title="@string/title_backhand" >
+            <Preference
+                android:key="@string/key_bh_drive"
+                android:title="@string/title_bh_drive" />
+            <Preference
+                android:key="@string/key_bh_short_drop"
+                android:title="@string/title_bh_short_drop" />
+            <Preference
+                android:key="@string/key_bh_long_drop"
+                android:title="@string/title_bh_long_drop" />
+            <Preference
+                android:key="@string/key_bh_boast"
+                android:title="@string/title_bh_boast" />
+            <Preference
+                android:key="@string/key_bh_serve"
+                android:title="@string/title_bh_serve" />
         </PreferenceCategory>
     </PreferenceScreen>
 
