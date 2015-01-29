@@ -6,3 +6,9 @@
 - Rackets
 - SHADER-CLASSES THAT ARE USABLE LIKE THE SHAPECOLLECTIONS
 - REVISED (ABSTRACT)SHAPE-CREATION, NO MORE STATIC NONSENSE
+
+For submission:
+- add colorpicker library
+- add color preferences
+- add shots
+- export/import settings

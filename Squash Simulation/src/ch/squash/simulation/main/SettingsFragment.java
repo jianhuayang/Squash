@@ -149,7 +149,11 @@ public class SettingsFragment extends PreferenceFragment implements
 					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_long_drop))) {
 						Settings.setBallStartPosition(new Vector(2, 0.5f, 3));
 						Settings.setBallStartSpeed(new Vector(1.7f, 3, -13.75f));
-						Toast.makeText(SquashActivity.getInstance(), "Set up FH short drop", Toast.LENGTH_SHORT).show();
+						Toast.makeText(SquashActivity.getInstance(), "Set up FH short drop", Toast.LENGTH_SHORT).show();						
+					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_boast))) {
+						Settings.setBallStartPosition(new Vector(2.5f, 0.75f, 3.75f));
+						Settings.setBallStartSpeed(new Vector(23.25f, 5, -35));
+						Toast.makeText(SquashActivity.getInstance(), "Set up FH boast", Toast.LENGTH_SHORT).show();
 					} else {
 						Toast.makeText(SquashActivity.getInstance(), "Unknown shot '" + pref.getTitle() + "'",	Toast.LENGTH_SHORT).show();
 						Log.e(TAG, "Unkown shot preference key: " + pref.getKey());
