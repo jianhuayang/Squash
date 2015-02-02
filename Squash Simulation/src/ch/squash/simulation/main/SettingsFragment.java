@@ -142,26 +142,57 @@ public class SettingsFragment extends PreferenceFragment implements
 		for (final Preference p : shotPreferences) {
 			p.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				public boolean onPreferenceClick(final Preference pref) {
+					// forehand shots
 					if (pref.getKey().equals(mResources.getString(R.string.key_fh_drive))) {
 						Settings.setBallStartPosition(new Vector(3, 0.75f, 4));
 						Settings.setBallStartSpeed(new Vector(0.65f, 5, -45));
-						Toast.makeText(SquashActivity.getInstance(), "Set up FH drive",	Toast.LENGTH_SHORT).show();
+						Toast.makeText(SquashActivity.getInstance(), "Set up BH drive",	Toast.LENGTH_SHORT).show();
+					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_short_drop))) {
+						Settings.setBallStartPosition(new Vector(1.5f, 0.5f, -2));
+						Settings.setBallStartSpeed(new Vector(3.1f, 2.1f, -8));
+						Toast.makeText(SquashActivity.getInstance(), "Set up BH short drop", Toast.LENGTH_SHORT).show();		
 					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_long_drop))) {
 						Settings.setBallStartPosition(new Vector(2, 0.5f, 3));
 						Settings.setBallStartSpeed(new Vector(1.7f, 3, -13.75f));
-						Toast.makeText(SquashActivity.getInstance(), "Set up FH short drop", Toast.LENGTH_SHORT).show();						
+						Toast.makeText(SquashActivity.getInstance(), "Set up BH long drop", Toast.LENGTH_SHORT).show();						
 					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_boast))) {
 						Settings.setBallStartPosition(new Vector(2.5f, 0.75f, 3.75f));
 						Settings.setBallStartSpeed(new Vector(23.25f, 5, -35));
-						Toast.makeText(SquashActivity.getInstance(), "Set up FH boast", Toast.LENGTH_SHORT).show();
+						Toast.makeText(SquashActivity.getInstance(), "Set up BH boast", Toast.LENGTH_SHORT).show();					
+					} else if (pref.getKey().equals(mResources.getString(R.string.key_fh_serve))) {
+						Settings.setBallStartPosition(new Vector(1.25f, 1.25f, 0.5f));
+						Settings.setBallStartSpeed(new Vector(-5.35f, 10, -16.5f));
+						Toast.makeText(SquashActivity.getInstance(), "Set up BH serve", Toast.LENGTH_SHORT).show();
+						
+						// backhand shots
+					} else if (pref.getKey().equals(mResources.getString(R.string.key_bh_drive))) {
+							Settings.setBallStartPosition(new Vector(-3, 0.75f, 4));
+							Settings.setBallStartSpeed(new Vector(-0.65f, 5, -45));
+							Toast.makeText(SquashActivity.getInstance(), "Set up BH drive",	Toast.LENGTH_SHORT).show();
+						} else if (pref.getKey().equals(mResources.getString(R.string.key_bh_short_drop))) {
+							Settings.setBallStartPosition(new Vector(-1.5f, 0.5f, -2));
+							Settings.setBallStartSpeed(new Vector(-3.1f, 2.1f, -8));
+							Toast.makeText(SquashActivity.getInstance(), "Set up BH short drop", Toast.LENGTH_SHORT).show();		
+						} else if (pref.getKey().equals(mResources.getString(R.string.key_bh_long_drop))) {
+							Settings.setBallStartPosition(new Vector(-2, 0.5f, 3));
+							Settings.setBallStartSpeed(new Vector(-1.7f, 3, -13.75f));
+							Toast.makeText(SquashActivity.getInstance(), "Set up BH long drop", Toast.LENGTH_SHORT).show();						
+						} else if (pref.getKey().equals(mResources.getString(R.string.key_bh_boast))) {
+							Settings.setBallStartPosition(new Vector(-2.5f, 0.75f, 3.75f));
+							Settings.setBallStartSpeed(new Vector(-23.25f, 5, -35));
+							Toast.makeText(SquashActivity.getInstance(), "Set up BH boast", Toast.LENGTH_SHORT).show();					
+						} else if (pref.getKey().equals(mResources.getString(R.string.key_bh_serve))) {
+							Settings.setBallStartPosition(new Vector(-1.25f, 1.25f, 0.5f));
+							Settings.setBallStartSpeed(new Vector(5.35f, 10, -16.5f));
+							Toast.makeText(SquashActivity.getInstance(), "Set up BH serve", Toast.LENGTH_SHORT).show();
 					} else {
 						Toast.makeText(SquashActivity.getInstance(), "Unknown shot '" + pref.getTitle() + "'",	Toast.LENGTH_SHORT).show();
 						Log.e(TAG, "Unkown shot preference key: " + pref.getKey());
 						return false;
 					}
-
-					((CheckBoxPreference) findPreference(Settings.getKeyReset()))
-							.setChecked(true);
+					
+					MovementEngine.resetMovables();
+					
 					return true;
 				}
 			});
@@ -190,6 +221,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		} else if (key.equals(Settings.getKeyReset()) && Settings.isReset()) {
 			// reset moveables
 			MovementEngine.resetMovables();
+			Log.e(TAG, "RESET MOVABLESSSSSSSSSS");
 		} else if (key.equals(Settings.getKeyBallPositionX())
 				|| key.equals(Settings.getKeyBallPositionY())
 				|| key.equals(Settings.getKeyBallPositionZ())) {

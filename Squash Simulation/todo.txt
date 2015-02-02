@@ -10,5 +10,5 @@
 For submission:
 - add colorpicker library
 - add color preferences
-- add shots
 - export/import settings
+- add flying camera?
