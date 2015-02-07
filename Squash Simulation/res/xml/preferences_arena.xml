@@ -25,15 +25,15 @@
                 android:key="@string/key_color_background"
                 android:title="@string/title_color_background" />
             <yuku.ambilwarna.widget.AmbilWarnaPreference
-                android:defaultValue="0xffffff"
+                android:defaultValue="0x4D00ff"
                 android:key="@string/key_color_seat"
                 android:title="@string/title_color_seat" />
             <yuku.ambilwarna.widget.AmbilWarnaPreference
-                android:defaultValue="0xffffff"
+                android:defaultValue="0x330033"
                 android:key="@string/key_color_floor"
                 android:title="@string/title_color_floor" />
             <yuku.ambilwarna.widget.AmbilWarnaPreference
-                android:defaultValue="0xffffff"
+                android:defaultValue="0x001A4D"
                 android:key="@string/key_color_wall"
                 android:title="@string/title_color_wall" />
         </PreferenceCategory>

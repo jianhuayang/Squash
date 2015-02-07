@@ -115,6 +115,18 @@ public final class Settings {
 		return mResources.getString(R.string.key_color_background);
 	}
 
+	public static String getKeyColorSeat() {
+		return mResources.getString(R.string.key_color_seat);
+	}
+
+	public static String getKeyColorFloor() {
+		return mResources.getString(R.string.key_color_floor);
+	}
+
+	public static String getKeyColorWall() {
+		return mResources.getString(R.string.key_color_wall);
+	}
+
 	/**********
 	 * SETTER *
 	 **********/
@@ -323,6 +335,18 @@ public final class Settings {
 	}
 
 	public static int getBackgroundColor() {
-		return mSharedPrefs.getInt(getKeyColorBackground(), 0xffffffff);
+		return mSharedPrefs.getInt(getKeyColorBackground(), 0xffffff);
+	}
+	
+	public static int getSeatColor() {
+		return mSharedPrefs.getInt(getKeyColorSeat(), 0x4D00ff);
+	}
+	
+	public static int getFloorColor() {
+		return mSharedPrefs.getInt(getKeyColorFloor(), 0x330033);
+	}
+	
+	public static int getWallColor() {
+		return mSharedPrefs.getInt(getKeyColorWall(), 0x001A4D);
 	}
 }

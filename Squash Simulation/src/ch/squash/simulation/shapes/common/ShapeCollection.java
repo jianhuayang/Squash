@@ -19,14 +19,9 @@ public class ShapeCollection {
 	private final int mObjectCollectionType;
 
 	private final static String FLOOR_LINE = "floor line";
-	private final static float[] COLOR_FLOOR = new float[] { 0.2f, 0, 0.2f, 1 };
-	private final static float[] COLOR_STAND_VERTICAL = new float[] { 0, 0.1f,
-			0.3f, 1 };
-	private final static float[] COLOR_STAND_HORIZONTAL = new float[] { 0.1f,
-			0f, 0.2f, 1 };
-	private final static float[] COLOR_STAND_OUTSIDE = new float[] { 0.2f,
-			0.2f, 0.2f, 1 };
-	private final static float[] COLOR_CHAIR = new float[] { 0.3f, 0, 1, 1 };
+	private static float[] COLOR_FLOOR = new float[] { 0.2f, 0, 0.2f, 1 };
+	private static float[] COLOR_WALL;
+	private static float[] COLOR_CHAIR;
 	private final static float STAND_STEP_WIDTH = 1f;
 	private final static float STAND_STEP_HEIGHT = 0.5f;
 	private final static float STAND_CHAIR_SIZE = 0.5f;
@@ -71,12 +66,26 @@ public class ShapeCollection {
 	private void loadArenaConstants() {
 		mStandCountBack = Settings.getSeatRowsBack();
 		mStandCountFrontSide = Settings.getSeatRowsFrontSide();
+
+		COLOR_CHAIR = colorIntToFloatArray(Settings.getSeatColor());
+		COLOR_FLOOR = colorIntToFloatArray(Settings.getFloorColor());
+		COLOR_WALL = colorIntToFloatArray(Settings.getWallColor());
+	}
+
+	private static float[] colorIntToFloatArray(final int color) {
+		final float r = (float) ((color & 0xff0000) >> 16) / 0xff;
+		final float g = (float) ((color & 0xff00) >> 8) / 0xff;
+		final float b = (float) ((color & 0xff)) / 0xff;
+
+		return new float[] { r, g, b, 1 };
 	}
 
 	public void reCreate() {
+		// cleanup
 		mTransparentObjects.clear();
 		mOpaqueObjects.clear();
 
+		// add objects
 		if (mObjectCollectionType == OBJECT_COLLECTION_COURT) {
 			addCourtObjects();
 		} else if (mObjectCollectionType == OBJECT_COLLECTION_ARENA) {
@@ -300,8 +309,8 @@ public class ShapeCollection {
 				-4.26f - mStandCountFrontSide * STAND_STEP_WIDTH, 0,
 				-6.49f - mStandCountBack * STAND_STEP_WIDTH,
 				4.26f + mStandCountFrontSide * STAND_STEP_WIDTH, 0,
-				-6.49f - mStandCountBack * STAND_STEP_WIDTH, },
-				COLOR_STAND_OUTSIDE, false));
+				-6.49f - mStandCountBack * STAND_STEP_WIDTH, }, COLOR_WALL,
+				false));
 
 		// stands - backwall
 		for (int i = 0; i < mStandCountBack - 1; i++) {
@@ -315,9 +324,9 @@ public class ShapeCollection {
 					(i + 1) * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH,
 					4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
 					i * STAND_STEP_HEIGHT, 5.26f + i * STAND_STEP_WIDTH },
-					COLOR_STAND_VERTICAL, false));
-			mOpaqueObjects.add(new Quadrilateral("stand_back",
-					new float[] {
+					COLOR_WALL, false));
+			mOpaqueObjects
+					.add(new Quadrilateral("stand_back", new float[] {
 							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
 							5.26f + i * STAND_STEP_WIDTH,
@@ -329,35 +338,33 @@ public class ShapeCollection {
 							5.26f + (i + 1) * STAND_STEP_WIDTH,
 							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
-							5.26f + i * STAND_STEP_WIDTH },
-					COLOR_STAND_HORIZONTAL, false));
+							5.26f + i * STAND_STEP_WIDTH }, COLOR_FLOOR, false));
 			// outside
-			mOpaqueObjects.add(new Quadrilateral("stand_back_outside",
-					new float[] {
-							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
-							0, 5.26f + i * STAND_STEP_WIDTH,
-							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
-							0, 5.26f + (i + 1) * STAND_STEP_WIDTH,
+			mOpaqueObjects
+					.add(new Quadrilateral("stand_back_outside", new float[] {
+							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH, 0,
+							5.26f + i * STAND_STEP_WIDTH,
+							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH, 0,
+							5.26f + (i + 1) * STAND_STEP_WIDTH,
 							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
 							5.26f + (i + 1) * STAND_STEP_WIDTH,
 							-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
-							5.26f + i * STAND_STEP_WIDTH, },
-					COLOR_STAND_OUTSIDE, false));
+							5.26f + i * STAND_STEP_WIDTH, }, COLOR_WALL, false));
 			mOpaqueObjects.add(new Quadrilateral("stand_back_outside",
 					new float[] {
-							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
-							0, 5.26f + (i + 1) * STAND_STEP_WIDTH,
-							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
-							0, 5.26f + i * STAND_STEP_WIDTH,
+							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH, 0,
+							5.26f + (i + 1) * STAND_STEP_WIDTH,
+							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH, 0,
+							5.26f + i * STAND_STEP_WIDTH,
 							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
 							5.26f + i * STAND_STEP_WIDTH,
 							4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT,
-							5.26f + (i + 1) * STAND_STEP_WIDTH, },
-					COLOR_STAND_OUTSIDE, false));
+							5.26f + (i + 1) * STAND_STEP_WIDTH, }, COLOR_WALL,
+					false));
 		}
 		// outside
 		mOpaqueObjects.add(new Quadrilateral("stand_back_outside", new float[] {
@@ -370,8 +377,8 @@ public class ShapeCollection {
 				-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH, 0,
 				5.26f + mStandCountBack * STAND_STEP_WIDTH,
 				4.2f + mStandCountFrontSide * STAND_STEP_WIDTH, 0,
-				5.26f + mStandCountBack * STAND_STEP_WIDTH, },
-				COLOR_STAND_OUTSIDE, false));
+				5.26f + mStandCountBack * STAND_STEP_WIDTH, }, COLOR_WALL,
+				false));
 
 		// stands - left sidewall
 		for (int i = 0; i < mStandCountFrontSide - 1; i++) {
@@ -381,8 +388,7 @@ public class ShapeCollection {
 					4.26f, -4.2f - i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT,
 					-6.49f - i * STAND_STEP_WIDTH,
 					-4.2f - i * STAND_STEP_WIDTH, (i + 1) * STAND_STEP_HEIGHT,
-					-6.49f - i * STAND_STEP_WIDTH }, COLOR_STAND_VERTICAL,
-					false));
+					-6.49f - i * STAND_STEP_WIDTH }, COLOR_WALL, false));
 			mOpaqueObjects.add(new Quadrilateral("stand_left", new float[] {
 					-4.2f - (i + 1) * STAND_STEP_WIDTH,
 					(i + 1) * STAND_STEP_HEIGHT, 4.26f,
@@ -391,8 +397,7 @@ public class ShapeCollection {
 					(i + 1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
 					-4.2f - (i + 1) * STAND_STEP_WIDTH,
 					(i + 1) * STAND_STEP_HEIGHT,
-					-6.49f - (i + 1) * STAND_STEP_WIDTH },
-					COLOR_STAND_HORIZONTAL, false));
+					-6.49f - (i + 1) * STAND_STEP_WIDTH }, COLOR_FLOOR, false));
 			// outside
 			mOpaqueObjects.add(new Quadrilateral("stand_left_outside",
 					new float[] { -4.2f - (i + 1) * STAND_STEP_WIDTH, 0, 4.26f,
@@ -400,8 +405,8 @@ public class ShapeCollection {
 							-4.2f - i * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT, 4.26f,
 							-4.2f - (i + 1) * STAND_STEP_WIDTH,
-							(i + 1) * STAND_STEP_HEIGHT, 4.26f },
-					COLOR_STAND_OUTSIDE, false));
+							(i + 1) * STAND_STEP_HEIGHT, 4.26f }, COLOR_WALL,
+					false));
 		}
 		// outside
 		mOpaqueObjects.add(new Quadrilateral("stand_left_outside", new float[] {
@@ -413,7 +418,7 @@ public class ShapeCollection {
 				-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
 				mStandCountFrontSide * STAND_STEP_HEIGHT,
 				-6.49f - mStandCountFrontSide * STAND_STEP_WIDTH, },
-				COLOR_STAND_OUTSIDE, false));
+				COLOR_WALL, false));
 
 		// stands - frontwall
 		for (int i = 0; i < mStandCountFrontSide - 1; i++) {
@@ -424,8 +429,7 @@ public class ShapeCollection {
 					-6.49f - i * STAND_STEP_WIDTH, 4.2f + i * STAND_STEP_WIDTH,
 					i * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
 					4.2f + i * STAND_STEP_WIDTH, (i + 1) * STAND_STEP_HEIGHT,
-					-6.49f - i * STAND_STEP_WIDTH }, COLOR_STAND_VERTICAL,
-					false));
+					-6.49f - i * STAND_STEP_WIDTH }, COLOR_WALL, false));
 			mOpaqueObjects.add(new Quadrilateral("stand_front", new float[] {
 					-4.2f - (i + 1) * STAND_STEP_WIDTH,
 					(i + 1) * STAND_STEP_HEIGHT,
@@ -435,13 +439,11 @@ public class ShapeCollection {
 					(i + 1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
 					4.2f + (i + 1) * STAND_STEP_WIDTH,
 					(i + 1) * STAND_STEP_HEIGHT,
-					-6.49f - (i + 1) * STAND_STEP_WIDTH },
-					COLOR_STAND_HORIZONTAL, false));
+					-6.49f - (i + 1) * STAND_STEP_WIDTH }, COLOR_FLOOR, false));
 		}
 		// outside
 		mOpaqueObjects.add(new Quadrilateral("stand_front_outside",
-				new float[] {
-						-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
+				new float[] { -4.2f - mStandCountFrontSide * STAND_STEP_WIDTH,
 						mStandCountFrontSide * STAND_STEP_HEIGHT,
 						-6.49f - mStandCountFrontSide * STAND_STEP_WIDTH,
 						4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
@@ -451,7 +453,7 @@ public class ShapeCollection {
 						-6.49f - mStandCountFrontSide * STAND_STEP_WIDTH,
 						-4.2f - mStandCountFrontSide * STAND_STEP_WIDTH, 0,
 						-6.49f - mStandCountFrontSide * STAND_STEP_WIDTH, },
-				COLOR_STAND_OUTSIDE, false));
+				COLOR_WALL, false));
 
 		// stands - right sidewall
 		for (int i = 0; i < mStandCountFrontSide - 1; i++) {
@@ -461,8 +463,7 @@ public class ShapeCollection {
 					4.26f, 4.2f + i * STAND_STEP_WIDTH,
 					(i + 1) * STAND_STEP_HEIGHT, -6.49f - i * STAND_STEP_WIDTH,
 					4.2f + i * STAND_STEP_WIDTH, i * STAND_STEP_HEIGHT,
-					-6.49f - i * STAND_STEP_WIDTH }, COLOR_STAND_VERTICAL,
-					false));
+					-6.49f - i * STAND_STEP_WIDTH }, COLOR_WALL, false));
 			mOpaqueObjects.add(new Quadrilateral("stand_right", new float[] {
 					4.2f + i * STAND_STEP_WIDTH, (i + 1) * STAND_STEP_HEIGHT,
 					4.26f, 4.2f + (i + 1) * STAND_STEP_WIDTH,
@@ -471,8 +472,7 @@ public class ShapeCollection {
 					(i + 1) * STAND_STEP_HEIGHT,
 					-6.49f - (i + 1) * STAND_STEP_WIDTH,
 					4.2f + i * STAND_STEP_WIDTH, (i + 1) * STAND_STEP_HEIGHT,
-					-6.49f - i * STAND_STEP_WIDTH }, COLOR_STAND_HORIZONTAL,
-					false));
+					-6.49f - i * STAND_STEP_WIDTH }, COLOR_FLOOR, false));
 			// outside
 			mOpaqueObjects.add(new Quadrilateral("stand_right_outside",
 					new float[] { 4.2f + i * STAND_STEP_WIDTH, 0, 4.26f,
@@ -480,8 +480,8 @@ public class ShapeCollection {
 							4.2f + (i + 1) * STAND_STEP_WIDTH,
 							(i + 1) * STAND_STEP_HEIGHT, 4.26f,
 							4.2f + i * STAND_STEP_WIDTH,
-							(i + 1) * STAND_STEP_HEIGHT, 4.26f, },
-					COLOR_STAND_OUTSIDE, false));
+							(i + 1) * STAND_STEP_HEIGHT, 4.26f, }, COLOR_WALL,
+					false));
 		}
 		// outside
 		mOpaqueObjects.add(new Quadrilateral("stand_right_outside",
@@ -494,11 +494,10 @@ public class ShapeCollection {
 						-6.49f - mStandCountFrontSide * STAND_STEP_WIDTH,
 						4.2f + mStandCountFrontSide * STAND_STEP_WIDTH,
 						mStandCountFrontSide * STAND_STEP_HEIGHT, 4.26f, },
-				COLOR_STAND_OUTSIDE, false));
+				COLOR_WALL, false));
 	}
 
 	private void addChairObjects() {
-
 		final float arenaWidth = 2 * mStandCountFrontSide * STAND_STEP_WIDTH
 				+ 2 + 6.4f;
 

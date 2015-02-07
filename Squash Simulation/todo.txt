@@ -8,6 +8,4 @@
 - REVISED (ABSTRACT)SHAPE-CREATION, NO MORE STATIC NONSENSE
 
 For submission:
-- add color preferences
 - export/import settings
-- add flying camera?
