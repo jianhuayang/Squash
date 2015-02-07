@@ -111,6 +111,10 @@ public final class Settings {
 		return mResources.getString(R.string.key_seat_rows_front_side);
 	}
 
+	public static String getKeyColorBackground() {
+		return mResources.getString(R.string.key_color_background);
+	}
+
 	/**********
 	 * SETTER *
 	 **********/
@@ -316,5 +320,9 @@ public final class Settings {
 	public static int getSeatRowsFrontSide() {
 		return Integer.parseInt(mSharedPrefs.getString(
 				getKeySeatRowsFrontSide(), "4"));
+	}
+
+	public static int getBackgroundColor() {
+		return mSharedPrefs.getInt(getKeyColorBackground(), 0xffffffff);
 	}
 }

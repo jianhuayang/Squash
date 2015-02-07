@@ -3,6 +3,8 @@ package ch.squash.simulation.main;
 import java.util.HashSet;
 import java.util.Set;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,7 +39,8 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 	private GestureDetectorCompat mDetector; // handles complex gestures
 
-	private boolean mIgnoringEvent;	// true if the current event is being ignored
+	private boolean mIgnoringEvent; // true if the current event is being
+									// ignored
 
 	private boolean mShowingUi = true; // true if the UI (buttons and title bar)
 										// are currently visible
@@ -75,7 +78,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		} else {
 			SquashView.getInstance().hideHud();
 		}
-		
+
 		// retrieve reference to layout
 		mLayout = (RelativeLayout) findViewById(R.id.layout);
 
@@ -84,7 +87,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		mDetector.setOnDoubleTapListener(this);
 
 		// hide the ui initially
-//		toggleUi();
+		// toggleUi();
 
 		Log.i(TAG, "SquashActivity created");
 	}
@@ -127,7 +130,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 		// launch activity
 		startActivityForResult(intent, RESULT_SETTINGS);
-		
+
 		Log.d(TAG, "SettingsActivity started");
 
 		return true;
@@ -136,17 +139,17 @@ public class SquashActivity extends Activity implements OnGestureListener,
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		SquashView.getInstance().onPause();
-		
-		//destroy shaders so that new ones will be created
+
+		// destroy shaders so that new ones will be created
 		Shader.destroyShaders();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		SquashView.getInstance().onResume();
 	}
 
@@ -254,7 +257,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		// Log.d(TAG, "onDoubleTap: " + event.toString());
 
 		randomizeMovables(null);
-		
+
 		return true;
 	}
 
@@ -269,14 +272,15 @@ public class SquashActivity extends Activity implements OnGestureListener,
 		// Log.d(TAG, "onSingleTapConfirmed: " + event.toString());
 
 		startStopMovementEngine(null);
-		
+
 		return true;
 	}
-	
+
 	public void showControls(final View view) {
-		Toast.makeText(this, "CONTROLS NOT IMPLEMENTED", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "CONTROLS NOT IMPLEMENTED", Toast.LENGTH_SHORT)
+				.show();
 	}
-	
+
 	public void randomizeMovables(final View view) {
 		if (MovementEngine.isRunning()) {
 			MovementEngine.pause();
@@ -284,7 +288,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 		MovementEngine.setRandomDirection();
 	}
-	
+
 	public void startStopMovementEngine(final View view) {
 		Toast.makeText(
 				SquashActivity.getInstance(),
@@ -293,7 +297,7 @@ public class SquashActivity extends Activity implements OnGestureListener,
 				Toast.LENGTH_SHORT).show();
 		MovementEngine.toggleRunning();
 	}
-	
+
 	public void resetMovables(final View view) {
 		MovementEngine.pause();
 		MovementEngine.resetMovables();

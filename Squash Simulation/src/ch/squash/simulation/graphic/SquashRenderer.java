@@ -143,8 +143,13 @@ public class SquashRenderer implements GLSurfaceView.Renderer {
 	// overridden methods
 	@Override
 	public void onSurfaceCreated(final GL10 glUnused, final EGLConfig config) {
-		// Set the background clear color to black
-		GLES20.glClearColor(1, 1, 1, 0);
+		// get background color
+		final int clearColor = Settings.getBackgroundColor();
+		// extract color component in range [0,1]
+		final float r = (float)((clearColor & 0xff0000) >> 16) / 0xff;
+		final float g = (float)((clearColor & 0xff00) >> 8) / 0xff;
+		final float b = (float)((clearColor & 0xff)) / 0xff;
+		GLES20.glClearColor(r, g, b, 0);
 
 		// Use culling to remove back faces.
 		GLES20.glEnable(GLES20.GL_CULL_FACE);

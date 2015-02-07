@@ -130,7 +130,17 @@
 	<string name="key_seat_rows_front_side">seat_rows_front_side</string>
 	<string name="title_seat_rows_front_side">Seat rows at the front and the sides</string>
 	<string name="default_seat_rows_front_side">4</string>
-	
+
+	<string name="title_arena_colors">Change color of elements of the arena</string>
+	<string name="key_color_background">color_background</string>
+	<string name="title_color_background">Background color of the world</string>
+	<string name="key_color_seat">color_seat</string>
+	<string name="title_color_seat">Color of the seats</string>
+	<string name="key_color_floor">color_floor</string>
+	<string name="title_color_floor">Color of the floor</string>
+	<string name="key_color_wall">color_wall</string>
+	<string name="title_color_wall">Color of the walls on the stands</string>
+		
 	<string name="title_shots">Pre-definied shots</string>
 	<string name="summary_shots">Set ball location and speed to pre-defined values</string>
 	
