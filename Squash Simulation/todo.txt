@@ -9,3 +9,5 @@
 
 For submission:
 - export/import settings
+- remove controls button
+- auto-rotate

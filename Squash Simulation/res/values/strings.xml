@@ -2,6 +2,7 @@
 <resources>
     <!-- GENERAL -->
     <string name="app_name">Squash Simulation</string>
+	<string name="app_description">Simulation of the environment on a Squash court.</string>
 	
 	<!-- BUTTONS -->
 	<string name="button_controls">Controls</string>

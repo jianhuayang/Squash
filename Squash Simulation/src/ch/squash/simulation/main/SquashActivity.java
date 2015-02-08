@@ -3,8 +3,6 @@ package ch.squash.simulation.main;
 import java.util.HashSet;
 import java.util.Set;
 
-import yuku.ambilwarna.AmbilWarnaDialog;
-import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
