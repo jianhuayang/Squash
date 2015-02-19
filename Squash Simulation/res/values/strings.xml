@@ -170,4 +170,10 @@
 	<string name="title_bh_serve">Serve</string>
 	<string name="key_bh_serve">bh_serve</string>
 	
+	<!-- About -->
+	<string name="about_author">Created by Fabian Furger (2014-2015)</string>
+	<string name="about_project">\"Squash Simulation\" started as a hobby project trying to simulate the environment on a squash court and was improved in the course of the \"Mobile Application Development\" module at Coventry University, England.</string>
+	<string name="about_title_libraries">External libraries</string>
+	<string name="about_summary_libraries">Graphics are displayed using OpenGL for ES, version 2.0.
+The color picker preferences are created using Ambilwarna (https://github.com/yukuku/ambilwarna).</string>
 </resources>

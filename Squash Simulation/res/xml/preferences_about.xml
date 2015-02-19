@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="About" >
+        <Preference
+            android:persistent="false"
+            android:selectable="false"
+            android:summary="@string/about_project"
+            android:title="@string/about_author" >
+        </Preference>
+        <Preference
+            android:persistent="false"
+            android:selectable="false"
+            android:summary="@string/about_summary_libraries"
+            android:title="@string/about_title_libraries" >
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

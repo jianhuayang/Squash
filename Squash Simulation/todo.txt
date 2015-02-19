@@ -8,6 +8,4 @@
 - REVISED (ABSTRACT)SHAPE-CREATION, NO MORE STATIC NONSENSE
 
 For submission:
-- export/import settings
-- remove controls button
-- auto-rotate
+- export/import settings?

@@ -70,6 +70,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		addPreferencesFromResource(R.xml.preferences_world);
 		addPreferencesFromResource(R.xml.preferences_arena);
 		addPreferencesFromResource(R.xml.preferences_shots);
+		addPreferencesFromResource(R.xml.preferences_about);
 
 		// fill entry values etc
 		ListPreference listPref = (ListPreference) findPreference(Settings
