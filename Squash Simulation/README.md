@@ -1,4 +1,4 @@
-# Project that is submitted as a challenge for the module 387com (Mobile Application Development) at Coventry University (Spring, 2015)
+# Project submitted as a challenge for the module 387com (Mobile Application Development) at Coventry University (Spring, 2015)
 
 ## Overview
 This project was initially created as an exercise for Android development and 3D-modeling with OpenGL for Embedded Systems. This project was started about a year ago (February 2014) and developed in my spare time. In the course of the module taught at Coventry University and for this submission, I improved various aspects of the application. The changes that were made for this submissions are those from [commit e3fe0795fee0f63f6d5da3eb36cf54ab52338beb](https://github.com/furgerf/Squash/commit/e3fe0795fee0f63f6d5da3eb36cf54ab52338beb) onwards.
