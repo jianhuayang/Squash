@@ -38,6 +38,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 
 		// GL stuff
 		setEGLContextClientVersion(2);
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		setRenderer(SquashRenderer.getInstance());
 		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
@@ -104,7 +105,7 @@ public class SquashView extends GLSurfaceView implements SurfaceHolder.Callback 
 									+ "/"
 									+ String.format("%.2f", location.getZ());
 							final IVector speed = ball.getMovable().speed;
-							final String speedString = "Speed:\t\t\t"
+							final String speedString = "Speed:\t\t"
 									+ String.format("%.2f", speed.getX()) + "/"
 									+ String.format("%.2f", speed.getY()) + "/"
 									+ String.format("%.2f", speed.getZ());

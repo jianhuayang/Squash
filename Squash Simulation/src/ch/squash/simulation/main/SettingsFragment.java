@@ -149,20 +149,20 @@ public class SettingsFragment extends PreferenceFragment implements
 						Settings.setBallStartPosition(new Vector(3, 0.75f, 4));
 						Settings.setBallStartSpeed(new Vector(0.65f, 5, -45));
 						Toast.makeText(SquashActivity.getInstance(),
-								"Set up BH drive", Toast.LENGTH_SHORT).show();
+								"Set up FH drive", Toast.LENGTH_SHORT).show();
 					} else if (pref.getKey().equals(
 							mResources.getString(R.string.key_fh_short_drop))) {
 						Settings.setBallStartPosition(new Vector(1.5f, 0.5f, -2));
 						Settings.setBallStartSpeed(new Vector(3.1f, 2.1f, -8));
 						Toast.makeText(SquashActivity.getInstance(),
-								"Set up BH short drop", Toast.LENGTH_SHORT)
+								"Set up FH short drop", Toast.LENGTH_SHORT)
 								.show();
 					} else if (pref.getKey().equals(
 							mResources.getString(R.string.key_fh_long_drop))) {
 						Settings.setBallStartPosition(new Vector(2, 0.5f, 3));
 						Settings.setBallStartSpeed(new Vector(1.7f, 3, -13.75f));
 						Toast.makeText(SquashActivity.getInstance(),
-								"Set up BH long drop", Toast.LENGTH_SHORT)
+								"Set up FH long drop", Toast.LENGTH_SHORT)
 								.show();
 					} else if (pref.getKey().equals(
 							mResources.getString(R.string.key_fh_boast))) {
@@ -170,7 +170,7 @@ public class SettingsFragment extends PreferenceFragment implements
 								3.75f));
 						Settings.setBallStartSpeed(new Vector(23.25f, 5, -35));
 						Toast.makeText(SquashActivity.getInstance(),
-								"Set up BH boast", Toast.LENGTH_SHORT).show();
+								"Set up FH boast", Toast.LENGTH_SHORT).show();
 					} else if (pref.getKey().equals(
 							mResources.getString(R.string.key_fh_serve))) {
 						Settings.setBallStartPosition(new Vector(1.25f, 1.25f,
@@ -178,7 +178,7 @@ public class SettingsFragment extends PreferenceFragment implements
 						Settings.setBallStartSpeed(new Vector(-5.35f, 10,
 								-16.5f));
 						Toast.makeText(SquashActivity.getInstance(),
-								"Set up BH serve", Toast.LENGTH_SHORT).show();
+								"Set up FH serve", Toast.LENGTH_SHORT).show();
 
 						// backhand shots
 					} else if (pref.getKey().equals(

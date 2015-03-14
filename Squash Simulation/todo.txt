@@ -1,4 +1,3 @@
-- Physics
 - Mode to control camera manually
 - Textures
 - Light
@@ -6,6 +5,3 @@
 - Rackets
 - SHADER-CLASSES THAT ARE USABLE LIKE THE SHAPECOLLECTIONS
 - REVISED (ABSTRACT)SHAPE-CREATION, NO MORE STATIC NONSENSE
-
-For submission:
-- export/import settings?

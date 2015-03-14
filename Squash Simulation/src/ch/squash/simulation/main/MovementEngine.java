@@ -101,7 +101,7 @@ public final class MovementEngine {
 		else if ("tin wall inside".equals(desc) || "tin line".equals(desc))
 			mInstance.mSoundPool.play(mInstance.mSoundTin, 0.5f, 0.5f, 1, 0, 1);
 		else
-			mInstance.mSoundPool.play(mInstance.mSoundBeep, 0.05f, 0.05f, 1, 0, 1);
+			mInstance.mSoundPool.play(mInstance.mSoundFrontWall, 0.5f, 0.5f, 1, 0, 1);
 	}
 
 	public static void initialize(final Movable[] movables) {
