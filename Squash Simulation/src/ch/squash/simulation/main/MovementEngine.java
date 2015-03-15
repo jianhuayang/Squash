@@ -28,7 +28,7 @@ public final class MovementEngine {
 	private final int mSoundBounce;
 	private final int mSoundFrontWall;
 	private final int mSoundTin;
-//	private final int mSoundBeep;
+	private final int mSoundBeep;
 
 	// control
 	private boolean mIsRunning;
@@ -124,8 +124,8 @@ public final class MovementEngine {
 				R.raw.frontwall, 1);
 		mSoundTin = mSoundPool.load(SquashActivity.getInstance(),
 				R.raw.tin, 1);
-//		mSoundBeep = mSoundPool.load(SquashActivity.getInstance(),
-//				R.raw.beep, 1);
+		mSoundBeep = mSoundPool.load(SquashActivity.getInstance(),
+				R.raw.beep, 1);
 
 		mMovables = movables.clone();
 
