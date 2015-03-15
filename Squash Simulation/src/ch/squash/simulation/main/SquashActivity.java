@@ -54,13 +54,15 @@ public class SquashActivity extends Activity implements OnGestureListener,
 
 		mInstance = this;
 
-		// ensure that if nothing would be drawn, ball court and forces are
+		// ensure that if nothing would be drawn, some default objects are
 		// drawn instead
 		if (Settings.getVisibleObjectCollections().size() == 0) {
 			final Set<String> ss = new HashSet<String>();
 			ss.add(Integer.toString(SquashRenderer.OBJECT_COURT));
 			ss.add(Integer.toString(SquashRenderer.OBJECT_BALL));
 			ss.add(Integer.toString(SquashRenderer.OBJECT_FORCE));
+			ss.add(Integer.toString(SquashRenderer.OBJECT_ARENA));
+			ss.add(Integer.toString(SquashRenderer.OBJECT_CHAIRS));
 			Settings.setVisibleObjectCollections(ss);
 		}
 
